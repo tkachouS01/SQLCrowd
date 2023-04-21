@@ -1,0 +1,64 @@
+import {useState, useEffect, useContext, useRef} from 'react';
+import {Toast} from 'react-bootstrap';
+import {useObserver} from 'mobx-react-lite';
+import {Context} from "../../index";
+import {SIGN_IN_ROUTE, TASKS_ROUTE} from "../../utils/constsPath";
+import {useNavigate} from "react-router-dom";
+
+function Message() {
+
+    const [show, setShow] = useState(false);
+    let {user} = useContext(Context)
+    const navigate = useNavigate();
+    const firstRender = useRef(true);
+
+    useEffect(() => {
+<<<<<<< HEAD
+        if (user.errorMessage.status === 401)
+            navigate(SIGN_IN_ROUTE)
+        else if (user.errorMessage.status === 404)
+=======
+        if (user.errorMessage.status == 401)
+            navigate(SIGN_IN_ROUTE)
+        else if (user.errorMessage.status == 404)
+>>>>>>> SQLCrowd/master
+            navigate(TASKS_ROUTE)
+        if (firstRender.current) {
+            firstRender.current = false;
+            return;
+        }
+
+        setShow(true)
+        const timer = setTimeout(() => {
+            setShow(false);
+        }, 5000);
+        return () => {
+            clearTimeout(timer);
+        }
+    }, [user.errorMessage]);
+
+    return useObserver(() => (
+        <>
+            {
+                user.errorMessage.message
+                    ?
+                    (
+                        <Toast show={show} onClose={() => setShow(false)}
+                               style={{position: "fixed", bottom: 20, right: 20, zIndex: 100}}>
+
+                            <Toast.Header>
+                                <strong className="me-auto">Статус {user.errorMessage.status === 500 ? "Зовите быстрее сисадмина. Сервак поломался":user.errorMessage.status}</strong>
+                            </Toast.Header>
+                            <Toast.Body>{user.errorMessage.message}</Toast.Body>
+                        </Toast>
+                    )
+                    :
+                    (<></>)
+            }
+        </>
+
+
+    ));
+}
+
+export default Message
