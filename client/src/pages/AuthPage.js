@@ -45,11 +45,8 @@ const AuthPage = observer(() => {
                 {isLogin ? (<>
 
 
-<<<<<<< HEAD
                     <h2 className="m-auto" style={{textAlign: "center"}}>ВХОД В СИСТЕМУ</h2>
-=======
-                    <h2 className="m-auto">ВХОД В СИСТЕМУ</h2>
->>>>>>> SQLCrowd/master
+
                     <div style={{display: "flex", justifyContent: "center"}}><Logo/></div>
                     <Form className="d-flex flex-column">
                         <Form.Control
@@ -76,11 +73,9 @@ const AuthPage = observer(() => {
                     </Form>
                 </>) : (<>
 
-<<<<<<< HEAD
+
                     <h2 className="m-auto" style={{textAlign: "center"}}>РЕГИСТРАЦИЯ В СИСТЕМЕ</h2>
-=======
-                    <h2 className="m-auto">РЕГИСТРАЦИЯ В СИСТЕМЕ</h2>
->>>>>>> SQLCrowd/master
+
                     <div style={{display: "flex", justifyContent: "center"}}><Logo/></div>
                     <Form className="d-flex flex-column">
                         <Form.Control

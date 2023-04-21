@@ -3,13 +3,8 @@ import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-sql';
 import 'ace-builds/src-noconflict/theme-cloud9_day';
 
-<<<<<<< HEAD
 function CodeEditor({codeSolution, setCodeSolution,readonly}) {
-=======
-function CodeEditor({codeSolution, setCodeSolution}) {
-    console.log("codeSolution")
-    console.log(codeSolution)
->>>>>>> SQLCrowd/master
+
         return (
         <AceEditor
             mode="sql"

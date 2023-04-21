@@ -51,12 +51,10 @@ export default class SolutionsController {
             let userSolution = await Solution.findOne({where: {taskId: task_id, userId}})
             if (!userSolution) {
                 let task = await Task.findOne({where: {id: task_id}});
-<<<<<<< HEAD
+
                 consoleError(task.userId === userId)
                 userSolution = await Solution.create({userId, taskId: task_id, is_author: task.userId === userId});
-=======
-                userSolution = await Solution.create({userId, taskId: task_id, is_author: task.userId===userId});
->>>>>>> SQLCrowd/master
+
             }
             return res.json({solutionId: userSolution.id})
         } catch (error) {

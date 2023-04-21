@@ -54,7 +54,6 @@ export const updateOneSolution = async (contextUser, contextTask, contextSolutio
     contextUser.setIsLoading(true)
     await check(contextUser);
     let taskId = contextTask.selectedTask;
-<<<<<<< HEAD
     let solutionId = contextSolution.selectedSolution
 
     await $authHost.patch(`${baseUrlApi}/tasks/${taskId}/solutions/${solutionId}`, {code: code})
@@ -138,27 +137,10 @@ export const like = async (contextUser, contextTask, contextSolution, solutionId
         })
         .catch(error => {
             console.log(error)
-=======
-    console.log("№ " + taskId)
-    let solutionId = contextSolution.selectedSolution
-    console.log("решение № " + solutionId)
-
-    await $authHost.patch(`${baseUrlApi}/tasks/${taskId}/solutions/${solutionId}`, {code: code})
-        .then(data => {
-            contextSolution.setSolution(data.data)
-            result = true;
-        })
-        .catch(error => {
->>>>>>> SQLCrowd/master
             contextUser.setErrorMessage(`${error.response.status}`, error.response.data.message)
         })
         .finally(() => {
             contextUser.setIsLoading(false);
         });
-<<<<<<< HEAD
-
-
-=======
->>>>>>> SQLCrowd/master
     return result;
 }

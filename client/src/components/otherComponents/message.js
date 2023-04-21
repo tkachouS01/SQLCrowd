@@ -13,15 +13,11 @@ function Message() {
     const firstRender = useRef(true);
 
     useEffect(() => {
-<<<<<<< HEAD
+
         if (user.errorMessage.status === 401)
             navigate(SIGN_IN_ROUTE)
         else if (user.errorMessage.status === 404)
-=======
-        if (user.errorMessage.status == 401)
-            navigate(SIGN_IN_ROUTE)
-        else if (user.errorMessage.status == 404)
->>>>>>> SQLCrowd/master
+
             navigate(TASKS_ROUTE)
         if (firstRender.current) {
             firstRender.current = false;

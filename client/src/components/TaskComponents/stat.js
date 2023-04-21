@@ -6,7 +6,7 @@ import createImage from "../../static/create.png";
 import updateImage from "../../static/update.png";
 import dbImage from "../../static/db.png";
 import authorImage from "../../static/author.png";
-<<<<<<< HEAD
+
 import React, {useContext, useEffect} from "react";
 import {convertDate, timeSolution} from "../../utils/utils";
 import {Context} from "../../index";
@@ -14,14 +14,6 @@ import {Context} from "../../index";
 const Stat = (({task, fullContent}) => {
     const {user} = useContext(Context)
 
-=======
-import React, {useContext} from "react";
-import {convertDate} from "../../utils/utils";
-import {Context} from "../../index";
-
-const Stat = ({task}) => {
-    const {user} = useContext(Context)
->>>>>>> SQLCrowd/master
     return (
         <Container style={{display: "flex", flexDirection: "column", gap: 15}}>
             <Row className="d-flex flex-row justify-content-end gap-2"
@@ -52,12 +44,10 @@ const Stat = ({task}) => {
                     <Image style={{height: 15, width: 'auto'}} src={dbImage}/>
                     <div>
                         {
-<<<<<<< HEAD
+
                             task.database ? `${task.database.name} [id${task.database.id}]` :
                                 <span style={{opacity: 0.5, fontWeight: 100}}>{'Не выбрана'}</span>
-=======
-                            task.database ? `${task.database.name} [id${task.database.id}]` : 'Не выбрана'
->>>>>>> SQLCrowd/master
+
                         }
 
                     </div>
@@ -65,7 +55,7 @@ const Stat = ({task}) => {
             </Row>
             <Row style={{background: "white", padding: 15, borderRadius: 10}}>
                 <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-<<<<<<< HEAD
+
                     <span style={{
                         fontWeight: "100",
                         fontFamily: 'Arial',
@@ -111,16 +101,12 @@ const Stat = ({task}) => {
 
                         }
 
-=======
-                    <span style={{fontWeight: "100", fontFamily: 'Arial', background: 'lightgray', padding: 5, borderRadius: 10, marginRight: 10}}>#{task.id}</span>
-                    <div style={{fontWeight: "700", fontFamily: 'Arial',color: 'gray', width: "100%", wordWrap: "break-word"}}>
-                        {task.description ? task.description : 'Не указано'}
->>>>>>> SQLCrowd/master
+
                     </div>
                 </div>
 
 
-<<<<<<< HEAD
+
                 <div style={{
                     fontSize: 12,
                     marginTop: 15,
@@ -207,31 +193,6 @@ const Stat = ({task}) => {
                     }
 
                 </div>
-=======
-
-
-                    <div style={{fontSize: 12, marginTop: 15}}>
-                        {
-                            task.user.nickname === user.user.nickname
-                            ?
-                                (
-                                    <div style={{background: "lightgreen", padding: '2px 5px',borderRadius: 8 ,display: "inline-flex", flexDirection: "row", alignItems: "center"}}>
-                                        <Image style={{height: 15, width: 'auto'}} src={authorImage}/>
-                                        <span style={{marginLeft: 5}}>Ваша задача</span>
-                                    </div>
-                                )
-                                :
-                                (
-                                    <div style={{background: "lightblue", padding: '2px 5px',borderRadius: 8 ,display: "inline-flex", flexDirection: "row", alignItems: "center"}}>
-                                        <Image style={{height: 15, width: 'auto'}} src={authorImage}/>
-                                        <span style={{marginLeft: 5}}>{task.user.nickname} [id{task.user.id}]</span>
-                                    </div>
-                                )
-                        }
-                    </div>
->>>>>>> SQLCrowd/master
-
-
             </Row>
         </Container>
     )

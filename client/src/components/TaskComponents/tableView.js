@@ -7,7 +7,7 @@ import {observer} from "mobx-react-lite";
 const TableView = observer( ({selectedTable, setSelectedTable, tableNames}) => {
     let {user} = useContext(Context)
     let {task} = useContext(Context)
-<<<<<<< HEAD
+
     let {solution} = useContext(Context)
     useEffect(()=>{solution.setResult({fields:[],rows:[]})},[])
     useEffect(() => {
@@ -15,9 +15,7 @@ const TableView = observer( ({selectedTable, setSelectedTable, tableNames}) => {
             setSelectedTable("Результирующая таблица");
         }
     }, [solution.result, setSelectedTable]);
-=======
 
->>>>>>> SQLCrowd/master
     return (
         <>
             {
