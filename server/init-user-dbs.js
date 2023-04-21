@@ -57,7 +57,7 @@ async function createDatabases() {
 async function executeQuery(code, databaseId) {
     databaseId = databaseId || 1;
     databaseId--;
-    const allowedQueryTypes = /^(SELECT|INSERT|UPDATE|DELETE)/i;
+    const allowedQueryTypes = /^(SELECT)/i;
 
     if (!allowedQueryTypes.test(code)) {
         throw new Error('Запрос начинается с неподдержимаемого оператора или имеет неверный синтаксис')
