@@ -15,6 +15,11 @@ let results = await sequelize.query(`SELECT 1 FROM pg_database WHERE datname = '
 if (results[0].length === 0) {
     if(true)
     {
+        await sequelize.query(`CREATE DATABASE ${process.env.DB_NAME}`);
+        sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+            host: process.env.DB_HOST, dialect: 'postgres'
+        });
+        await sequelize.authenticate();
         const sqlFilePath = path.join(__dirname, 'staticScriptsDB', `${process.env.DB_NAME}.sql`);
         const sql = fs.readFileSync(sqlFilePath, 'utf8');
 
@@ -28,13 +33,4 @@ if (results[0].length === 0) {
     }
 
 }
-export default sequelize = new Sequelize(
-    process.env.DB_NAME,
-    process.env.DB_USER,
-    process.env.DB_PASSWORD,
-    {
-        dialect: 'postgres',
-        host: process.env.DB_HOST,
-        port: process.env.DB_PORT
-    }
-)
+export default sequelize
