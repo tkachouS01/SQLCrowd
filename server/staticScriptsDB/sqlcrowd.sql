@@ -1,5 +1,5 @@
 
-ALTER DATABASE sqlcrowdd OWNER TO postgres;
+ALTER DATABASE sqlcrowd OWNER TO postgres;
 
 CREATE TYPE public.enum_users_gender AS ENUM (
     'М',

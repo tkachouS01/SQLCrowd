@@ -52,7 +52,7 @@ useEffect(()=>{setFirstRender(true)},[])
                                     )
                                     :
                                     (
-                                        <div style={{marginBottom: 15, display: "flex", flexDirection:"row", alignItems:"center", gap: 15}}>
+                                        <div style={{marginBottom: 15, display: "flex", flexDirection:"row", alignItems:"center", columnGap: 15,rowGap: 2, flexWrap: "wrap"}}>
                                             <Button onClick={clickStartSolution}>Выполнить</Button>
                                             <Button onClick={()=>{navigate(`/tasks/${task.selectedTask}/solutions`)}}>К решениям других</Button>
                                             <div>
@@ -66,7 +66,7 @@ useEffect(()=>{setFirstRender(true)},[])
                                                         )
                                                     :
                                                         (
-                                                            <span style={{background: "lightgray", padding: '3px 5px', borderRadius: 10}}>Нажмите Выполнить, для проверки решения</span>
+                                                            <span style={{background: "lightgray", padding: '3px 5px',fontSize: 12, borderRadius: 10}}>Нажмите Выполнить, для проверки решения</span>
                                                         )
 
 
