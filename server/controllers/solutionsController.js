@@ -97,11 +97,20 @@ export default class SolutionsController {
                 try {
                     rowsUser = await executeQuery(code, task.databaseId);
                 } catch (error) {
+                    await Solution.update({
+                        code, attempts: ++userSolution.attempts, verified: false
+                    }, {where: {id: userSolution.id}});
                     return next(ApiError.badRequest(`Ошибка при выполнении запроса: ${(String(error).split('SequelizeDatabaseError:')[1]) || error}`))
                 }
 
 
-                if (!rowsUser[0]) return next(ApiError.badRequest(`Пустой набор строк`))
+                if (!rowsUser[0]) 
+                {
+                    await Solution.update({
+                        code, attempts: ++userSolution.attempts, verified: false
+                    }, {where: {id: userSolution.id}});
+                    return next(ApiError.badRequest(`Пустой набор строк`))
+                }
 
 
                 let solutionAuthor = await Solution.findOne({where: {taskId: task.id, is_author: true}})
