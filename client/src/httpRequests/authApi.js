@@ -48,6 +48,8 @@ export const signIn = async (contextUser, navigate, login, password) => {
             contextUser.setIsAuth(true);
         })
         .catch(error => {
+            console.log("error.response.data.message")
+            console.log(error)
             contextUser.setErrorMessage(error.response.status, error.response.data.message)
         })
         .finally(() => {

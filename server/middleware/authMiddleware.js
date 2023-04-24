@@ -10,7 +10,10 @@ export default function (req, res, next) {
             res.redirect('/signin');
             return res.status(401).json({ message: "Не авторизован" })
         }
+        const decoded = jwt.verify(token, process.env.SECRET_KEY)
 
+        req.user = decoded
+        //let temp = req.user;
 
         req.user = jwt.verify(token, process.env.SECRET_KEY)
         next()
