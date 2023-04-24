@@ -11,15 +11,11 @@ tasksRouter.param('task_id', checkTaskExists);
 
 tasksRouter.use('/:task_id/solutions', solutionsRouter)
 tasksRouter.route('/')
-    //получение всех задач
     .get(tasksController.getAllTasks.bind(tasksController)) //+
-    //создание новой задачи
     .post(tasksController.createTask.bind(tasksController)); //+
 
 tasksRouter.route('/:task_id')
-    //получение конкретной задачи
     .get(tasksController.getOneTask.bind(tasksController)) //+
-    //обновление конкретной задачи
     .patch(taskAccessControl, tasksController.updateTask.bind(tasksController)); //+
 
 

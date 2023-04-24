@@ -1,4 +1,4 @@
-import {consoleError, consoleMessage} from '../customMessageConsole.js'
+import {consoleMessage} from '../customMessageConsole.js'
 import {Task, Solution, User, Database} from '../models/models.js';
 import ApiError from '../error/ApiError.js';
 import {formatMilliseconds} from '../utils/utils.js'
@@ -7,10 +7,9 @@ import {getAllTablesAndColumns} from '../init-user-dbs.js'
 export default class TasksController {
 
     async getTask(task_id) {
-        const task = await Task.findByPk(task_id, {
+        return await Task.findByPk(task_id, {
             ...queryOptions
         });
-        return task;
     }
 
     async addTaskStats(task,userId) {

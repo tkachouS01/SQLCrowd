@@ -1,4 +1,4 @@
-import {consoleMessage, consoleError} from '../customMessageConsole.js'
+import {consoleMessage} from '../customMessageConsole.js'
 import ApiError from '../error/ApiError.js';
 import {User} from '../models/models.js';
 

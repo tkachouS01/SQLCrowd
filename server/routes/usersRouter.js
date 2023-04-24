@@ -12,11 +12,9 @@ import UsersController from '../controllers/usersController.js';
 const usersController = new UsersController();
 
 usersRouter.route('/')
-    //получение всех пользователей
     .get(usersController.getAll.bind(usersController)); //+
 
 usersRouter.route('/:id')
-    //получение конкретного пользователя
     .get(usersController.getOne.bind(usersController)); //-
 
 export default usersRouter;

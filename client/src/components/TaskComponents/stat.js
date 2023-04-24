@@ -1,4 +1,4 @@
-import {Card, Col, Container, Image, Row} from "react-bootstrap";
+import {Col, Container, Image, Row} from "react-bootstrap";
 import solvedImage from "../../static/solved.png";
 import usersImage from "../../static/users.png";
 import timeImage from "../../static/time.png";
@@ -7,7 +7,7 @@ import updateImage from "../../static/update.png";
 import dbImage from "../../static/db.png";
 import authorImage from "../../static/author.png";
 
-import React, {useContext, useEffect} from "react";
+import React, {useContext} from "react";
 import {convertDate, timeSolution} from "../../utils/utils";
 import {Context} from "../../index";
 
@@ -16,8 +16,8 @@ const Stat = (({task, fullContent}) => {
 
     return (
         <Container style={{display: "flex", flexDirection: "column", gap: 15}}>
-            <Row className="d-flex flex-row justify-content-end gap-2"
-                 style={{background: "white", padding: 15, borderRadius: 10, whiteSpace: "nowrap"}}>
+            <Row className="d-flex flex-row justify-content-end"
+                 style={{background: "white", padding: '15px',borderRadius: 10, whiteSpace: "nowrap", columnGap: 15,rowGap: 5}}>
                 <Col className="blockFlex">
                     <Image style={{height: 15, width: 'auto'}} src={solvedImage}/>
                     <div>{task.solutionCount}</div>
@@ -113,6 +113,8 @@ const Stat = (({task, fullContent}) => {
                     display: "flex",
                     flexDirection: "row",
                     alignItems: "center",
+                    flexWrap: "wrap",
+                    rowGap: 5,
                     columnGap: 15
                 }}>
                     <div style={{

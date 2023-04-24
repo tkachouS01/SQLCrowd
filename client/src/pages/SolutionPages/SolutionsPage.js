@@ -37,13 +37,13 @@ const SolutionsPage = observer(() => {
     }, [])
     const sendCommentToServer = (solutionId) => {
         createComment(user, task, solution, solutionId, newComments[solutionId], navigate)
-            .then(r => {
+            .then(() => {
                 setRequestCompleted(true);
                 setNewComments({...newComments, [solutionId]: ""})
             })
     }
     const clickLike = (solutionId) => {
-        like(user,task,solution,solutionId).then(r => setRequestCompleted(true))
+        like(user,task,solution,solutionId).then(() => setRequestCompleted(true))
     }
     if (!requestCompleted) {
         return (<></>)

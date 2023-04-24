@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Context} from "../index";
-import {Button, Navbar, NavDropdown} from "react-bootstrap";
+import {Button, Navbar} from "react-bootstrap";
 import {Container, Nav} from "react-bootstrap";
 import {NavLink, useNavigate} from "react-router-dom";
 import {HOME_ROUTE, SIGN_IN_ROUTE, TASKS_ROUTE, USERS_ROUTE} from "../utils/constsPath";

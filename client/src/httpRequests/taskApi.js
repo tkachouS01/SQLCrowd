@@ -1,6 +1,5 @@
 import {$authHost} from "./httpMain";
 import {check} from "./authApi";
-import {Fade} from "react-bootstrap";
 
 const baseUrlApi = 'http://localhost:5000/sql-crowd-api'
 

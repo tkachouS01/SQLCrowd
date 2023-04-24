@@ -8,7 +8,6 @@ import fs from 'fs';
 import path from 'path';
 import {fileURLToPath} from 'url';
 import {Database} from './models/models.js'
-import ApiError from './error/ApiError.js';
 
 const dbNames = ['aero_pg_script', 'computer_pg_script', 'inc_out_pg_script', 'painting_pg_script', 'ships_pg_script'];
 
@@ -37,7 +36,7 @@ async function createDatabases() {
         try {
             await sequelize[i].authenticate();
             consoleMessage(`Соединение с ${dbNames[i]} успешно установлено.`)
-            if (results[i][0].length == 0) {
+            if (!results[i][0].length) {
                 const sqlFilePath = path.join(__dirname, 'staticScriptsDB', `${dbNames[i]}.sql`);
                 const sql = fs.readFileSync(sqlFilePath, 'utf8');
 
@@ -105,5 +104,5 @@ async function getAllTablesAndColumns(databaseId) {
     }
 
     return tableData;
-};
+}
 export {createDatabases, executeQuery, getAllTablesAndColumns};

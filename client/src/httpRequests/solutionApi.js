@@ -3,7 +3,7 @@ import {$authHost} from "./httpMain";
 
 const baseUrlApi = 'http://localhost:5000/sql-crowd-api'
 
-export const createSolution = async (contextUser, contextTask, contextSolution, navigate) => {
+export const createSolution = async (contextUser, contextTask, contextSolution) => {
     let result = false;
     contextUser.setIsLoading(true)
     await check(contextUser);
@@ -99,7 +99,7 @@ export const createComment = async (contextUser, contextTask, contextSolution, s
     await check(contextUser);
 
     await $authHost.post(`${baseUrlApi}/tasks/${contextTask.task.info.id}/solutions/${solutionId}/comment`, {content: content})
-        .then(data => {
+        .then(() => {
             result = getSolutions(contextUser,contextTask,contextSolution, contextTask.task.info.id, navigate)
         })
         .catch(error => {

@@ -2,7 +2,6 @@ import {consoleError, consoleMessage} from '../customMessageConsole.js'
 import {Task, Solution, User, SolutionLike, SolutionComment} from '../models/models.js';
 import ApiError from '../error/ApiError.js';
 import {executeQuery} from '../init-user-dbs.js'
-import {raw} from "express";
 
 export default class SolutionsController {
 

@@ -1,11 +1,9 @@
 import React, {useContext, useEffect, useState} from 'react'
 import {Context} from "../../index";
-import {getOneTask, getTasks, updateTask} from "../../httpRequests/taskApi";
-import {Button, Container, Form, Table} from "react-bootstrap";
+import {getOneTask, updateTask} from "../../httpRequests/taskApi";
+import {Container} from "react-bootstrap";
 import {useNavigate, useParams} from "react-router-dom";
-import {toJS} from "mobx";
 import Stat from "../../components/TaskComponents/stat";
-import CodeEditor from "../../components/TaskComponents/CodeEdit";
 import EditTaskComponent from "../../components/TaskComponents/EditTaskComponent";
 import TableView from "../../components/TaskComponents/tableView";
 import EditSolutionComponent from "../../components/TaskComponents/EditSolutionComponent";
@@ -22,7 +20,6 @@ const TaskSolutionPage = (() => {
     const [selectedTable, setSelectedTable] = useState("")
     const [selectedDatabaseName, setSelectedDatabaseName] = useState(undefined);
     const [descriptionTask, setDescriptionTask] = useState('')
-    const [startSolution, setStartSolution] = useState(false)
     const [tableNames, setTableNames] = useState([])
 
     let getTask = async () => {

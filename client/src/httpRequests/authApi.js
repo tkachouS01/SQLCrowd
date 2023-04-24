@@ -85,8 +85,7 @@ export const check = async (context) => {
 
         }
         else {
-            const user = decodedToken;
-            context.setUser(user);
+            context.setUser(decodedToken);
             context.setIsAuth(true);
         }
     }

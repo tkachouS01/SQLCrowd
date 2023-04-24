@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {NavLink, useLocation, useNavigate} from 'react-router-dom';
 import {Button, Card, Container, Form} from 'react-bootstrap';
-import {SIGN_IN_ROUTE, SIGN_UP_ROUTE, TASKS_ROUTE, USERS_ROUTE} from '../utils/constsPath';
+import {SIGN_IN_ROUTE, SIGN_UP_ROUTE} from '../utils/constsPath';
 import {exit, signIn, signUp} from '../httpRequests/authApi';
 import {observer} from 'mobx-react-lite';
 import {Context} from '../index';

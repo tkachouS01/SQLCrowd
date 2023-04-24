@@ -1,4 +1,4 @@
-import {consoleMessage, consoleError} from '../customMessageConsole.js'
+import {consoleMessage} from '../customMessageConsole.js'
 import ApiError from '../error/ApiError.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -6,7 +6,7 @@ import {Op} from 'sequelize'
 import {User} from '../models/models.js';
 
 const generateJwt = (id, email, role, nickname) => {
-    return jwt.sign({id, email, role, nickname}, process.env.SECRET_KEY, {expiresIn: '25h'})
+    return jwt.sign({id, email, role, nickname}, process.env.SECRET_KEY, {expiresIn: '24h'})
 }
 
 export default class AuthController {

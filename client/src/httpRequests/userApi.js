@@ -1,4 +1,4 @@
-import {$authHost, $host} from "./httpMain";
+import {$authHost} from "./httpMain";
 import {check} from "./authApi";
 
 const baseUrlApi = 'http://localhost:5000/sql-crowd-api'

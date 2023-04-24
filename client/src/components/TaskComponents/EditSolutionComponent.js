@@ -11,12 +11,13 @@ const EditSolutionComponent = () => {
     let {solution} = useContext(Context)
     const navigate = useNavigate();
     const [startSolution, setStartSolution] = useState(false)
-    const [requestCompleted, setRequestCompleted] = useState(false)
     const [codeSolution, setCodeSolution] = useState("")
     const [tempRender, setTempRender] = useState(false)
     const [firstRender, setFirstRender] = useState(true)
 
-useEffect(()=>{setFirstRender(true)},[])
+    useEffect(() => {
+        setFirstRender(true)
+    }, [])
     let clickStartSolution = () => {
         setFirstRender(false)
         updateOneSolution(user, task, solution, codeSolution)
@@ -32,7 +33,8 @@ useEffect(()=>{setFirstRender(true)},[])
                 setStartSolution(true);
             })
     }
-    useEffect(() => { }, [solution.result.success, tempRender])
+    useEffect(() => {
+    }, [solution.result.success, tempRender])
     return (
         <>
             {
@@ -52,23 +54,45 @@ useEffect(()=>{setFirstRender(true)},[])
                                     )
                                     :
                                     (
-                                        <div style={{marginBottom: 15, display: "flex", flexDirection:"row", alignItems:"center", columnGap: 15,rowGap: 2, flexWrap: "wrap"}}>
+                                        <div style={{
+                                            marginBottom: 15,
+                                            display: "flex",
+                                            flexDirection: "row",
+                                            alignItems: "center",
+                                            columnGap: 15,
+                                            rowGap: 2,
+                                            flexWrap: "wrap"
+                                        }}>
                                             <Button onClick={clickStartSolution}>Выполнить</Button>
-                                            <Button onClick={()=>{navigate(`/tasks/${task.selectedTask}/solutions`)}}>К решениям других</Button>
+                                            <Button onClick={() => {
+                                                navigate(`/tasks/${task.selectedTask}/solutions`)
+                                            }}>К решениям других</Button>
                                             <div>
                                                 {
                                                     !firstRender
                                                         ?
                                                         (
-                                                            (solution.result.success && user.errorMessage.status==200 )
-                                                                ? (<span style={{background: "#9ACD32", padding: '3px 5px', borderRadius: 10}}>Решение верное</span>)
-                                                                : (<span style={{background: "#FFC0CB", padding: '3px 5px', borderRadius: 10}}>Решение неверное</span>)
+                                                            (solution.result.success && user.errorMessage.status == 200)
+                                                                ? (<span style={{
+                                                                    background: "#9ACD32",
+                                                                    padding: '3px 5px',
+                                                                    borderRadius: 10
+                                                                }}>Решение верное</span>)
+                                                                : (<span style={{
+                                                                    background: "#FFC0CB",
+                                                                    padding: '3px 5px',
+                                                                    borderRadius: 10
+                                                                }}>Решение неверное</span>)
                                                         )
-                                                    :
+                                                        :
                                                         (
-                                                            <span style={{background: "lightgray", padding: '3px 5px',fontSize: 12, borderRadius: 10}}>Нажмите Выполнить, для проверки решения</span>
+                                                            <span style={{
+                                                                background: "lightgray",
+                                                                padding: '3px 5px',
+                                                                fontSize: 12,
+                                                                borderRadius: 10
+                                                            }}>Нажмите Выполнить, для проверки решения</span>
                                                         )
-
 
 
                                                 }
@@ -78,7 +102,8 @@ useEffect(()=>{setFirstRender(true)},[])
                             }
                             {
                                 startSolution && task.task.info.database
-                                    ? (<CodeEditor codeSolution={codeSolution} setCodeSolution={setCodeSolution} readonly={false}/>)
+                                    ? (<CodeEditor codeSolution={codeSolution} setCodeSolution={setCodeSolution}
+                                                   readonly={false}/>)
                                     : (<></>)
                             }
                         </Container>

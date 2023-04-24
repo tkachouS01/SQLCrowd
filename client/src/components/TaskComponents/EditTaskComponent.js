@@ -1,8 +1,6 @@
 import React, {useContext} from 'react';
-import Stat from "./stat";
 import {Button, Container, Form} from "react-bootstrap";
 import {Context} from "../../index";
-import {useParams} from "react-router-dom";
 
 
 const EditTaskComponent = ({

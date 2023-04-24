@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Card, Container, Image, Row} from "react-bootstrap";
+import {Card, Image, Row} from "react-bootstrap";
 import {Context} from "../../index";
 import {useNavigate} from "react-router-dom";
 import {USERS_ROUTE} from "../../utils/constsPath";
@@ -10,7 +10,7 @@ const UserItem = () => {
 
     const {user} = useContext(Context)
     const [requestCompleted, setRequestCompleted] = useState(false)
-    useEffect((bool)=>{
+    useEffect(()=>{
         getUsers(user).then((bool)=>{
             setRequestCompleted(bool)
         })
@@ -39,10 +39,10 @@ const UserItem = () => {
                             </div>
 
                             <div className="d-flex flex-column align-items-end align-self-center">
-                                <div>Ник: {user.nickname}</div>
+                                <div style={{textAlign: "end"}}>{user.nickname}</div>
 
-                                <div>{`${user.surname || ''} ${user.name || ''} ${user.patronymic || ''}`}</div>
-                                <div>День рождения: {user.date_of_birth || 'не указано'}</div>
+                                <div style={{textAlign: "end"}}>{`${user.surname || ''} ${user.name || ''} ${user.patronymic || ''}`}</div>
+                                <div style={{textAlign: "end"}}>{user.date_of_birth || 'не указано'}</div>
 
                             </div>
 
