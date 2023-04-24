@@ -197,9 +197,9 @@ INSERT INTO public.databases (id, name, description, "createdAt", "updatedAt") V
 INSERT INTO public.solution_comments (id, content, "createdAt", "updatedAt", "solutionId", "userId") VALUES (2, 'норма', '2023-04-08 23:04:25.017+03', '2023-04-08 23:04:25.017+03', 1, 2);
 INSERT INTO public.solution_comments (id, content, "createdAt", "updatedAt", "solutionId", "userId") VALUES (3, 'как сдать курсач', '2023-04-08 23:05:40.122+03', '2023-04-08 23:05:40.122+03', 1, 2);
 INSERT INTO public.solution_comments (id, content, "createdAt", "updatedAt", "solutionId", "userId") VALUES (4, 'Где найти работу??????', '2023-04-08 23:07:17.458+03', '2023-04-08 23:07:17.458+03', 1, 2);
-INSERT INTO public.solution_comments (id, content, "createdAt", "updatedAt", "solutionId", "userId") VALUES (5, 'Я придуроккккк', '2023-04-08 23:10:09.589+03', '2023-04-08 23:10:09.589+03', 1, 2);
+INSERT INTO public.solution_comments (id, content, "createdAt", "updatedAt", "solutionId", "userId") VALUES (5, 'Тест', '2023-04-08 23:10:09.589+03', '2023-04-08 23:10:09.589+03', 1, 2);
 INSERT INTO public.solution_comments (id, content, "createdAt", "updatedAt", "solutionId", "userId") VALUES (6, '12345', '2023-04-19 14:49:04.982+03', '2023-04-19 14:49:04.982+03', 1, 1);
-INSERT INTO public.solution_comments (id, content, "createdAt", "updatedAt", "solutionId", "userId") VALUES (21, 'Почему нельзя в двойных кавычках?', '2023-04-20 13:08:25.282+03', '2023-04-20 13:08:25.282+03', 27, 1);
+INSERT INTO public.solution_comments (id, content, "createdAt", "updatedAt", "solutionId", "userId") VALUES (21, 'Почему нельзя в двойных кавычках? И кстати, я придурок', '2023-04-20 13:08:25.282+03', '2023-04-20 13:08:25.282+03', 27, 1);
 INSERT INTO public.solution_comments (id, content, "createdAt", "updatedAt", "solutionId", "userId") VALUES (22, '21 апреля 2023 года', '2023-04-21 20:35:20.783+03', '2023-04-21 20:35:20.783+03', 35, 1);
 INSERT INTO public.solution_comments (id, content, "createdAt", "updatedAt", "solutionId", "userId") VALUES (23, '1', '2023-04-21 20:35:51.6+03', '2023-04-21 20:35:51.6+03', 2, 1);
 INSERT INTO public.solution_comments (id, content, "createdAt", "updatedAt", "solutionId", "userId") VALUES (24, 'привет', '2023-04-21 20:36:20.079+03', '2023-04-21 20:36:20.079+03', 2, 1);
