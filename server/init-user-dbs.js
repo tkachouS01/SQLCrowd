@@ -7,9 +7,9 @@ import {Sequelize} from 'sequelize';
 import fs from 'fs';
 import path from 'path';
 import {fileURLToPath} from 'url';
-import {Database} from './models/models.js'
+import {Databases} from './models/models.js'
 
-const dbNames = ['aero_pg_script', 'computer_pg_script', 'inc_out_pg_script', 'painting_pg_script', 'ships_pg_script'];
+const dbNames = ['aero', 'computer', 'inc_out', 'painting', 'ships'];
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 let sequelize = new Sequelize(null, process.env.DB_USER, process.env.DB_PASSWORD, {
@@ -20,9 +20,11 @@ async function createDatabases() {
     let results = [];
     for (let i = 0; i < dbNames.length; i++) {
         results[i] = await sequelize.query(`SELECT 1 FROM pg_database WHERE datname = '${dbNames[i]}'`);
-        if (results[i][0].length === 0) {
+
+        try {
             await sequelize.query(`CREATE DATABASE ${dbNames[i]}`);
-        }
+            console.log(`БД ${dbNames[i]} создана`);
+        } catch (error) {}
     }
     sequelize = [];
     for (let i = 0; i < dbNames.length; i++) {
@@ -31,7 +33,6 @@ async function createDatabases() {
         });
     }
 
-
     for (let i = 0; i < dbNames.length; i++) {
         try {
             await sequelize[i].authenticate();
@@ -39,29 +40,39 @@ async function createDatabases() {
             if (!results[i][0].length) {
                 const sqlFilePath = path.join(__dirname, 'staticScriptsDB', `${dbNames[i]}.sql`);
                 const sql = fs.readFileSync(sqlFilePath, 'utf8');
-
                 await sequelize[i].query(sql);
 
+
+                const result = await sequelize[i].query(`
+                  SELECT table_name, column_name
+                  FROM information_schema.columns
+                  WHERE table_schema = 'public'
+                `);
+
+                const tables = {};
+
+                result[0].forEach(({table_name, column_name}) => {
+                    if (!tables[table_name]) {
+                        tables[table_name] = [];
+                    }
+                    tables[table_name].push(column_name);
+                });
                 consoleMessage(`Структура ${dbNames[i]} создана`)
-                await Database.create({id: i + 1, name: dbNames[i]})
+                await Databases.create({_id: i + 1, name: dbNames[i], tables})
             }
         } catch (err) {
             consoleError(`Не удалось подключиться к базе данных ${dbNames[i]}: ${err}`)
         }
     }
-
-
 }
 
 async function executeQuery(code, databaseId) {
-    databaseId = databaseId || 1;
     databaseId--;
     const allowedQueryTypes = /^(SELECT)/i;
 
     if (!allowedQueryTypes.test(code)) {
         throw new Error('Запрос начинается с неподдержимаемого оператора или имеет неверный синтаксис')
     }
-
     const t = await sequelize[databaseId].transaction();
     try {
         const result = await sequelize[databaseId].query(code, {transaction: t});
@@ -69,7 +80,6 @@ async function executeQuery(code, databaseId) {
         return result[0];
     } catch (err) {
         await t.rollback();
-
         throw err;
     }
 }

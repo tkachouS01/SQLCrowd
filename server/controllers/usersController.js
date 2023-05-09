@@ -1,6 +1,8 @@
-import {consoleMessage} from '../customMessageConsole.js'
+import {consoleError, consoleMessage} from '../customMessageConsole.js'
 import ApiError from '../error/ApiError.js';
-import {User} from '../models/models.js';
+import {Users} from '../models/models.js';
+import fs from "fs";
+import path from "path";
 
 export default class UsersController {
 
@@ -9,7 +11,7 @@ export default class UsersController {
         try {
             //const { limit, offset } = req.pagination;
             consoleMessage(`ПОЛУЧИТЬ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ`)
-            const users = await User.findAll({ /*limit, offset,*/
+            const users = await Users.findAll({ /*limit, offset,*/
                 attributes: {exclude: ['password', 'email', 'role']}
             });
             return users.length ? res.json(users) : next(ApiError.notFound('Пользователи не найдены'));
@@ -26,11 +28,32 @@ export default class UsersController {
             if (!/^[1-9]\d*$/.test(id)) {
                 return next(ApiError.badRequest(`Некорректное значение id: ${id}`));
             }
-            const user = await User.findOne({where: {id}, attributes: {exclude: ['password', 'email', 'role']}});
+            const user = await Users.findOne({where: {_id: id}, attributes: {exclude: ['password', 'email', 'role']}});
 
             return user ? res.json(user) : next(ApiError.notFound(`Пользователь с id=${id} не найден`))
         } catch (error) {
             return next(ApiError.serverError(error.message))
         }
+    }
+
+    async getAvatar(req, res, next) {
+
+        const {id} = req.params;
+        consoleMessage(`ПОЛУЧИТЬ АВАТАР С id=${id}`)
+
+        // формируем путь к файлу картинки
+        const imagePath = path.resolve('staticImages', `${id}.png`);
+
+        // проверяем, существует ли файл картинки
+        fs.exists(imagePath, exists => {
+            if (exists) {
+                // отправляем запрошенную картинку на клиент
+                res.sendFile(imagePath);
+            } else {
+                // отправляем картинку по умолчанию на клиент
+                const defaultImagePath = path.resolve('staticImages', 'default', 'default_1.png');
+                res.sendFile(defaultImagePath);
+            }
+        });
     }
 }

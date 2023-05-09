@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {NavLink, useLocation, useNavigate} from 'react-router-dom';
-import {Button, Card, Container, Form} from 'react-bootstrap';
+import {Button, Card, Container, FloatingLabel, Form} from 'react-bootstrap';
 import {SIGN_IN_ROUTE, SIGN_UP_ROUTE} from '../utils/constsPath';
 import {exit, signIn, signUp} from '../httpRequests/authApi';
 import {observer} from 'mobx-react-lite';
@@ -40,109 +40,149 @@ const AuthPage = observer(() => {
     };
 
     return (
-        <Container style={{display:"flex",justifyContent:"center"}}>
-            <Card style={{width:600}} className="p-5">
+        <Container style={{display: "flex", justifyContent: "center"}}>
+            <Card style={{width: 600, background: "white", borderRadius: 50}}>
                 {isLogin ? (<>
 
+                    <div style={{
+                        width: '100%',
+                        background: "#415bc4",
+                        padding: 30,
+                        borderTopLeftRadius: 50,
+                        borderTopRightRadius: 50
+                    }}>
+                        <h2 className="m-auto" style={{textAlign: "center", color: "white", fontWeight: 700}}>ВХОД В
+                            СИСТЕМУ</h2>
 
-                    <h2 className="m-auto" style={{textAlign: "center"}}>ВХОД В СИСТЕМУ</h2>
+                        <div style={{display: "flex", justifyContent: "center"}}><Logo/></div>
+                    </div>
 
-                    <div style={{display: "flex", justifyContent: "center"}}><Logo/></div>
-                    <Form className="d-flex flex-column">
-                        <Form.Control
-                            className="mt-3"
-                            placeholder="Логин"
-                            value={login}
-                            onChange={(e) => setLogin(e.target.value)}
-                        />
-                        <Form.Control
-                            className="mt-3"
-                            type="password"
-                            placeholder="Пароль"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
+                    <Form className="d-flex flex-column p-5" style={{gap: 15}}>
+
+                        <FloatingLabel label="Введите логин">
+                            <Form.Control
+                                type="login"
+                                placeholder=" "
+                                value={login}
+                                onChange={(e) => setLogin(e.target.value)}
+                            />
+                        </FloatingLabel>
+
+
+                        <FloatingLabel label="Введите пароль">
+                            <Form.Control
+                                type="password"
+                                placeholder=" "
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </FloatingLabel>
+
                         <div className="d-flex justify-content-between mt-5 flex-wrap">
                             <div>
-                                Нет аккаунта? <NavLink to={SIGN_UP_ROUTE}>Зарегистрируйтесь</NavLink>
+                                <NavLink to={SIGN_UP_ROUTE} style={{color: "black"}}>Создать аккаунт</NavLink>
                             </div>
-                            <Button variant={'outline-success'} onClick={click}>
+                            <Button style={{background: "#415bc4", border: "none"}} onClick={click}>
                                 Войти
                             </Button>
                         </div>
                     </Form>
                 </>) : (<>
 
+                    <div style={{
+                        width: '100%',
+                        background: "#415bc4",
+                        padding: 30,
+                        borderTopLeftRadius: 50,
+                        borderTopRightRadius: 50
+                    }}>
+                        <h2 className="m-auto" style={{textAlign: "center", color: "white"}}>РЕГИСТРАЦИЯ В СИСТЕМЕ</h2>
 
-                    <h2 className="m-auto" style={{textAlign: "center"}}>РЕГИСТРАЦИЯ В СИСТЕМЕ</h2>
+                        <div style={{display: "flex", justifyContent: "center"}}><Logo/></div>
+                    </div>
 
-                    <div style={{display: "flex", justifyContent: "center"}}><Logo/></div>
-                    <Form className="d-flex flex-column">
-                        <Form.Control
-                            type="email"
-                            className="mt-3 required"
-                            placeholder="Email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                        <Form.Control
-                            type="text"
-                            className="mt-3 required"
-                            placeholder="Никнейм"
-                            value={nickname}
-                            onChange={(e) => setNickname(e.target.value)}
-                        />
-                        <Form.Control
-                            type="text"
-                            className="mt-3"
-                            placeholder="Фамилия"
-                            value={surname}
-                            onChange={(e) => setSurname(e.target.value)}
-                        />
-                        <Form.Control
-                            type="text"
-                            className="mt-3"
-                            placeholder="Имя"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                        />
-                        <Form.Control
-                            type="text"
-                            className="mt-3"
-                            placeholder="Отчество"
-                            value={patronymic}
-                            onChange={(e) => setPatronymic(e.target.value)}
-                        />
-                        <Form.Control
-                            className="mt-3"
-                            as="select"
-                            placeholder="Пол"
-                            value={gender}
-                            onChange={(e) => setGender(e.target.value)}
-                        >
-                            <option value="Не указано">Не указано</option>
-                            <option value="М">Мужской</option>
-                            <option value="Ж">Женский</option>
-                        </Form.Control>
-                        <Form.Control
-                            type="date"
-                            className="mt-3"
-                            placeholder="Дата рождения"
-                            value={date_of_birth}
-                            onChange={(e) => setDateOfBirth(e.target.value)}
-                        />
-                        <Form.Control
-                            type="password"
-                            className="mt-3"
-                            placeholder="Пароль"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
+                    <Form className="d-flex flex-column p-5" style={{gap: 15}}>
+
+                        <FloatingLabel label="Введите email">
+                            <Form.Control
+                                type="email"
+                                className="required"
+                                placeholder=" "
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                        </FloatingLabel>
+                        <FloatingLabel label="Введите никнейм">
+                            <Form.Control
+                                type="text"
+                                className="required"
+                                placeholder=" "
+                                value={nickname}
+                                onChange={(e) => setNickname(e.target.value)}
+                            />
+                        </FloatingLabel>
+                        <FloatingLabel label="Введите фамилию">
+                            <Form.Control
+                                type="text"
+                                placeholder=" "
+                                value={surname}
+                                onChange={(e) => setSurname(e.target.value)}
+                            />
+                        </FloatingLabel>
+                        <FloatingLabel label="Введите имя">
+                            <Form.Control
+                                type="text"
+                                placeholder=" "
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                            />
+                        </FloatingLabel>
+                        <FloatingLabel label="Введите отчество">
+                            <Form.Control
+                                type="text"
+                                placeholder=" "
+                                value={patronymic}
+                                onChange={(e) => setPatronymic(e.target.value)}
+                            />
+                        </FloatingLabel>
+
+                        <FloatingLabel label="Выберите пол">
+                            <Form.Control
+                                as="select"
+                                aria-label=" "
+                                value={gender}
+                                onChange={(e) => setGender(e.target.value)}
+                            >
+                                <option value="Не указано">Не указано</option>
+                                <option value="М">Мужской</option>
+                                <option value="Ж">Женский</option>
+                            </Form.Control>
+                        </FloatingLabel>
+
+                        <FloatingLabel label="Введите дату рождения">
+                            <Form.Control
+                                type="date"
+                                placeholder=" "
+                                value={date_of_birth}
+                                onChange={(e) => setDateOfBirth(e.target.value)}
+                            />
+                        </FloatingLabel>
+
+                        <FloatingLabel label="Введите пароль">
+                            <Form.Control
+                                type="password"
+                                placeholder=" "
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </FloatingLabel>
+
                         <div className="d-flex justify-content-between mt-5 flex-wrap">
                             <div>
-                                Есть аккаунт? <NavLink to={SIGN_IN_ROUTE}>Войдите</NavLink>
+                                <NavLink to={SIGN_IN_ROUTE} style={{color: "black"}}>Войти в существующий
+                                    аккаунт</NavLink>
                             </div>
-                            <Button variant={'outline-success'} onClick={click}>
+                            <Button style={{background: "#415bc4", border: "none"}} onClick={click}>
                                 Регистрация
                             </Button>
                         </div>

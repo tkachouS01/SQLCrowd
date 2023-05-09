@@ -12,6 +12,7 @@ import createImage from '../../static/create.png'
 import updateImage from '../../static/update.png'
 import likeImage from '../../static/like.png'
 import {observer} from "mobx-react-lite";
+import Avatar from "../../components/otherComponents/avatar";
 
 const SolutionsPage = observer(() => {
     const {user} = useContext(Context);
@@ -28,7 +29,7 @@ const SolutionsPage = observer(() => {
             .then(() => {
                 getSolutions(user, task, solution, id, navigate)
                     .then(() => {
-                        //setNewComments({...newComments, [solutionOne.id]})
+                        //setNewComments({...newComments, [solutionOne._id]})
                         console.log(solution.allSolutions)
                         setRequestCompleted(true)
                     })
@@ -70,7 +71,7 @@ const SolutionsPage = observer(() => {
                     solution.allSolutions.map(solutionOne =>
                         (
                             <Card
-                                key={solutionOne.id}
+                                key={solutionOne._id}
                                 className="d-flex flex-row justify-content-between flex-column"
                             >
                                 <Container style={{padding: '10px 20px 0'}}>
@@ -86,9 +87,9 @@ const SolutionsPage = observer(() => {
                                             <span style={{
                                                 background: "lightgray",
                                                 padding: '5px 10px'
-                                            }}>{solutionOne.id}</span>
+                                            }}>{solutionOne._id}</span>
                                             <span>Попытки: {solutionOne.attempts}</span>
-                                            {solutionOne.user.id === user.user.id
+                                            {solutionOne.user._id === user.user._id
                                                 ? (<span style={{
                                                     background: "lightblue",
                                                     padding: '3px 10px',
@@ -131,14 +132,11 @@ const SolutionsPage = observer(() => {
                                             gap: 15
                                         }}>
                                             <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                                <Image src={`https://picsum.photos/200?random=${solutionOne.user.id}`}
-                                                       style={{
-                                                           width: 25,
-                                                           height: 25,
-                                                           borderRadius: '50%',
-                                                           marginRight: 5
-                                                       }}/>
-                                                {solutionOne.user.nickname} [{solutionOne.user.id}]
+
+
+                                                <Avatar width={25} _id={solutionOne.user._id}/>
+
+                                                {solutionOne.user.nickname} [{solutionOne.user._id}]
                                             </div>
                                             <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
                                                 <Image src={createImage} style={{height: 15, marginRight: 5}}/>
@@ -161,7 +159,7 @@ const SolutionsPage = observer(() => {
                                                 background: "lightgray",
                                                 borderRadius: 15
                                             }}
-                                            onClick={()=>{clickLike(solutionOne.id)}}
+                                            onClick={()=>{clickLike(solutionOne._id)}}
 
                                         >
                                             <span style={{marginRight: 15}}>{solutionOne.like.likeCount}</span>
@@ -198,22 +196,16 @@ const SolutionsPage = observer(() => {
                                                 <div style={{display: "flex", flexDirection: "column"}}>
                                                     {
                                                         solutionOne.solution_comments.map(comment => (
-                                                            <div key={comment.id} style={{
+                                                            <div key={comment._id} style={{
                                                                 display: "flex",
                                                                 flexDirection: "row",
                                                                 padding: '10px 0'
                                                             }}>
-                                                                <Image
-                                                                    src={`https://picsum.photos/200?random=${comment.user.id}`}
-                                                                    style={{
-                                                                        width: 40,
-                                                                        height: 40,
-                                                                        borderRadius: '50%',
-                                                                        marginRight: 5
-                                                                    }}/>
+                                                                <Avatar width={40} _id={comment.user._id}/>
+
                                                                 <div style={{marginLeft: 15}}>
                                                                     <div
-                                                                        style={{fontWeight: 700}}>{comment.user.nickname} [{comment.user.id}]
+                                                                        style={{fontWeight: 700}}>{comment.user.nickname} [{comment.user._id}]
                                                                     </div>
                                                                     <div
                                                                         style={{padding: '5px 0'}}>{comment.content}</div>
@@ -234,25 +226,21 @@ const SolutionsPage = observer(() => {
                                     }
                                     {
                                         <Form style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                            <Image src={`https://picsum.photos/200?random=${user.id}`}
-                                                   style={{
-                                                       width: 40,
-                                                       height: 40,
-                                                       borderRadius: '50%',
-                                                       marginRight: 5
-                                                   }}/>
+
+                                            <Avatar width={40} _id={user.user._id}/>
+
                                             <Form.Control
                                                 type="text"
                                                 placeholder="Написать комментарий...."
-                                                value={newComments[solutionOne.id] || ""}
+                                                value={newComments[solutionOne._id] || ""}
                                                 onChange={(e) => {
-                                                    setNewComments({...newComments, [solutionOne.id]: e.target.value});
+                                                    setNewComments({...newComments, [solutionOne._id]: e.target.value});
                                                 }}
                                             />
                                             <Image
                                                 src={sendImage}
                                                 style={{height: 20, width: 'auto', marginLeft: 10, cursor: "pointer"}}
-                                                onClick={() => sendCommentToServer(solutionOne.id)}
+                                                onClick={() => sendCommentToServer(solutionOne._id)}
                                             />
                                         </Form>
 

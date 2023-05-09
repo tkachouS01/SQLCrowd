@@ -4,6 +4,7 @@ import CodeEditor from "./CodeEdit";
 import {Context} from "../../index";
 import {createSolution, updateOneSolution} from "../../httpRequests/solutionApi";
 import {useNavigate} from "react-router-dom";
+import MyTooltip from "../otherComponents/tooltip";
 
 const EditSolutionComponent = () => {
     let {user} = useContext(Context)
@@ -38,7 +39,7 @@ const EditSolutionComponent = () => {
     return (
         <>
             {
-                (task.task.info.verified || (task.task.info.user.id === user.user.id && task.task.info.database))
+                (task.task.info.verified || (task.task.info.user._id === user.user._id && task.task.info.database))
                     ?
                     (
                         <Container style={{background: "white", borderRadius: 10, padding: 15}}>

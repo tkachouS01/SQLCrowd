@@ -98,9 +98,9 @@ export const createComment = async (contextUser, contextTask, contextSolution, s
     contextUser.setIsLoading(true)
     await check(contextUser);
 
-    await $authHost.post(`${baseUrlApi}/tasks/${contextTask.task.info.id}/solutions/${solutionId}/comment`, {content: content})
+    await $authHost.post(`${baseUrlApi}/tasks/${contextTask.task.info._id}/solutions/${solutionId}/comment`, {content: content})
         .then(() => {
-            result = getSolutions(contextUser,contextTask,contextSolution, contextTask.task.info.id, navigate)
+            result = getSolutions(contextUser,contextTask,contextSolution, contextTask.task.info._id, navigate)
         })
         .catch(error => {
             contextUser.setErrorMessage(`${error.response.status}`, error.response.data.message)
@@ -119,10 +119,10 @@ export const like = async (contextUser, contextTask, contextSolution, solutionId
     contextUser.setIsLoading(true)
     await check(contextUser);
 
-    await $authHost.post(`${baseUrlApi}/tasks/${contextTask.task.info.id}/solutions/${solutionId}/like`, {})
+    await $authHost.post(`${baseUrlApi}/tasks/${contextTask.task.info._id}/solutions/${solutionId}/like`, {})
         .then(data => {
             let temp = contextSolution.allSolutions;
-            let index = temp.findIndex(el => el.id === solutionId);
+            let index = temp.findIndex(el => el._id === solutionId);
             console.log(data.data.isLiked)
             temp[index].like.isLiked = data.data.isLiked;
             console.log("2")

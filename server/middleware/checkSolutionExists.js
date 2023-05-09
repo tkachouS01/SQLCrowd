@@ -1,4 +1,4 @@
-import { Solution } from '../models/models.js'
+import { Solutions } from '../models/models.js'
 import ApiError from '../error/ApiError.js';
 
 export default async function (req, res, next) {
@@ -8,7 +8,7 @@ export default async function (req, res, next) {
         return next(ApiError.badRequest(`Некорректное значение параметра solution_id: ${solution_id}`));
     }
 
-    let task = await Solution.findOne({ where: { id: solution_id } });
+    let task = await Solutions.findOne({ where: { _id: solution_id } });
 
     if (task) {
         next();

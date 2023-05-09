@@ -5,6 +5,7 @@ import {useNavigate} from "react-router-dom";
 import {USERS_ROUTE} from "../../utils/constsPath";
 import {getUsers} from "../../httpRequests/userApi";
 import {convertDate} from "../../utils/utils";
+import Avatar from "../otherComponents/avatar";
 
 const UserItem = () => {
 
@@ -27,14 +28,13 @@ const UserItem = () => {
                     user.users.map(user =>
                         <Card
                             style={{cursor: "pointer"}}
-                            key={user.id}
-                            onClick={() => navigate(`${USERS_ROUTE}/${user.id}`)}
+                            key={user._id}
+                            onClick={() => navigate(`${USERS_ROUTE}/${user._id}`)}
                             className="d-flex flex-row justify-content-between"
                         >
                             <div>
-                                <div style={{paddingRight: 5}}>id{user.id}</div>
-                                <Image src={`https://picsum.photos/200?random=${user.id}`}
-                                       style={{width: 100, height: 100, borderRadius: 50}}/>
+                                <div style={{paddingRight: 5}}>id{user._id}</div>
+<Avatar width={100} _id={user._id}/>
                                 <div>{convertDate(user.createdAt)}</div>
                             </div>
 

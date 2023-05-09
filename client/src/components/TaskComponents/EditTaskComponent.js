@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {Button, Container, Form} from "react-bootstrap";
+import {Button, Container, FloatingLabel, Form} from "react-bootstrap";
 import {Context} from "../../index";
 
 
@@ -18,34 +18,38 @@ const EditTaskComponent = ({
 
         <>
             {
-                task.task.info.user.id === user.user.id
+                task.task.info.user._id === user.user._id
                     ?
                     (
                         <Form style={{background: "white", borderRadius: 10, padding: 15}}>
                             <Container style={{display: 'flex', flexWrap: 'nowrap'}}>
                                 <div style={{flexBasis: '70%', marginRight: '10px'}}>
-                                    <div>Описание задания</div>
-                                    <Form.Control
-                                        as="textarea"
-                                        rows={5}
-                                        style={{resize: 'none'}}
-                                        placeholder="Описание задания"
-                                        value={descriptionTask}
-                                        onChange={(e) => setDescriptionTask(e.target.value)}
-                                    />
+                                    <FloatingLabel label="Введите описание задания">
+                                        <Form.Control
+                                            as="textarea"
+                                            style={{ height: '150px', resize: 'none'}}
+                                            placeholder=" "
+                                            value={descriptionTask}
+                                            onChange={(e) => setDescriptionTask(e.target.value)}
+                                        />
+                                    </FloatingLabel>
                                 </div>
                                 <div style={{flexBasis: '30%'}}>
-                                    <div>Выбор используемой для решения БД</div>
-                                    <Form.Control
-                                        as="select"
-                                        placeholder="База данных"
-                                        value={selectedDatabaseName}
-                                        onChange={(e) => setSelectedDatabaseName(e.target.value)}
-                                    >
-                                        <option value="Не выбрано" key={id}>Не выбрано</option>
-                                        {task.task.databases.map((db, id) => (
-                                            <option value={`${db.name}`} key={id}>{db.name} [{db.id}]</option>))}
-                                    </Form.Control>
+
+
+                                    <FloatingLabel label="Выбор используемой БД">
+                                        <Form.Control
+                                            as="select"
+                                            placeholder=" "
+                                            value={selectedDatabaseName}
+                                            onChange={(e) => setSelectedDatabaseName(e.target.value)}
+                                        >
+                                            <option value="Не выбрано" key={id}>Не выбрано</option>
+                                            {task.task.databases.map((db, id) => (
+                                                <option value={`${db.name}`} key={id}>{db.name} [{db._id}]</option>))}
+                                        </Form.Control>
+                                    </FloatingLabel>
+
                                     <Button style={{marginTop: 20}} onClick={onSave}>Сохранить</Button>
                                 </div>
                             </Container>

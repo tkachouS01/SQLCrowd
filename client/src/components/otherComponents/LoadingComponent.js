@@ -5,6 +5,7 @@ import {observer} from "mobx-react-lite";
 const LoadingComponent = observer(() => {
     const {user} = useContext(Context);
 
+    console.log("ЖДЁМС хочет отрисоваться "+user.isLoading)
     if(user.isLoading)
     {
         console.log("ЖДЁМС")

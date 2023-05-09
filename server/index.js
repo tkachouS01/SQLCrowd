@@ -29,9 +29,10 @@ app.use(errorHandler)
 
 
 try {
-    await createDatabases()
+
     await sequelize.authenticate()
     await sequelize.sync()
+    await createDatabases()
     app.listen(PORT, () => consoleMessage(`Сервер запущен на порту ${PORT}`))
 } catch (e) {
     consoleError(`Ошибка при старте: ${e}`)

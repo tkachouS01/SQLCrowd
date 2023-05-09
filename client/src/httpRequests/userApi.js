@@ -22,3 +22,14 @@ export const getUsers = async (contextUser) => {
         });
     return result;
 }
+
+export const getImage = async (contextUser,file) => {
+    contextUser.setIsLoading(true)
+    await check(contextUser);
+
+    let response = await $authHost.get(`${baseUrlApi}/users/image/${file}`, {
+        responseType: 'blob',
+    })
+    console.log(response.data)
+    return URL.createObjectURL(response.data);
+}

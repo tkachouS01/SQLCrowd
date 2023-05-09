@@ -13,7 +13,6 @@ function Message() {
     const firstRender = useRef(true);
 
     useEffect(() => {
-console.log("сообщение где? "+user.errorMessage.message)
         if (user.errorMessage.status === 401)
             navigate(SIGN_IN_ROUTE)
         else if (user.errorMessage.status === 404)

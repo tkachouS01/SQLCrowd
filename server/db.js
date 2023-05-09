@@ -17,10 +17,10 @@ if (results[0].length === 0) {
     sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
         host: process.env.DB_HOST, dialect: 'postgres'
     });
-    await sequelize.authenticate();
-    const sqlFilePath = path.join(__dirname, 'staticScriptsDB', `${process.env.DB_NAME}.sql`);
-    const sql = fs.readFileSync(sqlFilePath, 'utf8');
-    await sequelize.query(sql);
+    //await sequelize.authenticate();
+    //const sqlFilePath = path.join(__dirname, 'staticScriptsDB', `${process.env.DB_NAME}.sql`);
+    //const sql = fs.readFileSync(sqlFilePath, 'utf8');
+    //await sequelize.query(sql);
     consoleMessage(`Структура ${process.env.DB_NAME} с данными создана`)
 
 }

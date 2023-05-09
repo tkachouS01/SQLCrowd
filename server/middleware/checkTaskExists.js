@@ -1,4 +1,4 @@
-import { Task } from '../models/models.js'
+import { Tasks } from '../models/models.js'
 import ApiError from '../error/ApiError.js';
 
 export default async function checkTaskExists(req, res, next) {
@@ -8,7 +8,7 @@ export default async function checkTaskExists(req, res, next) {
         return next(ApiError.badRequest(`Некорректное значение параметра taskid: ${task_id}`));
     }
 
-    let task = await Task.findOne({ where: { id: task_id } });
+    let task = await Tasks.findOne({ where: { _id: task_id } });
 
     if (task) {
         next();

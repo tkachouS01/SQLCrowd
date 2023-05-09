@@ -11,24 +11,17 @@ const TaskItem = observer(() => {
     const {task} = useContext(Context)
     const {user} = useContext(Context)
     const navigate = useNavigate()
-    const [requestCompleted, setRequestCompleted] = useState(false)
+
     useEffect( () => {
         getTasks(user, task)
-            .then((bool)=>{
-                setRequestCompleted(bool)
-            })
-    }, [user, task]);
-
-
+    }, [task]);
 
     const handleTaskClick = (selectedTask) => {
-        let idTask = selectedTask.id;
+        let idTask = selectedTask._id;
         task.setSelectedTask(selectedTask);
 
         navigate(`/tasks/${idTask}`);
     };
-    useEffect(()=>{},[requestCompleted])
-    if (!requestCompleted) return <></>
     return (
         <>
             <div style={{textAlign: "end"}}>В системе {task.tasks.length} заданий</div>
@@ -40,7 +33,7 @@ const TaskItem = observer(() => {
                             style={{
                                 cursor: "pointer"
                             }}
-                            key={taskOne.id}
+                            key={taskOne._id}
                             onClick={() => handleTaskClick(taskOne)}
                             className="d-flex flex-row justify-content-between flex-column"
                         >

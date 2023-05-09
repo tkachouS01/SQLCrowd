@@ -3,17 +3,17 @@ import ApiError from '../error/ApiError.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import {Op} from 'sequelize'
-import {User} from '../models/models.js';
+import {Users} from '../models/models.js';
 
-const generateJwt = (id, email, role, nickname) => {
-    return jwt.sign({id, email, role, nickname}, process.env.SECRET_KEY, {expiresIn: '24h'})
+const generateJwt = (_id, email, role, nickname) => {
+    return jwt.sign({_id, email, role, nickname}, process.env.SECRET_KEY, {expiresIn: '24h'})
 }
 
 export default class AuthController {
     async check(req, res, next) {
         try {
-            consoleMessage(`ПОЛУЧИТЬ ТОКЕН С id=${req.user.id}, email=${req.user.email}, role=${req.user.role}, nickname=${req.user.nickname}`)
-            const token = generateJwt(req.user.id, req.user.email, req.user.role, req.user.nickname)
+            consoleMessage(`ПОЛУЧИТЬ ТОКЕН С id=${req.user._id}, email=${req.user.email}, role=${req.user.role}, nickname=${req.user.nickname}`)
+            const token = generateJwt(req.user._id, req.user.email, req.user.role, req.user.nickname)
 
             return res.json({token})
         } catch (error) {
@@ -31,31 +31,32 @@ export default class AuthController {
             if (errorMessage) {
                 return next(ApiError.badRequest(errorMessage));
             }
-            let candidate = await User.findOne({where: {email}})
+            let candidate = await Users.findOne({where: {email}})
             if (candidate) {
                 return next(ApiError.conflictingRequest('Пользователь с таким email уже существует'))
             }
-            candidate = await User.findOne({where: {nickname}})
+            candidate = await Users.findOne({where: {nickname}})
             if (candidate) {
                 return next(ApiError.conflictingRequest('Пользователь с таким никнеймом уже существует'))
             }
             const hashPassword = await bcrypt.hash(password, 5)
             let user;
             try {
-                user = await User.create({
+                user = await Users.create({
                     surname, name, patronymic, gender, date_of_birth, nickname, email, password: hashPassword
                 })
             } catch (error) {
                 return next(ApiError.badRequest(`Некорректные входные данные` + error.message))
             }
 
-            const token = generateJwt(user.id, user.email, user.role, user.nickname)
-            return res.json({token, userId: user.id})
+            const token = generateJwt(user._id, user.email, user.role, user.nickname)
+            return res.json({token, userId: user._id})
         } catch (error) {
             return next(ApiError.serverError(error.message))
         }
 
     }
+
 
     async signIn(req, res, next) {
         try {
@@ -63,7 +64,7 @@ export default class AuthController {
             consoleMessage(`АУТЕНТИФИКАЦИЯ С login=${login}, password=${password}`)
             if (!login || !password) return next(ApiError.badRequest(`Значения логина или пароля пусты`))
 
-            const user = await User.findOne({
+            const user = await Users.findOne({
                 where: {
                     [Op.or]: [{email: login}, {nickname: login}]
                 }
@@ -79,8 +80,8 @@ export default class AuthController {
                 return next(ApiError.unauthorized(`Неверный пароль`))
             }
 
-            const token = generateJwt(user.id, user.email, user.role, user.nickname);
-            return res.json({token, userId: user.id});
+            const token = generateJwt(user._id, user.email, user.role, user.nickname);
+            return res.json({token, userId: user._id});
         } catch (error) {
             return next(ApiError.serverError(error.message))
         }

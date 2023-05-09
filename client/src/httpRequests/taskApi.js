@@ -12,7 +12,6 @@ export const getTasks = async (contextUser, contextTask) => {
     await $authHost.get(`${baseUrlApi}/tasks`)
         .then(data => {
             contextTask.setTasks(data.data)
-            console.log(data.data)
             result = true;
         })
         .catch(error => {
