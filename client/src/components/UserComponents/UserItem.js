@@ -1,57 +1,52 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Card, Image, Row} from "react-bootstrap";
+import {Button, Card, Image, Row} from "react-bootstrap";
 import {Context} from "../../index";
 import {useNavigate} from "react-router-dom";
-import {USERS_ROUTE} from "../../utils/constsPath";
-import {getUsers} from "../../httpRequests/userApi";
+import {USER_ONE_ROUTE, USERS_ROUTE} from "../../utils/constsPath";
+import {getUsers} from "../../httpRequests/userAPI";
 import {convertDate} from "../../utils/utils";
 import Avatar from "../otherComponents/avatar";
+import MyButton from "../basicElements/myButton";
 
-const UserItem = () => {
+const UserItem = ({user}) => {
 
-    const {user} = useContext(Context)
-    const [requestCompleted, setRequestCompleted] = useState(false)
-    useEffect(()=>{
-        getUsers(user).then((bool)=>{
-            setRequestCompleted(bool)
-        })
-
-    },[])
     const navigate = useNavigate()
-    useEffect(()=>{},[requestCompleted])
-    if (!requestCompleted) return <></>
     return (
-        <>
-            <div style={{textAlign: "end"}}>В системе {user.users.length} пользователей</div>
-            <Row  style={{ display:"flex",flexDirection:"column",gap:15,background: "white", padding: 15, borderRadius: 10}}>
-                {
-                    user.users.map(user =>
-                        <Card
-                            style={{cursor: "pointer"}}
-                            key={user._id}
-                            onClick={() => navigate(`${USERS_ROUTE}/${user._id}`)}
-                            className="d-flex flex-row justify-content-between"
-                        >
-                            <div>
-                                <div style={{paddingRight: 5}}>id{user._id}</div>
-<Avatar width={100} _id={user._id}/>
-                                <div>{convertDate(user.createdAt)}</div>
-                            </div>
+        <div style={{
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            justifyContent: "space-between"
+        }}>
+            <div style={{display: "flex", flexDirection: "row"}}>
+                <div style={{marginRight: 20}}>
+                    <Avatar width={80} _id={user._id}/>
+                </div>
 
-                            <div className="d-flex flex-column align-items-end align-self-center">
-                                <div style={{textAlign: "end"}}>{user.nickname}</div>
+                <div className="d-flex flex-column">
+                    <div style={{fontWeight: 700, fontSize: 30}}>[{user._id}] {user.nickname}</div>
+                    <div
+                        style={{
+                            fontWeight: 100,
+                            textDecoration: "underline"
+                        }}
+                    >
+                        {user.role === 'USER' ? '' : 'Преподаватель'}
+                    </div>
+                    <div>{`${user.surname || ''} ${user.name || ''} ${user.patronymic || ''}`}</div>
+                    <div>
+                        <span style={{fontWeight: 500}}>Зарегистрирован с </span>
+                        <span>{convertDate(user.createdAt)}</span>
+                    </div>
 
-                                <div style={{textAlign: "end"}}>{`${user.surname || ''} ${user.name || ''} ${user.patronymic || ''}`}</div>
-                                <div style={{textAlign: "end"}}>{user.date_of_birth || 'не указано'}</div>
+                </div>
+            </div>
+            <div style={{alignSelf: "flex-end"}}>
+                <MyButton text={"Перейти в профиль"} onClick={() => navigate(USER_ONE_ROUTE(user._id))}/>
+            </div>
 
-                            </div>
 
-
-                        </Card>
-                    )
-                }
-            </Row>
-        </>
+        </div>
 
     );
 };

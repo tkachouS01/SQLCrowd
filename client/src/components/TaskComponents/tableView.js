@@ -17,19 +17,21 @@ const TableView = observer( ({selectedTable, setSelectedTable, tableNames}) => {
             setSelectedTable("Результирующая таблица");
         }
     }, [solution.result, setSelectedTable]);
-console.log(task.task)
+
     const [modalShow, setModalShow] = React.useState(false);
+    console.log(selectedTable)
+    console.log(task.databasesData)
     return (
         <>
             {
-                task.task.info.database && (task.task.info.verified || (user.user._id === task.task.info.user._id))
+                task.currentTask.database && (task.currentTask.verified || (user.user._id === task.currentTask.user._id))
                     ?
                     (
                         <Container style={{background: "white", borderRadius: 10, padding: 15}}>
                             <Form className="d-flex flex-column">
                                 <>
 
-                                    <Diagramm task={task.task}/>
+                                    <Diagramm task={task.currentTask}/>
                                 </>
                                 <div style={{marginBottom: 15}}>Просмотр строк таблицы</div>
                                 <DropdownButton id="table-dropdown" title={selectedTable}
@@ -100,17 +102,17 @@ console.log(task.task)
                                             <Table striped bordered responsive>
                                                 <thead>
                                                 <tr>
-                                                    {task.task.data[selectedTable].fields.map((field, id) => (
+                                                    {task.databasesData[selectedTable].fields.map((field, id) => (
                                                         <th key={id}>{field}</th>))}
                                                 </tr>
                                                 </thead>
                                                 <tbody>
                                                 {
-                                                    toJS(task.task.data[selectedTable].rows).map((row, id) =>
+                                                    toJS(task.databasesData[selectedTable].rows).map((row, id) =>
                                                         (
                                                             <tr key={id}>
                                                                 {
-                                                                    task.task.data[selectedTable]?.fields?.map((field, id) => {
+                                                                    task.databasesData[selectedTable]?.fields?.map((field, id) => {
                                                                         return <td
                                                                             key={id}>{row[field]}</td>
                                                                     })

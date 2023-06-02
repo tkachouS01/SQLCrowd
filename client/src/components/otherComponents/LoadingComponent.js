@@ -1,14 +1,13 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {Context} from "../../index";
 import {observer} from "mobx-react-lite";
 
 const LoadingComponent = observer(() => {
     const {user} = useContext(Context);
 
-    console.log("ЖДЁМС хочет отрисоваться "+user.isLoading)
     if(user.isLoading)
     {
-        console.log("ЖДЁМС")
+
         return (
             <div
                 className="d-flex justify-content-center align-items-center flex-column"

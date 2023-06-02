@@ -5,8 +5,8 @@ export default class UserStore {
         this._isAuth = false;
         this._user = {};
         this._users = [];
+        this._currentProfile = {};
         this._errorMessage = {};
-        this._isLoading = false;
         makeAutoObservable(this)
     }
 
@@ -33,6 +33,13 @@ export default class UserStore {
     get users() {
         return toJS(this._users);
     }
+    setCurrentProfile(currentProfile) {
+        this._currentProfile = currentProfile;
+    }
+
+    get currentProfile() {
+        return toJS(this._currentProfile);
+    }
 
     setErrorMessage(status, message){
         this._errorMessage={status, message};
@@ -40,13 +47,5 @@ export default class UserStore {
 
     get errorMessage() {
         return toJS(this._errorMessage);
-    }
-
-    setIsLoading(bool) {
-        this._isLoading = bool;
-    }
-
-    get isLoading (){
-        return toJS(this._isLoading);
     }
 }

@@ -37,4 +37,3 @@ try {
 } catch (e) {
     consoleError(`Ошибка при старте: ${e}`)
 }
-

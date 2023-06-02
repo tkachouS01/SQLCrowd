@@ -1,5 +1,5 @@
 import {useState, useEffect, useContext, useRef} from 'react';
-import {Toast} from 'react-bootstrap';
+import {Button, Toast} from 'react-bootstrap';
 import {useObserver} from 'mobx-react-lite';
 import {Context} from "../../index";
 import {SIGN_IN_ROUTE, TASKS_ROUTE} from "../../utils/constsPath";
@@ -14,10 +14,9 @@ function Message() {
 
     useEffect(() => {
         if (user.errorMessage.status === 401)
-            navigate(SIGN_IN_ROUTE)
-        else if (user.errorMessage.status === 404)
-
-            navigate(TASKS_ROUTE)
+            navigate(SIGN_IN_ROUTE())
+        /*else if (user.errorMessage.status === 404)
+            navigate(TASKS_ROUTE(1))*/
         if (firstRender.current) {
             firstRender.current = false;
             return;
@@ -38,14 +37,26 @@ function Message() {
                 user.errorMessage.message
                     ?
                     (
-                        <Toast show={show} onClose={() => setShow(false)}
-                               style={{position: "fixed", bottom: 20, right: 20, zIndex: 100}}>
+                        <>
+                            <Toast show={show} onClose={() => setShow(false)}
+                                   style={{position: "fixed", bottom: 20, right: 20, zIndex: 100}}>
 
-                            <Toast.Header>
-                                <strong className="me-auto">Статус {user.errorMessage.status === 500 ? "Зовите быстрее сисадмина. Сервак поломался":user.errorMessage.status}</strong>
-                            </Toast.Header>
-                            <Toast.Body>{user.errorMessage.message}</Toast.Body>
-                        </Toast>
+                                <Toast.Header>
+                                    <strong className="me-auto">Статус {user.errorMessage.status === 500 ? "Зовите быстрее сисадмина. Сервак поломался":user.errorMessage.status}</strong>
+                                </Toast.Header>
+                                <Toast.Body>{user.errorMessage.message}</Toast.Body>
+                            </Toast>
+                            {
+                                show
+                                ?<></>
+                                    :
+                                    <Button variant={'dark'} onClick={()=>setShow(!show)} style={{position: "fixed", bottom: 0, right: 0, zIndex: 100,fontSize:10}}>
+                                        <strong>ПОКАЗАТЬ</strong> сообщение
+                                    </Button>
+                            }
+
+                        </>
+
                     )
                     :
                     (<></>)

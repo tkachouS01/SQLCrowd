@@ -1,63 +1,67 @@
 import {$authHost} from "./httpMain";
-import {check} from "./authApi";
+import {check} from "./authAPI";
 
 const baseUrlApi = 'http://localhost:5000/sql-crowd-api'
 
 //+
-export const getTasks = async (contextUser, contextTask) => {
+export const getTasks = async (contextUser, contextTask, themeId) => {
     let result = false;
-    contextUser.setIsLoading(true)
+
     await check(contextUser);
 
-    await $authHost.get(`${baseUrlApi}/tasks`)
+    await $authHost.get(`${baseUrlApi}/modules/${null}/themes/${themeId}/tasks?inBank=true&themeId=${themeId}`)
         .then(data => {
-            contextTask.setTasks(data.data)
+            contextTask.setAllTasks(data.data)
+
             result = true;
         })
         .catch(error => {
             contextUser.setErrorMessage(error.response.status, error.response.data.message)
         })
-        .finally(() => {
-            contextUser.setIsLoading(false);
-        });
+
     return result;
 }
 
 //+
 //получить конкретную задачу
-export const getOneTask = async (contextUser, contextTask, selectedTaskId) => {
+export const getOneTask = async (contextUser, contextTask, themeId, taskId) => {
     let result = false;
-    contextUser.setIsLoading(true)
+
     await check(contextUser);
 
-    await $authHost.get(`${baseUrlApi}/tasks/${selectedTaskId}`,{})
+    await $authHost.get(`${baseUrlApi}/modules/${null}/themes/${themeId}/tasks/${+taskId}`, {})
         .then(data => {
-            contextTask.setTask(data.data);
+console.log(data.data.info)
+console.log(data.data.databases)
+console.log(data.data.data)
+            contextTask.setCurrentTask(data.data.info);
+            contextTask.setDatabases(data.data.databases);
+            contextTask.setDatabasesData(data.data.data);
             result = true;
         })
         .catch(error => {
             contextUser.setErrorMessage(error.response.status, error.response.data.message)
         })
-        .finally(() => {
-            contextUser.setIsLoading(false);
-        });
+
     return result;
 }
 
 //+
 //обновить задачу
-export const updateTask = async (contextUser, contextTask, navigate, taskId, databaseName, description) => {
+export const updateTask = async (contextUser, contextTask, navigate, taskId, databaseName, description, themeId) => {
     let result = false;
-    contextUser.setIsLoading(true)
+
     await check(contextUser);
 
-    await $authHost.patch(`${baseUrlApi}/tasks/${taskId}`,
+    await $authHost.patch(`${baseUrlApi}/modules/${null}/themes/${themeId}/tasks/${taskId}`,
         databaseName === "Не выбрано"
             ? {description}
             : {databaseName, description}
     )
         .then(data => {
-            contextTask.setTask(data);
+console.log(data.data)
+            //contextTask.setCurrentTask(data.data);
+
             contextUser.setErrorMessage(200, `Задача #${taskId} обновлена`)
             result = true;
         })
@@ -65,32 +69,32 @@ export const updateTask = async (contextUser, contextTask, navigate, taskId, dat
             contextUser.setErrorMessage(`${error.response.status}`, error.response.data.message)
         })
         .finally(() => {
-            contextUser.setIsLoading(false);
-            if (result) navigate(`/tasks/${taskId}`);
+
         });
     return result;
 }
 
 //-
 //создать задачу
-export const createTask = async (contextUser, contextTask, navigate) => {
+export const createTask = async (contextUser, contextTask, themeId) => {
     let result = false;
-    contextUser.setIsLoading(true)
+
     await check(contextUser);
     let taskId;
-    await $authHost.post(`${baseUrlApi}/tasks`,{})
+    await $authHost.post(`${baseUrlApi}/modules/${null}/themes/${themeId}/tasks`, {})
         .then(data => {
-            taskId = data.data.task_id;
+            taskId = +data.data.task_id;
 
-            result = getOneTask(contextUser,contextTask, taskId)
-                .then((bool)=>{if(bool){contextUser.setErrorMessage(200, `Задача #${taskId} создана`)}});
+            getOneTask(contextUser, contextTask, themeId, taskId)
+                .then((bool) => {
+                    if (bool) {
+                        result = taskId;
+                        contextUser.setErrorMessage(200, `Задача #${taskId} создана`)
+                    }
+                });
         })
         .catch(error => {
             contextUser.setErrorMessage(`${error.response.status}: Создать задачу не удалось`, error.response.data.message)
         })
-        .finally(() => {
-            contextUser.setIsLoading(false);
-            if (result) navigate(`/tasks/${taskId}`);
-        });
     return result;
 }

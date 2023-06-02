@@ -3,10 +3,18 @@ import {Context} from "../index";
 import {Button, Navbar} from "react-bootstrap";
 import {Container, Nav} from "react-bootstrap";
 import {NavLink, useNavigate} from "react-router-dom";
-import {HOME_ROUTE, SIGN_IN_ROUTE, TASKS_ROUTE, USERS_ROUTE} from "../utils/constsPath";
+import {
+    HOME_ROUTE,
+    RATING_ROUTE, REQUESTS_ROLE_ROUTE,
+    SIGN_IN_ROUTE,
+    TASKS_ROUTE,
+    THEMES_ROUTE,
+    USER_ONE_ROUTE,
+    USERS_ROUTE
+} from "../utils/constsPath";
 import {action} from "mobx";
 import Logo from "./otherComponents/logo";
-import {check, exit} from "../httpRequests/authApi";
+import {check, exit} from "../httpRequests/authAPI";
 import Avatar from "./otherComponents/avatar";
 
 const NavBar = (() => {
@@ -20,7 +28,7 @@ const NavBar = (() => {
     const logOut = action(() => {
         exit(user);
 
-        navigate(SIGN_IN_ROUTE);
+        navigate(SIGN_IN_ROUTE());
     });
     useEffect(() => {
         check(user).then((result) => {
@@ -33,15 +41,18 @@ const NavBar = (() => {
     if (!requestCompleted) return <></>
 
     return (
-        <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" style={{
+        <Navbar collapseOnSelect expand="lg" style={{
             position: "fixed",
             width: "100%",
             height: 50,
             top: 0,
-            zIndex: 99
+            zIndex: 99,
+            background: "rgba(255,255,255,0.70)",
+            backdropFilter: 'blur(10px)',
+            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
         }}>
             <Container>
-                <NavLink to={HOME_ROUTE} style={{color: 'white', textDecoration: "none"}}>
+                <NavLink to={HOME_ROUTE()} style={{color: 'white', textDecoration: "none"}}>
                     <Logo fontSize={20}/>
                 </NavLink>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav"/>
@@ -49,7 +60,7 @@ const NavBar = (() => {
                     <Nav className="me-auto">
 
                     </Nav>
-                    <Nav style={{background: '#212529'}}>
+                    <Nav >
                         {
                             user.isAuth
                                 ?
@@ -59,26 +70,55 @@ const NavBar = (() => {
 
                                         <Nav.Link
                                             onClick={() => {
-                                                navigate(USERS_ROUTE)
+                                                navigate(USERS_ROUTE())
                                             }}
-                                        >Пользователи</Nav.Link>
+                                        >
+                                            Пользователи
+                                        </Nav.Link>
+
                                         <Nav.Link
                                             onClick={() => {
-                                                navigate(TASKS_ROUTE)
+                                                navigate(THEMES_ROUTE())
                                             }}
-                                        >Задачи</Nav.Link>
-
+                                        >
+                                            Темы
+                                        </Nav.Link>
+                                        <Nav.Link
+                                            onClick={() => {
+                                                navigate(RATING_ROUTE())
+                                            }}
+                                        >
+                                            Общий рейтинг
+                                        </Nav.Link>
+                                        <Nav.Link
+                                            onClick={() => {
+                                                navigate(REQUESTS_ROLE_ROUTE())
+                                            }}
+                                        >
+                                            Запросы на роль
+                                        </Nav.Link>
 
                                         <Nav.Link
                                             onClick={() => logOut()}
                                         >Выйти</Nav.Link>
 
-                                        <div style={{marginLeft:"20px", display:"flex", flexDirection: "row"}}>
+                                        <div
+                                            style={{
+                                                marginLeft: "20px",
+                                                display: "flex",
+                                                flexDirection: "row",
+                                                cursor: "pointer",
+                                                background: "black",
+                                                padding: 5,
+                                                borderRadius: 15
+                                            }}
+                                            onClick={() => navigate(USER_ONE_ROUTE(user.user._id))}
+                                        >
                                             <div style={{
-                                                color: 'white',
+                                                color: `${user.user.role==='ADMIN'?'yellow':"white"}`,
                                                 paddingRight: 10,
                                                 textAlign: "center",
-                                                alignSelf: "center"
+                                                alignSelf: "center",
                                             }}>
                                                 {user.user.nickname}
                                             </div>
@@ -90,7 +130,7 @@ const NavBar = (() => {
                                 (
                                     <Nav className="me-auto">
                                         <Nav.Link
-                                            onClick={() => navigate(SIGN_IN_ROUTE)}
+                                            onClick={() => navigate(SIGN_IN_ROUTE())}
                                         >Авторизация</Nav.Link>
                                     </Nav>
                                 )

@@ -1,10 +1,10 @@
 import React, {useContext, useEffect, useState} from 'react'
 import {useNavigate, useParams} from "react-router-dom";
-import {createComment, getSolutions, like} from "../../httpRequests/solutionApi";
+import {createComment, getSolutions, like} from "../../httpRequests/solutionAPI";
 import {Context} from "../../index";
 import {Card, Container, Form, Image} from "react-bootstrap";
 import Stat from "../../components/TaskComponents/stat";
-import {getOneTask} from "../../httpRequests/taskApi";
+import {getOneTask} from "../../httpRequests/taskAPI";
 import CodeEditor from "../../components/TaskComponents/CodeEdit";
 import {convertDate} from "../../utils/utils";
 import sendImage from '../../static/send.png'
@@ -29,8 +29,6 @@ const SolutionsPage = observer(() => {
             .then(() => {
                 getSolutions(user, task, solution, id, navigate)
                     .then(() => {
-                        //setNewComments({...newComments, [solutionOne._id]})
-                        console.log(solution.allSolutions)
                         setRequestCompleted(true)
                     })
             })
@@ -55,7 +53,7 @@ const SolutionsPage = observer(() => {
     return (
 
         <Container className="col-md-9" style={{display: "flex", flexDirection: "column", gap: 15, width: "100%"}}>
-            <Stat task={task.task.info} fullContent={true}/>
+            <Stat task={task.currentTask} fullContent={true}/>
             <div style={{textAlign: "end"}}>Для задачи было создано {solution.allSolutions.length} решений</div>
             <Container style={{
                 background: "white",
@@ -65,7 +63,15 @@ const SolutionsPage = observer(() => {
                 flexDirection: "column",
                 gap: 15
             }}>
-
+                {
+                    solution.allSolutions.length===0
+                        ?
+                        <div style={{textAlign: "center"}}>
+                            Решений еще нет
+                        </div>
+                        :
+                        <></>
+                }
                 {
 
                     solution.allSolutions.map(solutionOne =>

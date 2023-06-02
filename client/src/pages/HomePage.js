@@ -1,9 +1,16 @@
 import React from 'react';
 import Logo from "../components/otherComponents/logo";
+import {Breadcrumb} from "react-bootstrap";
 
 const NotFoundPage = () => {
     return (
         <div>
+            <div style={{background: "rgba(1,1,1,0.05)", padding: '0 5px'}}>
+                <Breadcrumb>
+                    <Breadcrumb.Item active>Главная</Breadcrumb.Item>
+                </Breadcrumb>
+            </div>
+
             <div
                 className="d-flex justify-content-center align-items-center flex-column"
 

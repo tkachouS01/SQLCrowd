@@ -2,33 +2,37 @@ import {makeAutoObservable, toJS} from "mobx";
 
 export default class TaskStore {
     constructor() {
-        this._task = {};
-        this._tasks = [];
-        this._selectedTask = {};
+        this._databases=[];
+        this._databasesData=[];
+        this._currentTask = {};
+        this._allTasks = [];
         makeAutoObservable(this)
     }
-
-    setTask(task) {
-        this._task = task;
+    setDatabases(databases) {
+        this._databases = databases;
+    }
+    get databases() {
+        return toJS(this._databases);
     }
 
-    get task() {
-        return toJS(this._task);
+    setDatabasesData(databasesData) {
+        this._databasesData = databasesData;
+    }
+    get databasesData() {
+        return toJS(this._databasesData);
     }
 
-    setTasks(tasks) {
-        this._tasks = tasks;
+    setCurrentTask(currentTask) {
+        this._currentTask = currentTask;
+    }
+    get currentTask() {
+        return toJS(this._currentTask);
     }
 
-    get tasks() {
-        return toJS(this._tasks);
+    setAllTasks(allTasks) {
+        this._allTasks = allTasks;
     }
-
-    setSelectedTask(task) {
-        this._selectedTask = task;
-    }
-
-    get selectedTask() {
-        return toJS(this._selectedTask);
+    get allTasks() {
+        return toJS(this._allTasks);
     }
 }

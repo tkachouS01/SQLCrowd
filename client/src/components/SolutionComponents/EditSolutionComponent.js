@@ -2,7 +2,7 @@ import React, {useContext, useState} from 'react';
 import {Button, Container} from "react-bootstrap";
 import CodeEditor from "../TaskComponents/CodeEdit";
 import {Context} from "../../index";
-import {createSolution} from "../../httpRequests/solutionApi";
+import {createSolution} from "../../httpRequests/solutionAPI";
 import {useNavigate} from "react-router-dom";
 
 const EditSolutionComponent = () => {
@@ -21,8 +21,6 @@ const EditSolutionComponent = () => {
         if (!startSolution) {
             createSolution(user, task, solution, navigate)
                 .then(() => {
-                    console.log("+++++");
-                    console.log(solution.solution)
                     setCodeSolution(solution.solution.code)
                     setStartSolution(true);
                 })
@@ -32,7 +30,7 @@ const EditSolutionComponent = () => {
     return (
         <>
             {
-                (task.task.info.verified || (task.task.info.user._id === user.user._id && task.task.info.database))
+                (task.currentTask.verified || (task.currentTask.user._id === user.user._id && task.currentTask.database))
                     ?
                     (
                         <Container style={{background: "white", borderRadius: 10, padding: 15}}>
@@ -53,7 +51,7 @@ const EditSolutionComponent = () => {
                                     )
                             }
                             {
-                                startSolution && task.task.info.database
+                                startSolution && task.currentTask.database
                                     ? (<CodeEditor codeSolution={codeSolution} setCodeSolution={setCodeSolution}/>)
                                     : (<></>)
                             }

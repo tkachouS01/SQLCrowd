@@ -1,13 +1,13 @@
 import {$authHost, $host} from "./httpMain";
 import jwt_decode from "jwt-decode";
-import {TASKS_ROUTE} from "../utils/constsPath";
+import {TASKS_ROUTE, THEMES_ROUTE} from "../utils/constsPath";
 
 const baseUrlApi = 'http://localhost:5000/sql-crowd-api'
 
 //РЕГИСТРАТИОН
-export const signUp = async (context, email, nickname, surname, name, patronymic, gender, date_of_birth, password) => {
+export const signUp = async (context, email, nickname, surname, name, patronymic, gender, date_of_birth) => {
     let result = false;
-    context.setIsLoading(true)
+
 
     await $host.post(`${baseUrlApi}/signup`, {
         email,
@@ -16,27 +16,24 @@ export const signUp = async (context, email, nickname, surname, name, patronymic
         name,
         patronymic,
         gender,
-        date_of_birth,
-        password
+        date_of_birth
     })
         .then(data => {
-            funcTokenSet(data.data.token, context)
-            context.setErrorMessage(200, `Регистрация прошла успешно с id = ${data.data.userId}`)
+            //funcTokenSet(data.data.token, context)
+            context.setErrorMessage(200,
+                `Вы стали #${data.data.userId} пользователем. На почту ${email} отправлено письмо с вашим паролем`)
             result = true;
+
         })
         .catch(error => {
             context.setErrorMessage(error.response.status, error.response.data.message)
         })
-        .finally(() => {
-            context.setIsLoading(false);
-        });
     return result;
 }
 
 //АУТЕНТИФИКЭЙШЕН
 export const signIn = async (contextUser, navigate, login, password) => {
     let result = false;
-    contextUser.setIsLoading(true)
 
     await $host.post(`${baseUrlApi}/signin`, {login, password})
         .then((data) => {
@@ -51,8 +48,7 @@ export const signIn = async (contextUser, navigate, login, password) => {
             contextUser.setErrorMessage(error.response.status, error.response.data.message)
         })
         .finally(() => {
-            contextUser.setIsLoading(false);
-            if (result) navigate(TASKS_ROUTE);
+            if (result) navigate(THEMES_ROUTE());
         });
     return result;
 }
@@ -65,7 +61,7 @@ export const exit = (context) => {
 
 }
 export const check = async (context) => {
-    context.setIsLoading(true);
+
     const token = localStorage.getItem('token');
     if (token) {
         const decodedToken = jwt_decode(token);
@@ -76,7 +72,7 @@ export const check = async (context) => {
                 const response = await $authHost.get(`${baseUrlApi}/auth`);
                 const newToken = response.data.token;
                 funcTokenSet(newToken, context);
-                console.log("ТОКЕН ОБНОВЛЕН")
+
                 context.setIsAuth(true);
             } catch (error) {
                 context.setErrorMessage(error.response.status, error.response.data.message);
@@ -90,7 +86,7 @@ export const check = async (context) => {
         }
     }
     else { context.setIsAuth(false);}
-    context.setIsLoading(false);
+
     return true;
 };
 

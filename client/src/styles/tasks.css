@@ -11,10 +11,10 @@
 
     background-image: linear-gradient(
             -225deg,
-            #59ff00 0%,
-            #ffffff 25%,
-            #696bc7 75%,
-            #696bc7 100%
+            rgba(124, 124, 124, 0.42),
+            #005c7c,
+            rgba(124, 124, 124, 0.42),
+            #005c7c
     );
     background-size: auto auto;
     background-clip: border-box;

@@ -18,7 +18,7 @@ const EditTaskComponent = ({
 
         <>
             {
-                task.task.info.user._id === user.user._id
+                task.currentTask.user._id === user.user._id
                     ?
                     (
                         <Form style={{background: "white", borderRadius: 10, padding: 15}}>
@@ -45,7 +45,7 @@ const EditTaskComponent = ({
                                             onChange={(e) => setSelectedDatabaseName(e.target.value)}
                                         >
                                             <option value="Не выбрано" key={id}>Не выбрано</option>
-                                            {task.task.databases.map((db, id) => (
+                                            {task.databases.map((db, id) => (
                                                 <option value={`${db.name}`} key={id}>{db.name} [{db._id}]</option>))}
                                         </Form.Control>
                                     </FloatingLabel>

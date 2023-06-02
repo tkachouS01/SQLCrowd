@@ -1,5 +1,4 @@
-import {consoleError, consoleMessage} from '../customMessageConsole.js'
-import {Tasks, Solutions, Users, SolutionLikes, SolutionComments} from '../models/models.js';
+import {Task, Solution, User, SolutionLike, SolutionComment} from '../models/models.js';
 import ApiError from '../error/ApiError.js';
 import {executeQuery} from '../init-user-dbs.js'
 
@@ -9,33 +8,27 @@ export default class SolutionsController {
         try {
             const {task_id} = req.params;
 
-            //const { limit, offset } = req.pagination;
-            consoleMessage(`ПОЛУЧИТЬ ВСЕ РЕШЕНИЯ ЗАДАЧИ №${task_id}`)
             const userId = req.user._id;
 
-            let isAuthor = await Tasks.findOne({where: {_id: task_id, userId}})
-            let userSolution = isAuthor || (await Solutions.findOne({where: {taskId: task_id, userId, verified: true}}));
+            let isAuthor = await Task.findOne({where: {_id: task_id, userId}})
+            let userSolution = isAuthor || (await Solution.findOne({where: {taskId: task_id, userId, verified: true}}));
 
             if (!userSolution) {
                 return next(ApiError.forbidden(`Вам не разрешено просматривать решения задачи №${task_id}`));
             }
-            let solutions = await Solutions.findAll({
+            let solutions = await Solution.findAll({
                 where: {taskId: task_id}, ...queryOptions
             });
 
             let result = await Promise.all(solutions.map(async (el) => {
                 let temp = el.toJSON();
                 let tempSolutionId = temp._id;
-                let like = await SolutionLikes.findOne({where:{solutionId: tempSolutionId, userId}});
-                let likes = await SolutionLikes.findAll({where:{solutionId: tempSolutionId}});
+                let like = await SolutionLike.findOne({where:{solutionId: tempSolutionId, userId}});
+                let likes = await SolutionLike.findAll({where:{solutionId: tempSolutionId}});
                 temp.like = {isLiked: !!like, likeCount: likes.length};
                 return temp;
             }));
 
-            //let json = JSON.stringify(result);
-
-
-            console.log(result)
             res.json(result);
 
         } catch (error) {
@@ -47,12 +40,11 @@ export default class SolutionsController {
         try {
             const {task_id} = req.params;
             const userId = req.user._id;
-            let userSolution = await Solutions.findOne({where: {taskId: task_id, userId}})
+            let userSolution = await Solution.findOne({where: {taskId: task_id, userId}})
             if (!userSolution) {
-                let task = await Tasks.findOne({where: {_id: task_id}});
+                let task = await Task.findOne({where: {_id: task_id}});
 
-                consoleError(task.userId === userId)
-                userSolution = await Solutions.create({userId, taskId: task_id, is_author: task.userId === userId});
+                userSolution = await Solution.create({userId, taskId: task_id, is_author: task.userId === userId});
 
             }
             return res.json({solutionId: userSolution._id})
@@ -66,28 +58,26 @@ export default class SolutionsController {
             const {solution_id} = req.params;
             const {code} = req.body;
             const userId = req.user._id;
-            consoleError(solution_id)
-            consoleError(code)
-            consoleError(userId)
-            let userSolution = (await Solutions.findByPk(solution_id));
 
-            let isUserSolution = await Solutions.findOne({where: {_id: solution_id, userId}})
+            let userSolution = (await Solution.findByPk(solution_id));
+
+            let isUserSolution = await Solution.findOne({where: {_id: solution_id, userId}})
             if (isUserSolution) {
 
-                let task = await Tasks.findByPk(userSolution.taskId)
+                let task = await Task.findByPk(userSolution.taskId)
                 if (userSolution.is_author) {
                     try {
                         let rows = await executeQuery(code, task.databaseId);
-                        await Solutions.update({
+                        await Solution.update({
                             code, attempts: ++userSolution.attempts, verified: true
                         }, {where: {_id: userSolution._id}});
-                        await Tasks.update({verified: true}, {where: {_id: task._id}})
+                        await Task.update({verified: true}, {where: {_id: task._id}})
                         return res.json({success: true, fields: Object.keys(rows[0]), rows})
                     } catch (error) {
-                        await Solutions.update({
+                        await Solution.update({
                             code, attempts: ++userSolution.attempts, verified: false
                         }, {where: {_id: userSolution._id}});
-                        await Tasks.update({verified: false}, {where: {_id: task._id}})
+                        await Task.update({verified: false}, {where: {_id: task._id}})
                         return next(ApiError.badRequest(`Ошибка при выполнении запроса: ${(String(error).split('Error: SequelizeDatabaseError:')[1]) || error}`))
                     }
                 }
@@ -96,7 +86,7 @@ export default class SolutionsController {
                 try {
                     rowsUser = await executeQuery(code, task.databaseId);
                 } catch (error) {
-                    await Solutions.update({
+                    await Solution.update({
                         code, attempts: ++userSolution.attempts, verified: false
                     }, {where: {_id: userSolution._id}});
                     return next(ApiError.badRequest(`Ошибка при выполнении запроса: ${(String(error).split('SequelizeDatabaseError:')[1]) || error}`))
@@ -105,26 +95,26 @@ export default class SolutionsController {
 
                 if (!rowsUser[0]) 
                 {
-                    await Solutions.update({
+                    await Solution.update({
                         code, attempts: ++userSolution.attempts, verified: false
                     }, {where: {_id: userSolution._id}});
                     return next(ApiError.badRequest(`Пустой набор строк`))
                 }
 
 
-                let solutionAuthor = await Solutions.findOne({where: {taskId: task._id, is_author: true}})
-                consoleError(solutionAuthor)
+                let solutionAuthor = await Solution.findOne({where: {taskId: task._id, is_author: true}})
+
                 let rowsAuthor = await executeQuery(solutionAuthor.code, task.databaseId);
 
                 let temp = JSON.stringify(rowsUser) === JSON.stringify(rowsAuthor)
-                let taskTemp = await Tasks.findByPk(userSolution.taskId)
+                let taskTemp = await Task.findByPk(userSolution.taskId)
                 if (taskTemp.description !== '' && taskTemp.databaseId) {
-                    await Tasks.update({verified: true}, {where: {_id: taskTemp._id}})
+                    await Task.update({verified: true}, {where: {_id: taskTemp._id}})
                 }
-                await Solutions.update({
+                await Solution.update({
                     code, attempts: ++userSolution.attempts, verified: temp
                 }, {where: {_id: userSolution._id}});
-                consoleError(rowsUser[0])
+
                 return res.json({success: temp, fields: Object.keys(rowsUser[0]), rows: rowsUser})
             }
             return next(ApiError.forbidden(`Редактировать решение другого пользователя запрещено`))
@@ -137,7 +127,7 @@ export default class SolutionsController {
         try {
             const {solution_id} = req.params;
             const userId = req.user._id;
-            let solution = await Solutions.findByPk(solution_id)
+            let solution = await Solution.findByPk(solution_id)
 
             if (solution.userId !== userId) return next(ApiError.forbidden(`Доступ к этому решению разрешен только его создателю`))
             return res.json(solution)
@@ -151,13 +141,13 @@ export default class SolutionsController {
         const userId = req.user._id;
 
         try {
-            const solutionLike = await SolutionLikes.findOne({where: {solutionId: solution_id, userId}})
+            const solutionLike = await SolutionLike.findOne({where: {solutionId: solution_id, userId}})
 
             if (solutionLike) {
-                await SolutionLikes.destroy({where: {solutionId: solution_id, userId}})
+                await SolutionLike.destroy({where: {solutionId: solution_id, userId}})
                 return res.json({isLiked: false})
             } else {
-                await SolutionLikes.create({solutionId: solution_id, userId})
+                await SolutionLike.create({solutionId: solution_id, userId})
                 return res.json({isLiked: true})
             }
         } catch (error) {
@@ -172,7 +162,7 @@ export default class SolutionsController {
             const userId = req.user._id;
             if (!content || content===' ') return next(ApiError.badRequest(`Комментарий не может быть пустым`))
 
-            const comment = await SolutionComments.create({content, userId, solutionId: solution_id})
+            const comment = await SolutionComment.create({content, userId, solutionId: solution_id})
 
             return res.json({id: comment._id})
         } catch (error) {
@@ -183,10 +173,10 @@ export default class SolutionsController {
 
 const queryOptions = {
     attributes: {exclude: ['taskId', 'userId']}, include: [{
-        model: Users, attributes: ['_id', 'nickname']
+        model: User, attributes: ['_id', 'nickname']
     }, {
-        model: SolutionComments, attributes: {exclude: ['solutionId', 'userId', 'updatedAt']}, include: [{
-            model: Users, attributes: ['_id', 'nickname']
+        model: SolutionComment, attributes: {exclude: ['solutionId', 'userId', 'updatedAt']}, include: [{
+            model: User, attributes: ['_id', 'nickname']
         }]
     }]
 };

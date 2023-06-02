@@ -2,9 +2,10 @@ import React, {useContext, useEffect, useState} from 'react';
 import {Button, Container} from "react-bootstrap";
 import CodeEditor from "./CodeEdit";
 import {Context} from "../../index";
-import {createSolution, updateOneSolution} from "../../httpRequests/solutionApi";
+import {createSolution, updateOneSolution} from "../../httpRequests/solutionAPI";
 import {useNavigate} from "react-router-dom";
 import MyTooltip from "../otherComponents/tooltip";
+import {SOLUTIONS_ROUTE} from "../../utils/constsPath";
 
 const EditSolutionComponent = () => {
     let {user} = useContext(Context)
@@ -39,7 +40,7 @@ const EditSolutionComponent = () => {
     return (
         <>
             {
-                (task.task.info.verified || (task.task.info.user._id === user.user._id && task.task.info.database))
+                (task.currentTask.verified || (task.currentTask.user._id === user.user._id && task.currentTask.database))
                     ?
                     (
                         <Container style={{background: "white", borderRadius: 10, padding: 15}}>
@@ -66,14 +67,14 @@ const EditSolutionComponent = () => {
                                         }}>
                                             <Button onClick={clickStartSolution}>Выполнить</Button>
                                             <Button onClick={() => {
-                                                navigate(`/tasks/${task.selectedTask}/solutions`)
+                                                navigate(SOLUTIONS_ROUTE(1, task.selectedTask))
                                             }}>К решениям других</Button>
                                             <div>
                                                 {
                                                     !firstRender
                                                         ?
                                                         (
-                                                            (solution.result.success && user.errorMessage.status == 200)
+                                                            (solution.result.success && user.errorMessage.status === 200)
                                                                 ? (<span style={{
                                                                     background: "#9ACD32",
                                                                     padding: '3px 5px',
@@ -102,7 +103,7 @@ const EditSolutionComponent = () => {
                                     )
                             }
                             {
-                                startSolution && task.task.info.database
+                                startSolution && task.currentTask.database
                                     ? (<CodeEditor codeSolution={codeSolution} setCodeSolution={setCodeSolution}
                                                    readonly={false}/>)
                                     : (<></>)
