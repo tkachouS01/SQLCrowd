@@ -4,14 +4,15 @@ import {check} from "./authAPI";
 const baseUrlApi = 'http://localhost:5000/sql-crowd-api'
 
 //+
-export const getTasks = async (contextUser, contextTask, themeId) => {
+export const getTasks = async (contextUser, contextTask, themeId,section,category) => {
     let result = false;
 
     await check(contextUser);
 
-    await $authHost.get(`${baseUrlApi}/modules/${null}/themes/${themeId}/tasks?inBank=true&themeId=${themeId}`)
+    await $authHost.get(`${baseUrlApi}/modules/${null}/themes/${themeId}/tasks?section=${section}&category=${category}`)
         .then(data => {
-            contextTask.setAllTasks(data.data)
+            contextTask.setAllTasks(data.data.result)
+            contextTask.setCurrentProgress(data.data.info)
 
             result = true;
         })
@@ -31,13 +32,34 @@ export const getOneTask = async (contextUser, contextTask, themeId, taskId) => {
 
     await $authHost.get(`${baseUrlApi}/modules/${null}/themes/${themeId}/tasks/${+taskId}`, {})
         .then(data => {
-console.log(data.data.info)
-console.log(data.data.databases)
-console.log(data.data.data)
+            console.log(data.data.info.inBank)
+            console.log(data.data.info.autoTaskCheck)
+
             contextTask.setCurrentTask(data.data.info);
             contextTask.setDatabases(data.data.databases);
             contextTask.setDatabasesData(data.data.data);
             result = true;
+
+        })
+        .catch(error => {
+            contextUser.setErrorMessage(error.response.status, error.response.data.message)
+        })
+
+    return result;
+}
+export const addRatingOneTask = async (contextUser, contextTask, themeId, taskId, commentValue, ratingValue) => {
+    let result = false;
+
+    await check(contextUser);
+
+    await $authHost.post(`${baseUrlApi}/modules/${null}/themes/${themeId}/tasks/${+taskId}/add-rating`, {comment: commentValue, rating: ratingValue})
+        .then(data => {
+            //contextTask.setCurrentTask(data.data.info);
+            //contextTask.setDatabases(data.data.databases);
+            //contextTask.setDatabasesData(data.data.data);
+            contextUser.setErrorMessage(200, 'Отзыв успешно оставлен')
+            result = true;
+
         })
         .catch(error => {
             contextUser.setErrorMessage(error.response.status, error.response.data.message)
@@ -48,7 +70,7 @@ console.log(data.data.data)
 
 //+
 //обновить задачу
-export const updateTask = async (contextUser, contextTask, navigate, taskId, databaseName, description, themeId) => {
+export const updateTask = async (contextUser, contextTask, taskId, databaseName, description, themeId) => {
     let result = false;
 
     await check(contextUser);
@@ -59,8 +81,10 @@ export const updateTask = async (contextUser, contextTask, navigate, taskId, dat
             : {databaseName, description}
     )
         .then(data => {
-console.log(data.data)
-            //contextTask.setCurrentTask(data.data);
+            contextTask.setCurrentTask(data.data.info);
+
+
+            contextTask.setDatabasesData(data.data.data);
 
             contextUser.setErrorMessage(200, `Задача #${taskId} обновлена`)
             result = true;
@@ -83,18 +107,10 @@ export const createTask = async (contextUser, contextTask, themeId) => {
     let taskId;
     await $authHost.post(`${baseUrlApi}/modules/${null}/themes/${themeId}/tasks`, {})
         .then(data => {
-            taskId = +data.data.task_id;
-
-            getOneTask(contextUser, contextTask, themeId, taskId)
-                .then((bool) => {
-                    if (bool) {
-                        result = taskId;
-                        contextUser.setErrorMessage(200, `Задача #${taskId} создана`)
-                    }
-                });
+            taskId = +data.data.taskId;
         })
         .catch(error => {
             contextUser.setErrorMessage(`${error.response.status}: Создать задачу не удалось`, error.response.data.message)
         })
-    return result;
+    return taskId;
 }

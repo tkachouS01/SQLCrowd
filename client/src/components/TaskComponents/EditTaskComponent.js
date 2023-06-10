@@ -1,6 +1,8 @@
 import React, {useContext} from 'react';
 import {Button, Container, FloatingLabel, Form} from "react-bootstrap";
 import {Context} from "../../index";
+import TextareaAutosize from "react-textarea-autosize";
+import MyButton from "../basicElements/myButton";
 
 
 const EditTaskComponent = ({
@@ -21,18 +23,22 @@ const EditTaskComponent = ({
                 task.currentTask.user._id === user.user._id
                     ?
                     (
-                        <Form style={{background: "white", borderRadius: 10, padding: 15}}>
-                            <Container style={{display: 'flex', flexWrap: 'nowrap'}}>
+                        <div style={{borderRadius: 10, padding: 15}}>
+                            <div style={{display: 'flex', flexWrap: 'nowrap'}}>
                                 <div style={{flexBasis: '70%', marginRight: '10px'}}>
-                                    <FloatingLabel label="Введите описание задания">
-                                        <Form.Control
-                                            as="textarea"
-                                            style={{ height: '150px', resize: 'none'}}
-                                            placeholder=" "
-                                            value={descriptionTask}
-                                            onChange={(e) => setDescriptionTask(e.target.value)}
-                                        />
-                                    </FloatingLabel>
+
+                                    <TextareaAutosize
+                                        value={descriptionTask}
+                                        onChange={(e) => setDescriptionTask(e.target.value)}
+                                        style={{
+                                            resize: "none",
+                                            width: '100%',
+                                            border: '1px solid gray',
+                                            padding: '10px',
+                                            borderRadius: 10
+                                        }}
+                                        placeholder={'Введите описание задания'}
+                                    />
                                 </div>
                                 <div style={{flexBasis: '30%'}}>
 
@@ -49,13 +55,13 @@ const EditTaskComponent = ({
                                                 <option value={`${db.name}`} key={id}>{db.name} [{db._id}]</option>))}
                                         </Form.Control>
                                     </FloatingLabel>
+                                    <MyButton text={"Сохранить"} onClick={onSave}/>
 
-                                    <Button style={{marginTop: 20}} onClick={onSave}>Сохранить</Button>
                                 </div>
-                            </Container>
-                        </Form>
+                            </div>
+                        </div>
                     )
-                    : ( <></> )
+                    : (<></>)
             }
 
         </>

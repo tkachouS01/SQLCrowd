@@ -1,3 +1,4 @@
+import {consoleMessage, consoleError} from './customMessageConsole.js'
 import dotenv from 'dotenv'
 
 dotenv.config()
@@ -6,7 +7,6 @@ import {Sequelize} from 'sequelize';
 import fs from 'fs';
 import path from 'path';
 import {fileURLToPath} from 'url';
-import {Database} from './models/models.js'
 
 const dbNames = ['aero', 'computer', 'inc_out', 'painting', 'ships'];
 
@@ -22,6 +22,7 @@ async function createDatabases() {
 
         try {
             await sequelize.query(`CREATE DATABASE ${dbNames[i]}`);
+            console.log(`БД ${dbNames[i]} создана`);
         } catch (error) {}
     }
     sequelize = [];
@@ -34,7 +35,7 @@ async function createDatabases() {
     for (let i = 0; i < dbNames.length; i++) {
         try {
             await sequelize[i].authenticate();
-
+            consoleMessage(`Соединение с ${dbNames[i]} успешно установлено.`)
             if (!results[i][0].length) {
                 const sqlFilePath = path.join(__dirname, 'staticScriptsDB', `${dbNames[i]}.sql`);
                 const sql = fs.readFileSync(sqlFilePath, 'utf8');
@@ -55,9 +56,11 @@ async function createDatabases() {
                     }
                     tables[table_name].push(column_name);
                 });
-                await Database.create({_id: i + 1, name: dbNames[i], tables})
+                consoleMessage(`Структура ${dbNames[i]} создана`)
+                await Databases.create({_id: i + 1, name: dbNames[i], tables})
             }
         } catch (err) {
+            consoleError(`Не удалось подключиться к базе данных ${dbNames[i]}: ${err}`)
         }
     }
 }
@@ -72,7 +75,7 @@ async function executeQuery(code, databaseId) {
     const t = await sequelize[databaseId].transaction();
     try {
         const result = await sequelize[databaseId].query(code, {transaction: t});
-        await t.rollback();
+        await t.commit();
         return result[0];
     } catch (err) {
         await t.rollback();

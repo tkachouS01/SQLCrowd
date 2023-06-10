@@ -6,6 +6,7 @@ export default class TaskStore {
         this._databasesData=[];
         this._currentTask = {};
         this._allTasks = [];
+        this._currentProgress = {};
         makeAutoObservable(this)
     }
     setDatabases(databases) {
@@ -34,5 +35,12 @@ export default class TaskStore {
     }
     get allTasks() {
         return toJS(this._allTasks);
+    }
+
+    setCurrentProgress(currentProgress) {
+        this._currentProgress = currentProgress;
+    }
+    get currentProgress() {
+        return toJS(this._currentProgress);
     }
 }

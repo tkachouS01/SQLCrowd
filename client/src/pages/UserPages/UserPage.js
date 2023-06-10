@@ -1,37 +1,64 @@
 import React, {useContext, useEffect, useState} from 'react'
 import {Context} from "../../index";
-import {getOneUser, getUsers} from "../../httpRequests/userAPI";
+import {addImageProfile, getOneUser, getUsers} from "../../httpRequests/userAPI";
 import {useNavigate, useParams} from "react-router-dom";
 import Avatar from "../../components/otherComponents/avatar";
-import {Breadcrumb, Image} from "react-bootstrap";
+import {Breadcrumb, Button, Form, Image} from "react-bootstrap";
 import {convertDate} from "../../utils/utils";
 import MyButton from "../../components/basicElements/myButton";
 import {updateRole} from "../../httpRequests/roleRequestsAPI";
 import {HOME_ROUTE, USERS_ROUTE} from "../../utils/constsPath";
 
 const UserPage = () => {
+    const [isLoading, setIsLoading] = useState(true)
     const {user} = useContext(Context)
     const {userId} = useParams();
     const [userRole, setUserRole] = useState(null)
-    const [isFinish, setIsFinish] = useState(false)
     const navigate = useNavigate()
+    const [selectedFile, setSelectedFile] = useState(null);
+
+    const handleFileChange = (event) => {
+        setSelectedFile(event.target.files[0]);
+    };
+    const handleUpload = () => {
+        setIsLoading(true)
+        addImageProfile(user, userId, selectedFile)
+            .then(() => {
+                setSelectedFile(null);
+                setIsLoading(false)
+            })
+            .catch(() => {
+                setSelectedFile(null);
+                setIsLoading(false)
+            })
+    }
+
+
     useEffect(() => {
         getOneUser(user, userId).then(() => {
-            setIsFinish(true);
             setUserRole(user.currentProfile.role)
+            setIsLoading(false)
         })
-
+            .catch(() => {
+                setIsLoading(false)
+            })
     })
     useEffect(() => {
-    }, [isFinish, user.currentProfile.role])
+    }, [isLoading, user.currentProfile.role])
 
     const updateRoleClick = () => {
+
         updateRole(user, "", user.currentProfile._id)
             .then((res) => {
                 setUserRole(res)
+                setIsLoading(false)
+            })
+            .catch(() => {
+                setIsLoading(false)
             })
     }
-    if (isFinish === false || isFinish === undefined) return <></>
+    if (isLoading)
+        return <></>
     else {
 
         return (
@@ -72,41 +99,74 @@ const UserPage = () => {
 
 
                     </div>
-
                     <div>
                         <hr/>
-                        <div style={{textTransform: "uppercase"}}>
-                            <span>{user.currentProfile.name} </span>
-                            <span>{user.currentProfile.patronymic} </span>
-                            <span style={{fontWeight: 500}}>{user.currentProfile.surname}</span>
-                        </div>
-                        <div>
-                            <span style={{fontWeight: 500, paddingRight: '20px'}}>Зарегистрирован</span>
-                            <span>{convertDate(user.currentProfile.createdAt)}</span>
-                        </div>
-                        <div>
-                            <span style={{fontWeight: 500, paddingRight: '20px'}}>Дата рождения </span>
-                            <span>{convertDate(user.currentProfile.date_of_birth).split(",")[0]}</span>
-                        </div>
-                        <div>
-                            <span style={{fontWeight: 500, paddingRight: '20px'}}>Пол </span>
-                            <span>{user.currentProfile.gender === 'Ж' ? 'Женский' : 'Мужской'}</span>
-                        </div>
-                        <div>
-                            <span style={{fontWeight: 500, paddingRight: '20px'}}>Email </span>
-                            <span>{user.currentProfile.email}</span>
-                        </div>
-                        <div>
-                            <span style={{fontWeight: 500, paddingRight: '20px'}}>Роль </span>
-                            <span>{userRole === 'USER' ? 'обучающийся' : 'преподаватель'}</span>
-                        </div>
                         {
-                            user.currentProfile._id === 1 || user.user.role === 'USER'
-                                ? <></>
-                                : <MyButton
-                                    text={`${userRole === 'USER' ? 'Назначить преподавателем' : 'Назначить обучающимся'}`}
-                                    onClick={updateRoleClick}/>
+                            userId == 0
+                                ?
+                                <div>
+                                    <div>ЭТО ОЧЕНЬ СЕКРЕТНЫЙ ПОЛЬЗОВАТЕЛЬ</div>
+                                    <div>ВЫ НЕ ДОЛЖНЫ ЕГО ВИДЕТЬ</div>
+                                </div>
+                                :
+                                <>
+                                    {
+                                        user.currentProfile._id === user.user._id || (user.user.role === 'ADMIN' && userRole === 'USER')
+                                            ?
+                                            <div style={{
+                                                display: "inline-flex",
+                                                marginBottom: 10,
+                                                marginLeft: 5,
+                                                alignItems: "center",
+                                                columnGap: 5
+                                            }}>
+                                                <Form.Control
+                                                    type="file"
+                                                    placeholder=" "
+                                                    accept="image/jpeg,image/png"
+                                                    onChange={handleFileChange}
+                                                />
+                                                <MyButton text={selectedFile ? "Сохранить" : "Удалить"}
+                                                          onClick={handleUpload}/>
+                                            </div>
+                                            : <></>
+                                    }
+
+                                    <div style={{textTransform: "uppercase"}}>
+                                        <span>{user.currentProfile.name} </span>
+                                        <span>{user.currentProfile.patronymic} </span>
+                                        <span style={{fontWeight: 500}}>{user.currentProfile.surname}</span>
+                                    </div>
+                                    <div>
+                                        <span style={{fontWeight: 500, paddingRight: '20px'}}>Зарегистрирован</span>
+                                        <span>{convertDate(user.currentProfile.createdAt)}</span>
+                                    </div>
+                                    <div>
+                                        <span style={{fontWeight: 500, paddingRight: '20px'}}>Дата рождения </span>
+                                        <span>{convertDate(user.currentProfile.date_of_birth).split(",")[0]}</span>
+                                    </div>
+                                    <div>
+                                        <span style={{fontWeight: 500, paddingRight: '20px'}}>Пол </span>
+                                        <span>{user.currentProfile.gender === 'Ж' ? 'Женский' : 'Мужской'}</span>
+                                    </div>
+                                    <div>
+                                        <span style={{fontWeight: 500, paddingRight: '20px'}}>Email </span>
+                                        <span>{user.currentProfile.email}</span>
+                                    </div>
+                                    <div>
+                                        <span style={{fontWeight: 500, paddingRight: '20px'}}>Роль </span>
+                                        <span>{userRole === 'USER' ? 'обучающийся' : 'преподаватель'}</span>
+                                    </div>
+                                    {
+                                        user.currentProfile._id === 1 || user.user.role === 'USER'
+                                            ? <></>
+                                            : <MyButton
+                                                text={`${userRole === 'USER' ? 'Назначить преподавателем' : 'Назначить обучающимся'}`}
+                                                onClick={updateRoleClick}/>
+                                    }
+                                </>
                         }
+
 
                     </div>
                 </div>

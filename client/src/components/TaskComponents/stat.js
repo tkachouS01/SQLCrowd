@@ -14,6 +14,7 @@ import Avatar from "../otherComponents/avatar";
 import {USER_ONE_ROUTE} from "../../utils/constsPath";
 import {useNavigate} from "react-router-dom";
 import UserImgLink from "../basicElements/userImgLink";
+import TaskStatusAuthor from "../basicElements/taskStatusAuthor";
 
 const Stat = (({task, fullContent}) => {
     const {user} = useContext(Context)
@@ -73,7 +74,16 @@ const Stat = (({task, fullContent}) => {
                     : <></>
             }
 
-            <div >
+            <div>
+                {
+                    fullContent
+                        ?
+                        <div style={{marginBottom: 15}}>
+                            <TaskStatusAuthor/>
+                        </div>
+                        : <></>
+                }
+
                 <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
 
                             <span style={{
@@ -94,20 +104,20 @@ const Stat = (({task, fullContent}) => {
                     }}>
                         {
                             task.description ?
-                                    fullContent
-                                        ?
-                                            <div style={{wordWrap: "break-word", paddingRight: 30}}>
-                                                {task.description}
-                                            </div>
-                                        :
-                                            <div style={{
-                                                whiteSpace: "nowrap",
-                                                overflow: "hidden",
-                                                textOverflow: "ellipsis",
-                                                paddingRight: 30
-                                            }}>
-                                                {task.description}
-                                            </div>
+                                fullContent
+                                    ?
+                                    <div style={{wordWrap: "break-word", paddingRight: 30}}>
+                                        {task.description}
+                                    </div>
+                                    :
+                                    <div style={{
+                                        whiteSpace: "nowrap",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                        paddingRight: 30
+                                    }}>
+                                        {task.description}
+                                    </div>
                                 :
                                 <div style={{opacity: 0.5, fontWeight: 100}}>{'Не указано'}</div>
                         }
@@ -117,7 +127,7 @@ const Stat = (({task, fullContent}) => {
 
                 {
                     fullContent
-                    ?
+                        ?
                         <div style={{
                             fontSize: 12,
                             marginTop: 15,
@@ -184,9 +194,10 @@ const Stat = (({task, fullContent}) => {
                                         }}>{task.myProgress}</div>)
                                         : (<></>)
                                 }
+
                             </div>
                         </div>
-                        :<></>
+                        : <></>
                 }
 
             </div>

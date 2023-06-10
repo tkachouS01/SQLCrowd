@@ -5,6 +5,7 @@ import {Op} from 'sequelize'
 import {User} from '../models/models.js';
 import {mySendMail} from "./mail.js";
 import {generatePassword} from "../utils/utils.js";
+import sequelize from "../db.js";
 
 const generateJwt = (_id, email, role, nickname) => {
     return jwt.sign({_id, email, role, nickname}, process.env.SECRET_KEY, {expiresIn: '24h'})
@@ -46,24 +47,29 @@ export default class AuthController {
             const password = generatePassword(12);
 
             const hashPassword = await bcrypt.hash(password, 5)
-            let user;
+            const t = await sequelize.transaction()
             try {
+                let user;
+
                 user = await User.create({
                     surname, name, patronymic, gender, date_of_birth, nickname, email, password: hashPassword
-                });
+                }, {transaction: t});
 
+
+                let countUsers = await User.count({transaction:t});
+                if (countUsers === 1) {
+                    await User.update(
+                        {role: 'ADMIN'}, {where: {_id: user._id},transaction:t}
+                    )
+                }
+                await mySendMail(user.nickname, user.email, password, user._id, user.createdAt)
+                await t.commit()
+                return res.json({userId: user._id})
             } catch (error) {
-                return next(ApiError.badRequest(`Некорректные входные данные` + error.message))
+                await t.rollback()
+                return next(ApiError.badRequest(error))
             }
-            let countUsers = await User.count();
-            if (countUsers === 1) {
-                await User.update(
-                    {role: 'ADMIN'}, {where: {_id: user._id}}
-                )
-            }
-            await mySendMail(user.nickname, user.email, password, user._id, user.createdAt)
 
-            return res.json({userId: user._id})
         } catch (error) {
             return next(ApiError.serverError(error.message))
         }
@@ -108,7 +114,7 @@ function validateFields(surname, name, patronymic, gender, date_of_birth, nickna
     if (!surname) missingFields.push('фамилия');
     if (!name) missingFields.push('имя');
     if (!patronymic) missingFields.push('отчество');
-    if (gender==="Не указано") missingFields.push('пол');
+    if (gender === "Не указано") missingFields.push('пол');
     if (!date_of_birth) missingFields.push('дата рождения');
     if (missingFields.length === 0) return null;
     return `Не указаны: ${missingFields.join(', ')}`;

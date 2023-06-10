@@ -1,35 +1,56 @@
-import {Task, Solution, User, SolutionLike, SolutionComment} from '../models/models.js';
+import {
+    Task,
+    Solution,
+    User,
+    SolutionLike,
+    SolutionComment,
+    AutoTaskCheck,
+    TaskRating,
+    TaskEvaluationScore, DifficultyLevelsOfTheme, Scores, TaskSolutionScore
+} from '../models/models.js';
 import ApiError from '../error/ApiError.js';
 import {executeQuery} from '../init-user-dbs.js'
+import stringSimilarity from "string-similarity";
+import {consoleError, consoleMessage} from "../customMessageConsole.js";
+import {Op} from "sequelize";
+import sequelize from "../db.js";
+
+export const unknownUser = {
+    _id: 0, nickname: 'СЕКРЕТНЫЙ СУСЛИК', role: 'ADMIN'
+}
 
 export default class SolutionsController {
 
     async getSolutions(req, res, next) {
         try {
-            const {task_id} = req.params;
+            const taskId = req.params.taskId;
 
             const userId = req.user._id;
 
-            let isAuthor = await Task.findOne({where: {_id: task_id, userId}})
-            let userSolution = isAuthor || (await Solution.findOne({where: {taskId: task_id, userId, verified: true}}));
+            const currentTask = await Task.findByPk(taskId);
 
-            if (!userSolution) {
-                return next(ApiError.forbidden(`Вам не разрешено просматривать решения задачи №${task_id}`));
-            }
+
             let solutions = await Solution.findAll({
-                where: {taskId: task_id}, ...queryOptions
+                where: {taskId: taskId}, ...queryOptions
             });
 
             let result = await Promise.all(solutions.map(async (el) => {
                 let temp = el.toJSON();
                 let tempSolutionId = temp._id;
-                let like = await SolutionLike.findOne({where:{solutionId: tempSolutionId, userId}});
-                let likes = await SolutionLike.findAll({where:{solutionId: tempSolutionId}});
+                let like = await SolutionLike.findOne({where: {solutionId: tempSolutionId, userId}});
+                let likes = await SolutionLike.findAll({where: {solutionId: tempSolutionId}});
                 temp.like = {isLiked: !!like, likeCount: likes.length};
+                if (currentTask.inBank === null && temp.user._id !== userId) {
+                    temp.user = {...unknownUser};
+                    temp.solution_comments = temp.solution_comments.map(item => {
+                        item.user = item.user._id === userId ? item.user : {...unknownUser};
+                        return item;
+                    })
+                }
                 return temp;
             }));
 
-            res.json(result);
+            return res.json(result);
 
         } catch (error) {
             return next(ApiError.serverError(error.message))
@@ -37,117 +58,288 @@ export default class SolutionsController {
     }
 
     async createSolutionTask(req, res, next) {
+        const t = await sequelize.transaction()
         try {
-            const {task_id} = req.params;
+            const taskId = req.params.taskId;
             const userId = req.user._id;
-            let userSolution = await Solution.findOne({where: {taskId: task_id, userId}})
+            let userSolution = await Solution.findOne({where: {taskId: taskId, userId}}, {transaction: t})
             if (!userSolution) {
-                let task = await Task.findOne({where: {_id: task_id}});
+                let task = await Task.findOne({where: {_id: taskId}}, {transaction: t});
 
-                userSolution = await Solution.create({userId, taskId: task_id, is_author: task.userId === userId});
+                userSolution = await Solution.create({
+                    userId,
+                    taskId: taskId,
+                    isAuthor: task.userId === userId
+                }, {transaction: t});
 
+            }else {
+                await t.rollback()
+                return res.json({solutionId: userSolution._id})
             }
+            await t.commit()
             return res.json({solutionId: userSolution._id})
         } catch (error) {
+            await t.rollback()
             return next(ApiError.serverError(error.message))
         }
     }
 
     async updateSolutionTask(req, res, next) {
+        const t = await sequelize.transaction()
         try {
-            const {solution_id} = req.params;
+            const solutionId = req.params.solutionId;
             const {code} = req.body;
             const userId = req.user._id;
 
-            let userSolution = (await Solution.findByPk(solution_id));
+            let userSolution = await Solution.findByPk(solutionId, {transaction: t});
+            let task = await Task.findByPk(userSolution.taskId, {transaction: t})
 
-            let isUserSolution = await Solution.findOne({where: {_id: solution_id, userId}})
-            if (isUserSolution) {
+            let rowsUser;
+            try {
+                rowsUser = await executeQuery(code, task.databaseId);
 
-                let task = await Task.findByPk(userSolution.taskId)
-                if (userSolution.is_author) {
+                if (userSolution.code === code || userSolution.finished) {
+                    return res.json({
+                        success: userSolution.verified,
+                        fields: Object.keys(rowsUser[0] || {}),
+                        rows: rowsUser
+                    })
+                }
+            } catch (error) {
+                if (!(userSolution.code === code || userSolution.finished)) {
+
                     try {
-                        let rows = await executeQuery(code, task.databaseId);
-                        await Solution.update({
-                            code, attempts: ++userSolution.attempts, verified: true
-                        }, {where: {_id: userSolution._id}});
-                        await Task.update({verified: true}, {where: {_id: task._id}})
-                        return res.json({success: true, fields: Object.keys(rows[0]), rows})
-                    } catch (error) {
                         await Solution.update({
                             code, attempts: ++userSolution.attempts, verified: false
-                        }, {where: {_id: userSolution._id}});
-                        await Task.update({verified: false}, {where: {_id: task._id}})
-                        return next(ApiError.badRequest(`Ошибка при выполнении запроса: ${(String(error).split('Error: SequelizeDatabaseError:')[1]) || error}`))
+                        }, {where: {_id: userSolution._id}, transaction: t});
+                    } catch (error) {
+                        await t.rollback()
+                        return next(ApiError.badRequest(error))
                     }
+
                 }
-
-                let rowsUser;
-                try {
-                    rowsUser = await executeQuery(code, task.databaseId);
-                } catch (error) {
-                    await Solution.update({
-                        code, attempts: ++userSolution.attempts, verified: false
-                    }, {where: {_id: userSolution._id}});
-                    return next(ApiError.badRequest(`Ошибка при выполнении запроса: ${(String(error).split('SequelizeDatabaseError:')[1]) || error}`))
-                }
-
-
-                if (!rowsUser[0]) 
-                {
-                    await Solution.update({
-                        code, attempts: ++userSolution.attempts, verified: false
-                    }, {where: {_id: userSolution._id}});
-                    return next(ApiError.badRequest(`Пустой набор строк`))
-                }
-
-
-                let solutionAuthor = await Solution.findOne({where: {taskId: task._id, is_author: true}})
-
-                let rowsAuthor = await executeQuery(solutionAuthor.code, task.databaseId);
-
-                let temp = JSON.stringify(rowsUser) === JSON.stringify(rowsAuthor)
-                let taskTemp = await Task.findByPk(userSolution.taskId)
-                if (taskTemp.description !== '' && taskTemp.databaseId) {
-                    await Task.update({verified: true}, {where: {_id: taskTemp._id}})
-                }
-                await Solution.update({
-                    code, attempts: ++userSolution.attempts, verified: temp
-                }, {where: {_id: userSolution._id}});
-
-                return res.json({success: temp, fields: Object.keys(rowsUser[0]), rows: rowsUser})
+                await t.commit()
+                return next(ApiError.badRequest(`Ошибка при выполнении запроса: ${(String(error).split('SequelizeDatabaseError:')[1]) || error}`))
             }
-            return next(ApiError.forbidden(`Редактировать решение другого пользователя запрещено`))
+
+            if (userSolution.isAuthor) {
+                try {
+                    await Solution.update({
+                        code, attempts: ++userSolution.attempts, verified: true
+                    }, {where: {_id: userSolution._id}, transaction: t});
+                    await Task.update({verified: true}, {where: {_id: task._id}, transaction: t})
+                    await t.commit()
+                    return res.json({success: true, fields: Object.keys(rowsUser[0] || {}), rows: rowsUser})
+                } catch (error) {
+                    await t.rollback()
+                    try {
+                        await Solution.update({
+                            code, attempts: ++userSolution.attempts, verified: false
+                        }, {where: {_id: userSolution._id}, transaction: t});
+                        await Task.update({verified: false}, {where: {_id: task._id}, transaction: t})
+                        await t.commit()
+                        return next(ApiError.badRequest(`Ошибка при выполнении запроса: ${(String(error).split('Error: SequelizeDatabaseError:')[1]) || error}`))
+                    } catch (error) {
+                        await t.rollback()
+                        return next(ApiError.badRequest(error))
+                    }
+
+                }
+            }
+
+            if (!rowsUser[0]) {
+                await Solution.update({
+                    code, attempts: ++userSolution.attempts, verified: false
+                }, {where: {_id: userSolution._id}, transaction: t});
+                await t.commit()
+                return next(ApiError.badRequest(`Пустой набор строк`))
+            }
+
+            let solutionAuthor = await Solution.findOne({where: {taskId: task._id, isAuthor: true}}, {transaction: t})
+
+            let rowsAuthor = await executeQuery(solutionAuthor.code, task.databaseId);
+
+            let temp = JSON.stringify(rowsUser) === JSON.stringify(rowsAuthor)
+            let taskTemp = await Task.findByPk(userSolution.taskId, {transaction: t})
+            if (taskTemp.description !== '' && taskTemp.databaseId) {
+                await Task.update({verified: true}, {where: {_id: taskTemp._id}, transaction: t})
+            }
+            await Solution.update({
+                code, attempts: ++userSolution.attempts, verified: temp
+            }, {where: {_id: userSolution._id}, transaction: t});
+            await t.commit()
+            return res.json({success: temp, fields: Object.keys(rowsUser[0]), rows: rowsUser})
         } catch (error) {
-            return next(ApiError.serverError(error.message))
+            await t.rollback()
+            return next(ApiError.badRequest(error))
         }
+    }
+
+    async finishTheSolution(req, res, next) {
+        //try {
+        const t = await sequelize.transaction()
+        try {
+            const solutionId = req.params.solutionId;
+            const taskId = req.params.taskId;
+            const themeId = req.params.themeId;
+            const userId = req.user._id;
+
+            let userSolution = await Solution.findByPk(solutionId, {transaction: t});
+            let userTask = await Task.findByPk(taskId, {transaction: t});
+
+            if (userSolution.finished) {
+                await t.commit()
+                return next(ApiError.forbidden('Вы уже завершили решение'))
+            }
+            if (req.user.role === 'USER' && req.user._id !== userTask.userId && userTask.inBank === null) {
+                const taskRating = await TaskRating.findOne({where: {taskId, userId}}, {transaction: t})
+                if (!taskRating) {
+                    await t.commit()
+                    return next(ApiError.forbidden('Вы не оценили задачу, завершение решения запрещено'))
+                }
+            }
+
+            await Solution.update(
+                {finished: true},
+                {where: {_id: solutionId}, transaction: t}
+            )
+            if (userTask.userId !== req.user._id && userTask.inBank === true) {
+                const taskSolution = (await DifficultyLevelsOfTheme.findByPk(themeId, {transaction: t})).taskSolution;
+                const score = userSolution.verified ? taskSolution : 0;
+                const rating = Math.round(((score / taskSolution) * 5) * 100) / 100
+
+                const scoreId = (await Scores.create({
+                    score,
+                    rating,
+                    userId
+                }, {transaction: t}))._id
+                await TaskSolutionScore.create({
+                    solutionId,
+                    scoreId
+                }, {transaction: t})
+                await t.commit()
+                return req.json({})
+            }
+
+            let isUserSolution = userSolution.userId === userId
+            if (isUserSolution) {
+
+                if (userSolution.isAuthor) {
+
+                    const currentSolution = await Solution.findOne({
+                        where: {_id: solutionId},
+                        attributes: ['code']
+                    }, {transaction: t})
+                    const solutions = await Solution.findAll({
+                        where: {
+                            isAuthor: true,
+                            verified: true,
+                            finished: true,
+                            _id: {
+                                [Op.ne]: solutionId
+                            }
+                        },
+                        attributes: ['code']
+                    }, {transaction: t})
+                    const currentTask = await Task.findOne({
+                        where: {_id: taskId},
+                        attributes: ['description']
+                    }, {transaction: t})
+                    const tasks = await Task.findAll({
+                        where: {
+                            _id: {
+                                [Op.ne]: taskId
+                            }
+                        },
+                        include: {
+                            model: Solution,
+                            where: {isAuthor: true, finished: true},
+                            attributes: []
+                        },
+                        attributes: ['description']
+                    }, {transaction: t})
+
+                    const complexConditionCheck = solutions.length === 0 ? 0 : conditionCheckFunc(
+                        toString(currentSolution.code),
+                        solutions.filter(item => item.code !== null && item.code.trim() !== '').map(item => item.code)
+                    );
+                    const simpleConditionCheck = tasks.length === 0 ? 0 : conditionCheckFunc(
+                        currentTask.description,
+                        tasks.filter(item => item.description !== null && item.description.trim() !== '').map(item => item.description)
+                    );
+
+
+                    await AutoTaskCheck.create({
+                        taskId,
+                        checkingSyntaxOfCode: userSolution.verified,
+                        simpleConditionCheck,
+                        complexConditionCheck
+                    }, {transaction: t})
+                    const checks = await AutoTaskCheck.findOne({where: {taskId}, transaction: t})
+                    if (!checks.checkingSyntaxOfCode || checks.simpleConditionCheck >= 85 || checks.complexConditionCheck >= 85) {
+                        await Task.update({inBank: false}, {where: {_id: taskId}, transaction: t})
+                    } else {
+                        if (req.user.role === 'ADMIN')
+                            await Task.update({inBank: true}, {where: {_id: taskId}, transaction: t})
+                    }
+                    const inBank = (await Task.findByPk(taskId, {transaction: t})).inBank;
+
+                    await t.commit()
+
+                    return res.json({
+                        autoTaskCheck: {
+                            checkingSyntaxOfCode: checks.checkingSyntaxOfCode,
+                            simpleConditionCheck: checks.simpleConditionCheck,
+                            complexConditionCheck: checks.complexConditionCheck
+                        },
+                        inBank
+                    })
+                } else {
+                    await t.commit()
+                    return res.json({})
+                }
+            } else {
+                await t.rollback()
+                return next(ApiError.forbidden(`Редактировать решение другого пользователя запрещено`))
+            }
+
+        } catch (error) {
+            await t.rollback()
+            return next(ApiError.badRequest(error))
+        }
+
+        //} catch (error) {
+        //  return next(ApiError.serverError(error.message))
+        //}
     }
 
     async getOneSolution(req, res, next) {
-        try {
-            const {solution_id} = req.params;
-            const userId = req.user._id;
-            let solution = await Solution.findByPk(solution_id)
+        //try {
+        const userId = req.user._id;
+        const solutionId = req.params.solutionId;
+        const taskId = req.params.taskId;
 
-            if (solution.userId !== userId) return next(ApiError.forbidden(`Доступ к этому решению разрешен только его создателю`))
-            return res.json(solution)
-        } catch (error) {
-            return next(ApiError.serverError(error.message))
-        }
+        let solution = await Solution.findByPk(solutionId)
+
+        if (solution.userId !== userId) return next(ApiError.forbidden(`Доступ к этому решению разрешен только его создателю`))
+        return res.json(solution)
+        //} catch (error) {
+        //   return next(ApiError.serverError(error.message))
+        //}
     }
 
     async likeSolution(req, res, next) {
-        const {solution_id} = req.params;
+        const solutionId = req.params.solutionId;
         const userId = req.user._id;
 
         try {
-            const solutionLike = await SolutionLike.findOne({where: {solutionId: solution_id, userId}})
+            const solutionLike = await SolutionLike.findOne({where: {solutionId: solutionId, userId}})
 
             if (solutionLike) {
-                await SolutionLike.destroy({where: {solutionId: solution_id, userId}})
+                await SolutionLike.destroy({where: {solutionId: solutionId, userId}})
                 return res.json({isLiked: false})
             } else {
-                await SolutionLike.create({solutionId: solution_id, userId})
+                await SolutionLike.create({solutionId: solutionId, userId})
                 return res.json({isLiked: true})
             }
         } catch (error) {
@@ -157,12 +349,12 @@ export default class SolutionsController {
 
     async addCommentSolution(req, res, next) {
         try {
-            const {solution_id} = req.params;
+            const solutionId = req.params.solutionId;
             const content = req.body.content;
             const userId = req.user._id;
-            if (!content || content===' ') return next(ApiError.badRequest(`Комментарий не может быть пустым`))
+            if (!content || content === ' ') return next(ApiError.badRequest(`Комментарий не может быть пустым`))
 
-            const comment = await SolutionComment.create({content, userId, solutionId: solution_id})
+            const comment = await SolutionComment.create({content, userId, solutionId: solutionId})
 
             return res.json({id: comment._id})
         } catch (error) {
@@ -173,10 +365,35 @@ export default class SolutionsController {
 
 const queryOptions = {
     attributes: {exclude: ['taskId', 'userId']}, include: [{
-        model: User, attributes: ['_id', 'nickname']
+        model: User, attributes: ['_id', 'nickname', 'role']
     }, {
         model: SolutionComment, attributes: {exclude: ['solutionId', 'userId', 'updatedAt']}, include: [{
-            model: User, attributes: ['_id', 'nickname']
+            model: User, attributes: ['_id', 'nickname', 'role']
         }]
     }]
 };
+const conditionCheckFunc = (current, array) => {
+    current = current.replace(/(\/\*[\s\S]*?\*\/|--.*?$)/gm, '').toLowerCase();
+    array = array.map(item => item.replace(/(\/\*[\s\S]*?\*\/|--.*?$)/gm, '').toLowerCase())
+    const result = stringSimilarity.findBestMatch(current, array);
+
+    return (result.bestMatch.rating * 100).toFixed(2)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

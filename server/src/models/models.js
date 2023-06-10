@@ -100,7 +100,7 @@ const Task = sequelize.define('tasks', {
     _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true}, //номер задачи
     description: {type: DataTypes.STRING}, // описание задачи
     verified: {type: DataTypes.BOOLEAN, defaultValue: false}, //доступно ли для решения
-    inBank: {type: DataTypes.BOOLEAN, defaultValue: false} //задача в банке задач? (банк - прошедшие все проверки)
+    inBank: {type: DataTypes.BOOLEAN, defaultValue: null} //задача в банке задач? (банк - прошедшие все проверки)
 });
 Theme.hasMany(Task);
 Task.belongsTo(Theme, {
@@ -130,8 +130,8 @@ Task.belongsTo(Database, {
 // Task
 const AutoTaskCheck = sequelize.define('auto_task_checks', {
     _id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true }, //номер проверки
-    simpleConditionCheck: {type: DataTypes.BOOLEAN, defaultValue: false}, //содержимое ответа
-    complexConditionCheck: {type: DataTypes.BOOLEAN, defaultValue: false}, //содержимое ответа
+    simpleConditionCheck: {type: DataTypes.FLOAT}, //содержимое ответа
+    complexConditionCheck: {type: DataTypes.FLOAT}, //содержимое ответа
     checkingSyntaxOfCode: {type: DataTypes.BOOLEAN, defaultValue: false}, //содержимое ответа
 });
 Task.hasOne(AutoTaskCheck);
@@ -146,10 +146,11 @@ AutoTaskCheck.belongsTo(Task, {
 // Task, User
 const Solution = sequelize.define('solutions', {
     _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true}, //номер решения
-    is_author: {type: DataTypes.BOOLEAN, defaultValue: false}, //это авторское решение?
+    isAuthor: {type: DataTypes.BOOLEAN, defaultValue: false}, //это авторское решение?
     attempts: {type: DataTypes.INTEGER, defaultValue: 0}, //количество попыток решения
     code: {type: DataTypes.STRING}, //код решения
-    verified: {type: DataTypes.BOOLEAN, defaultValue: false} //прошло ли решение автоматическую проверку
+    verified: {type: DataTypes.BOOLEAN, defaultValue: false},
+    finished: {type: DataTypes.BOOLEAN, defaultValue: false} //прошло ли решение автоматическую проверку
 });
 Task.hasMany(Solution);
 Solution.belongsTo(Task, {
@@ -161,6 +162,30 @@ Solution.belongsTo(Task, {
 
 User.hasMany(Solution);
 Solution.belongsTo(User, {
+    foreignKey: {
+        name: 'userId',
+        allowNull: false
+    }
+});
+
+// СВЯЗАН:
+// Solution, User
+const TaskRating = sequelize.define('task_ratings', {
+    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    rating: {type: DataTypes.INTEGER, allowNull: false},
+    verified: {type: DataTypes.BOOLEAN, defaultValue: null}, //оценка надежная или нет
+    isAdmin: {type: DataTypes.BOOLEAN, allowNull: false},
+});
+Task.hasMany(TaskRating);
+TaskRating.belongsTo(Task, {
+    foreignKey: {
+        name: 'taskId',
+        allowNull: false
+    }
+});
+
+User.hasMany(TaskRating);
+TaskRating.belongsTo(User, {
     foreignKey: {
         name: 'userId',
         allowNull: false
@@ -186,6 +211,14 @@ SolutionComment.belongsTo(User, {
     foreignKey: {
         name: 'userId',
         allowNull: false
+    }
+});
+
+TaskRating.hasOne(SolutionComment);
+SolutionComment.belongsTo(TaskRating, {
+    foreignKey: {
+        name: 'taskRatingId',
+        allowNull: true
     }
 });
 
@@ -257,28 +290,7 @@ UserTestAnswer.belongsTo(User, {
     }
 });
 
-// СВЯЗАН:
-// Solution, User
-const TaskRating = sequelize.define('task_ratings', {
-    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true}, //номер оценки
-    rating: {type: DataTypes.INTEGER, allowNull: false}, //выставленный бал
-    verified: {type: DataTypes.BOOLEAN}, //оценка надежная или нет
-});
-Solution.hasMany(TaskRating);
-TaskRating.belongsTo(Solution, {
-    foreignKey: {
-        name: 'solutionId',
-        allowNull: false
-    }
-});
 
-User.hasMany(TaskRating);
-TaskRating.belongsTo(User, {
-    foreignKey: {
-        name: 'userId',
-        allowNull: false
-    }
-});
 
 // СВЯЗАН:
 // User
@@ -401,9 +413,9 @@ TaskSolutionScore.belongsTo(Scores, {
 export {
     Database,
     User,
-    Subscriber,
+    Subscriber,//-
     Task,
-    AutoTaskCheck,
+    AutoTaskCheck,//-
     Solution,
     SolutionComment,
     SolutionLike,
@@ -412,11 +424,11 @@ export {
     DifficultyLevelsOfTheme,
     Test,
     UserTestAnswer,
-    TaskRating,
+    TaskRating,//-
     AdminRoleRequest,
     Scores,
     UserTestScore,
-    TaskCreationScore,
-    TaskEvaluationScore,
-    TaskSolutionScore
+    TaskCreationScore,//-
+    TaskEvaluationScore,//-
+    TaskSolutionScore//-
 };

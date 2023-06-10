@@ -29,7 +29,7 @@ import OneThemePage from "../pages/ThemesPage/OneThemePage";
 import RatingPage from "../pages/RatingPage/RatingPage";
 import RequestsRolePage from "../pages/RequestsRolePage/RequestsRolePage";
 import TestPage from "../pages/TestPage/TestPage";
-import BankTasksPage from "../pages/TasksPage/BankTasksPage";
+import TasksPage from "../pages/TasksPage/TasksPage";
 
 const AppRouter = () => {
     return (
@@ -48,11 +48,11 @@ const AppRouter = () => {
             <Route key="7" path={THEMES_ROUTE()} element={<ThemesPage/>} strict/>
             <Route key="8" path={THEME_ONE_ROUTE(':themeId')} element={<OneThemePage/>} strict/>
             <Route key="9" path={THEME_TEST_ROUTE(':themeId')} element={<TestPage/>} strict/>
-            <Route key="9" path={TASKS_ROUTE(':themeId')} element={<BankTasksPage/>} strict/>
+            <Route key="9" path={TASKS_ROUTE(':themeId')} element={<TasksPage/>} strict/>
 
             <Route key="11" path={TASK_ONE_ROUTE(':themeId', ':taskId')} element={<OneTaskPage/>} strict/>
 
-            <Route key="" path={SOLUTIONS_ROUTE(':themeId',':tasksId')} element={<SolutionsPage/>} strict/>
+            <Route key="" path={SOLUTIONS_ROUTE(':themeId',':taskId')} element={<SolutionsPage/>} strict/>
 
             <Route path='*' element={<NotFoundPage/>}/>
         </Routes>

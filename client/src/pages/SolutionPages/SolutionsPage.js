@@ -13,49 +13,57 @@ import updateImage from '../../static/update.png'
 import likeImage from '../../static/like.png'
 import {observer} from "mobx-react-lite";
 import Avatar from "../../components/otherComponents/avatar";
+import UserImgLink from "../../components/basicElements/userImgLink";
+import {TASK_ONE_ROUTE, USER_ONE_ROUTE} from "../../utils/constsPath";
 
 const SolutionsPage = observer(() => {
+    const navigate = useNavigate()
     const {user} = useContext(Context);
     const {task} = useContext(Context);
     const {solution} = useContext(Context);
     const [requestCompleted, setRequestCompleted] = useState(false)
 
-    const navigate = useNavigate()
-    const {id} = useParams();
+    const {themeId, taskId} = useParams();
+
     const [newComments, setNewComments] = useState({});
 
     useEffect(() => {
-        getOneTask(user, task, id)
+        getOneTask(user, task, themeId, taskId)
             .then(() => {
-                getSolutions(user, task, solution, id, navigate)
-                    .then(() => {
+                getSolutions(user, task, solution ,null,themeId,taskId)
+                    .then((data) => {
+                        if(!data) {
+                            navigate(TASK_ONE_ROUTE(themeId,taskId))
+                        }
                         setRequestCompleted(true)
+                    })
+                    .catch(()=>{
+
                     })
             })
 
     }, [])
     const sendCommentToServer = (solutionId) => {
-        createComment(user, task, solution, solutionId, newComments[solutionId], navigate)
+
+        createComment(user, task, solution, newComments[solutionId],null, themeId, taskId,solutionId)
             .then(() => {
                 setRequestCompleted(true);
                 setNewComments({...newComments, [solutionId]: ""})
             })
     }
     const clickLike = (solutionId) => {
-        like(user,task,solution,solutionId).then(() => setRequestCompleted(true))
+        like(user,task,solution,null, themeId,solutionId).then(() => setRequestCompleted(true))
     }
     if (!requestCompleted) {
         return (<></>)
     }
 
-
-
     return (
 
-        <Container className="col-md-9" style={{display: "flex", flexDirection: "column", gap: 15, width: "100%"}}>
+        <div className="col-md-9" style={{display: "flex", flexDirection: "column", gap: 15, width: "100%"}}>
             <Stat task={task.currentTask} fullContent={true}/>
             <div style={{textAlign: "end"}}>Для задачи было создано {solution.allSolutions.length} решений</div>
-            <Container style={{
+            <div style={{
                 background: "white",
                 borderRadius: 10,
                 padding: 15,
@@ -80,7 +88,7 @@ const SolutionsPage = observer(() => {
                                 key={solutionOne._id}
                                 className="d-flex flex-row justify-content-between flex-column"
                             >
-                                <Container style={{padding: '10px 20px 0'}}>
+                                <div style={{padding: '10px 20px 0'}}>
                                     <div>
 
                                         <div style={{
@@ -102,7 +110,7 @@ const SolutionsPage = observer(() => {
                                                     borderRadius: 10
                                                 }}>Ваше решение</span>)
                                                 : <></>}
-                                            {solutionOne.is_author
+                                            {solutionOne.isAuthor
                                                 ? (<span style={{
                                                     background: "lightyellow",
                                                     padding: '3px 10px',
@@ -137,13 +145,11 @@ const SolutionsPage = observer(() => {
                                             flexWrap: "wrap",
                                             gap: 15
                                         }}>
-                                            <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                            <UserImgLink _id={solutionOne.user._id}
+                                                         nickname={solutionOne.user.nickname}
+                                                         role={solutionOne.user.role}
+                                                         />
 
-
-                                                <Avatar width={25} _id={solutionOne.user._id}/>
-
-                                                {solutionOne.user.nickname} [{solutionOne.user._id}]
-                                            </div>
                                             <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
                                                 <Image src={createImage} style={{height: 15, marginRight: 5}}/>
                                                 <span>{convertDate(solutionOne.createdAt)}</span>
@@ -192,7 +198,7 @@ const SolutionsPage = observer(() => {
 
 
                                     </div>
-                                </Container>
+                                </div>
                                 <hr/>
                                 <div style={{margin: '10px 30px'}}>
                                     {
@@ -207,11 +213,18 @@ const SolutionsPage = observer(() => {
                                                                 flexDirection: "row",
                                                                 padding: '10px 0'
                                                             }}>
-                                                                <Avatar width={40} _id={comment.user._id}/>
+                                                                <div
+                                                                    onClick={()=>navigate(USER_ONE_ROUTE(comment.user._id))}
+                                                                    style={{cursor:"pointer"}}
+                                                                >
+                                                                    <Avatar width={40} _id={comment.user._id}/>
+                                                                </div>
+
 
                                                                 <div style={{marginLeft: 15}}>
                                                                     <div
-                                                                        style={{fontWeight: 700}}>{comment.user.nickname} [{comment.user._id}]
+                                                                        onClick={()=>navigate(USER_ONE_ROUTE(comment.user._id))}
+                                                                        style={{fontWeight: 700,cursor:"pointer"}}>{comment.user.nickname} [{comment.user._id}]
                                                                     </div>
                                                                     <div
                                                                         style={{padding: '5px 0'}}>{comment.content}</div>
@@ -232,8 +245,13 @@ const SolutionsPage = observer(() => {
                                     }
                                     {
                                         <Form style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                            <div
+                                                onClick={()=>navigate(USER_ONE_ROUTE(user.user._id))}
+                                                style={{cursor:"pointer", marginRight: 10}}
+                                            >
+                                                <Avatar width={40} _id={user.user._id}/>
+                                            </div>
 
-                                            <Avatar width={40} _id={user.user._id}/>
 
                                             <Form.Control
                                                 type="text"
@@ -243,11 +261,17 @@ const SolutionsPage = observer(() => {
                                                     setNewComments({...newComments, [solutionOne._id]: e.target.value});
                                                 }}
                                             />
-                                            <Image
-                                                src={sendImage}
-                                                style={{height: 20, width: 'auto', marginLeft: 10, cursor: "pointer"}}
+                                            <div
+                                                style={{cursor: "pointer",}}
                                                 onClick={() => sendCommentToServer(solutionOne._id)}
-                                            />
+                                            >
+                                                <Image
+                                                    src={sendImage}
+                                                    style={{height: 30, width: 'auto', marginLeft: 10, cursor: "none"}}
+                                                />
+                                            </div>
+
+
                                         </Form>
 
                                     }
@@ -256,10 +280,10 @@ const SolutionsPage = observer(() => {
                             </Card>
                         ))
                 }
-            </Container>
+            </div>
 
 
-        </Container>
+        </div>
 
     )
 })

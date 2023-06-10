@@ -16,6 +16,7 @@ import {action} from "mobx";
 import Logo from "./otherComponents/logo";
 import {check, exit} from "../httpRequests/authAPI";
 import Avatar from "./otherComponents/avatar";
+import UserImgLink from "./basicElements/userImgLink";
 
 const NavBar = (() => {
     const {user} = useContext(Context);
@@ -60,7 +61,7 @@ const NavBar = (() => {
                     <Nav className="me-auto">
 
                     </Nav>
-                    <Nav >
+                    <Nav>
                         {
                             user.isAuth
                                 ?
@@ -101,29 +102,9 @@ const NavBar = (() => {
                                         <Nav.Link
                                             onClick={() => logOut()}
                                         >Выйти</Nav.Link>
+                                        <UserImgLink _id={user.user._id} nickname={user.user.nickname}
+                                                     role={user.user.role}/>
 
-                                        <div
-                                            style={{
-                                                marginLeft: "20px",
-                                                display: "flex",
-                                                flexDirection: "row",
-                                                cursor: "pointer",
-                                                background: "black",
-                                                padding: 5,
-                                                borderRadius: 15
-                                            }}
-                                            onClick={() => navigate(USER_ONE_ROUTE(user.user._id))}
-                                        >
-                                            <div style={{
-                                                color: `${user.user.role==='ADMIN'?'yellow':"white"}`,
-                                                paddingRight: 10,
-                                                textAlign: "center",
-                                                alignSelf: "center",
-                                            }}>
-                                                {user.user.nickname}
-                                            </div>
-                                            <Avatar width={25} _id={user.user._id}/>
-                                        </div>
                                     </Nav>
                                 )
                                 :

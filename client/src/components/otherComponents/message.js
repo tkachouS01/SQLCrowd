@@ -50,7 +50,7 @@ function Message() {
                                 show
                                 ?<></>
                                     :
-                                    <Button variant={'dark'} onClick={()=>setShow(!show)} style={{position: "fixed", bottom: 0, right: 0, zIndex: 100,fontSize:10}}>
+                                    <Button variant={'light'} onClick={()=>setShow(!show)} style={{position: "fixed", bottom: 0, right: 0, zIndex: 100,fontSize:10}}>
                                         <strong>ПОКАЗАТЬ</strong> сообщение
                                     </Button>
                             }

@@ -4,17 +4,16 @@ export default class SolutionStore {
     constructor() {
         this._oneSolution = {};
         this._allSolutions = [];
-        this._selectedSolution = {};
         this._result = {success: false, fields:[],rows:[]};
         //this._codeSolution = '';
         makeAutoObservable(this)
     }
 
-    setSolution(solution) {
+    setOneSolution(solution) {
         this._oneSolution = solution;
     }
 
-    get solution() {
+    get oneSolution() {
         return toJS(this._oneSolution);
     }
 
@@ -25,14 +24,6 @@ export default class SolutionStore {
     get allSolutions() {
         return toJS(this._allSolutions);
 
-    }
-
-    setSelectedSolution(selectedSolution) {
-        this._selectedSolution = selectedSolution;
-    }
-
-    get selectedSolution() {
-        return toJS(this._selectedSolution);
     }
 
     setResult(result) {

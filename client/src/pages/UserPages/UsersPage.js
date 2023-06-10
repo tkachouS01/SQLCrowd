@@ -9,16 +9,20 @@ import CountList from "../../components/otherComponents/countList";
 import {HOME_ROUTE} from "../../utils/constsPath";
 
 const UsersPage = observer(() => {
+    const [isLoading, setIsLoading]=useState(true)
     const {user} = useContext(Context)
     const navigate = useNavigate()
 
     useEffect(() => {
+        setIsLoading(true)
         getUsers(user).then((bool) => {
-
+setIsLoading(false)
         })
-
+            .catch(()=>{})
+        setIsLoading(false)
     }, [])
-
+useEffect(()=>{},[isLoading])
+    if(isLoading) return <></>
     return (
         <div>
             <div style={{background: "rgba(1,1,1,0.05)", padding: '0 5px'}}>

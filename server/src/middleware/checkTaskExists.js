@@ -1,6 +1,5 @@
 import { Task } from '../models/models.js'
 import ApiError from '../error/ApiError.js';
-import {consoleError} from "../customMessageConsole.js";
 
 export default async function checkTaskExists(req, res, next) {
     const { taskId } = req.params;
@@ -12,7 +11,6 @@ export default async function checkTaskExists(req, res, next) {
     let task = await Task.findOne({ where: { _id: taskId } });
 
     if (task) {
-        consoleError("+++")
         next();
     } else {
         return next(ApiError.notFound(`Задание №${taskId} не найдено`));

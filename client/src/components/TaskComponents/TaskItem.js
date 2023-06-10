@@ -17,10 +17,8 @@ const TaskItem = observer(({task}) => {
     const navigate = useNavigate()
     const {themeId} = useParams();
 
-    const handleTaskClick = (selectedTask) => {
-        let idTask = selectedTask._id;
-
-        navigate(TASK_ONE_ROUTE(themeId, idTask));
+    const handleTaskClick = (taskId) => {
+        navigate(TASK_ONE_ROUTE(themeId, taskId));
     };
     return (
         <>
@@ -36,7 +34,7 @@ const TaskItem = observer(({task}) => {
 
                 <Stat task={task} fullContent={false}/>
                 <div style={{alignSelf: "flex-end"}}>
-                    <MyButton text={"Перейти на задачу"} onClick={() => handleTaskClick(task)}/>
+                    <MyButton text={"Перейти на задачу"} onClick={() => handleTaskClick(task._id)}/>
                 </div>
 
 

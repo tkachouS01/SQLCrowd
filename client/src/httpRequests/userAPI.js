@@ -36,6 +36,26 @@ export const getOneUser = async (contextUser, currentUserId) => {
 
     return result;
 }
+export const addImageProfile = async (contextUser, userId,selectedFile)=>{
+    let result = false;
+    const formData = new FormData();
+    formData.append('profilePicture', selectedFile);
+
+    await check(contextUser);
+
+    await $authHost.post(`${baseUrlApi}/users/image/${userId}`,formData)
+        .then(data => {
+
+            //contextUser.setCurrentProfile(data.data)
+            result = true;
+            contextUser.setErrorMessage(200, "Картинка профиля обновлена. При необходимости перезагрузите страницу")
+        })
+        .catch(error => {
+            contextUser.setErrorMessage(error.response.status, error.response.data.message)
+        })
+
+    return result;
+}
 export const getImage = async (contextUser,file) => {
 
     await check(contextUser);

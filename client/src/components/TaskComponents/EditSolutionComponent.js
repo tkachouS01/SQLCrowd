@@ -2,12 +2,15 @@ import React, {useContext, useEffect, useState} from 'react';
 import {Button, Container} from "react-bootstrap";
 import CodeEditor from "./CodeEdit";
 import {Context} from "../../index";
-import {createSolution, updateOneSolution} from "../../httpRequests/solutionAPI";
-import {useNavigate} from "react-router-dom";
+import {createSolution, endSolution, runOneSolution} from "../../httpRequests/solutionAPI";
+import {useNavigate, useParams} from "react-router-dom";
 import MyTooltip from "../otherComponents/tooltip";
 import {SOLUTIONS_ROUTE} from "../../utils/constsPath";
+import MyButton from "../basicElements/myButton";
+import {observer} from "mobx-react-lite";
 
-const EditSolutionComponent = () => {
+const EditSolutionComponent = observer(() => {
+    const {themeId, taskId} = useParams()
     let {user} = useContext(Context)
     let {task} = useContext(Context)
     let {solution} = useContext(Context)
@@ -19,96 +22,124 @@ const EditSolutionComponent = () => {
 
     useEffect(() => {
         setFirstRender(true)
+        if (task.currentTask.myProgress !== 'Не выполнялось') {
+            clickGoToTheSolution()
+        }
     }, [])
-    let clickStartSolution = () => {
+    let clickRunSolution = () => {
         setFirstRender(false)
-        updateOneSolution(user, task, solution, codeSolution)
-            .then(() => {
 
+        runOneSolution(user, task, solution, codeSolution, null, themeId, taskId, solution.oneSolution._id)
+            .then((data) => {
                 setTempRender(!tempRender)
+            })
+
+    }
+    let clickEndSolution = () => {
+        endSolution(user, solution, null, themeId, taskId, solution.oneSolution._id)
+            .then(() => {
+            })
+            .catch(() => {
             })
     }
     let clickGoToTheSolution = () => {
-        createSolution(user, task, solution, navigate)
+        createSolution(user, task, solution, null, themeId, taskId)
             .then(() => {
-                setCodeSolution(solution.solution.code)
+                setCodeSolution(solution.oneSolution.code)
+
                 setStartSolution(true);
             })
     }
     useEffect(() => {
-    }, [solution.result.success, tempRender])
+    }, [solution.result.success, tempRender,solution.oneSolution.finished])
+
     return (
         <>
             {
                 (task.currentTask.verified || (task.currentTask.user._id === user.user._id && task.currentTask.database))
                     ?
                     (
-                        <Container style={{background: "white", borderRadius: 10, padding: 15}}>
-
-                            {
-                                !startSolution
-                                    ?
-                                    (
-                                        <div style={{display: "flex", flexDirection: "row", gap: 15}}>
-                                            <Button onClick={clickGoToTheSolution}>К решению</Button>
-                                        </div>
-
-                                    )
-                                    :
-                                    (
-                                        <div style={{
-                                            marginBottom: 15,
-                                            display: "flex",
-                                            flexDirection: "row",
-                                            alignItems: "center",
-                                            columnGap: 15,
-                                            rowGap: 2,
-                                            flexWrap: "wrap"
-                                        }}>
-                                            <Button onClick={clickStartSolution}>Выполнить</Button>
-                                            <Button onClick={() => {
-                                                navigate(SOLUTIONS_ROUTE(1, task.selectedTask))
-                                            }}>К решениям других</Button>
-                                            <div>
+                        <div>
+                            <div style={{
+                                marginBottom: 15,
+                                display: "flex",
+                                flexDirection: "row",
+                                alignItems: "center",
+                                columnGap: 15,
+                                rowGap: 2,
+                                flexWrap: "wrap"
+                            }}>
+                                <MyButton text={"К решениям других"}
+                                          onClick={() => {
+                                              navigate(SOLUTIONS_ROUTE(themeId, taskId))
+                                          }}
+                                />
+                                {
+                                    !startSolution
+                                        ?
+                                        (
+                                            <MyButton text={"Начать решение"} onClick={clickGoToTheSolution}/>
+                                        )
+                                        :
+                                        (
+                                            <>
+                                                <MyButton text={"Выполнить"}
+                                                          onClick={clickRunSolution}
+                                                />
                                                 {
-                                                    !firstRender
-                                                        ?
-                                                        (
-                                                            (solution.result.success && user.errorMessage.status === 200)
-                                                                ? (<span style={{
-                                                                    background: "#9ACD32",
-                                                                    padding: '3px 5px',
-                                                                    borderRadius: 10
-                                                                }}>Решение верное</span>)
-                                                                : (<span style={{
-                                                                    background: "#FFC0CB",
-                                                                    padding: '3px 5px',
-                                                                    borderRadius: 10
-                                                                }}>Решение неверное</span>)
-                                                        )
+                                                    solution.oneSolution.finished
+                                                        ? <></>
                                                         :
-                                                        (
-                                                            <span style={{
-                                                                background: "lightgray",
-                                                                padding: '3px 5px',
-                                                                fontSize: 12,
-                                                                borderRadius: 10
-                                                            }}>Нажмите Выполнить, для проверки решения</span>
-                                                        )
-
-
+                                                        <MyButton text={"Завершить решение"}
+                                                                  onClick={clickEndSolution}
+                                                        />
                                                 }
-                                            </div>
-                                        </div>
-                                    )
-                            }
-                            {
-                                startSolution && task.currentTask.database
-                                    ? (<CodeEditor codeSolution={codeSolution} setCodeSolution={setCodeSolution}
-                                                   readonly={false}/>)
-                                    : (<></>)
-                            }
-                        </Container>
+
+                                                <div>
+                                                    {
+                                                        !firstRender
+                                                            ?
+                                                            (
+                                                                (solution.result.success)
+                                                                    ? (<span style={{
+                                                                        background: "#9ACD32",
+                                                                        padding: '3px 5px',
+                                                                        borderRadius: 10
+                                                                    }}>Решение верное</span>)
+                                                                    : (<span style={{
+                                                                        background: "#FFC0CB",
+                                                                        padding: '3px 5px',
+                                                                        borderRadius: 10
+                                                                    }}>Решение неверное</span>)
+                                                            )
+                                                            :
+                                                            (
+                                                                <span style={{
+                                                                    background: "lightgray",
+                                                                    padding: '3px 5px',
+                                                                    fontSize: 12,
+                                                                    borderRadius: 10
+                                                                }}>Нажмите Выполнить, для проверки решения</span>
+                                                            )
+
+
+                                                    }
+                                                </div>
+                                            </>
+                                        )
+                                }
+                            </div>
+                            <div style={{marginBottom: 15}}>
+                                {
+                                    startSolution && task.currentTask.database
+                                        ? (<CodeEditor codeSolution={codeSolution} setCodeSolution={setCodeSolution}
+                                                       readonly={solution.oneSolution.finished}/>)
+                                        : (<></>)
+                                }
+                            </div>
+
+                        </div>
+
                     )
                     :
                     (
@@ -120,6 +151,6 @@ const EditSolutionComponent = () => {
         </>
 
     );
-};
+});
 
 export default EditSolutionComponent;
