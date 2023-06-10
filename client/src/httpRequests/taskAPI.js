@@ -32,9 +32,6 @@ export const getOneTask = async (contextUser, contextTask, themeId, taskId) => {
 
     await $authHost.get(`${baseUrlApi}/modules/${null}/themes/${themeId}/tasks/${+taskId}`, {})
         .then(data => {
-            console.log(data.data.info.inBank)
-            console.log(data.data.info.autoTaskCheck)
-
             contextTask.setCurrentTask(data.data.info);
             contextTask.setDatabases(data.data.databases);
             contextTask.setDatabasesData(data.data.data);

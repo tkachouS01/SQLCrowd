@@ -81,7 +81,7 @@ const OneTaskPage = (() => {
     if (isLoading) {
         return <></>
     }
-    console.log(task.currentTask)
+
     return (
         <div>
             <div style={{background: "rgba(1,1,1,0.05)", padding: '0 5px'}}>

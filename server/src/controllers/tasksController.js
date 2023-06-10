@@ -427,7 +427,6 @@ export const getQuery = (section, category, themeId, userId, role, isFinished = 
                 attributes: []
             })
         } else if (category === 'my-tasks') {
-            consoleError("++++")
             if (!isFinished) {
 
                 query.where = {

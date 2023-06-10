@@ -69,9 +69,6 @@ export const endSolution = async (contextUser, contextSolution, moduleId, themeI
 
     await $authHost.patch(`${baseUrlApi}/modules/${moduleId}/themes/${themeId}/tasks/${taskId}/solutions/${solutionId}/finished`)
         .then(data => {
-            console.log(contextSolution.oneSolution)
-            console.log({...contextSolution.oneSolution, finished: true})
-
             contextSolution.setOneSolution({...contextSolution.oneSolution, finished: true})
             //contextSolution.setResult(data.data)
             result = true;
