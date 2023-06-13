@@ -63,9 +63,10 @@ function App() {
                     <Image src={githubLogo} style={{height: 40}}/>
                 </a>
 
-                <a style={{fontWeight: 1000, fontSize: 25, color: "rgb(62,113,178)",textDecoration: "none"}} href={'http://bru.by/'}>БРУ</a>
-                <a style={{color: "black",textDecoration: "none"}} href={'https://t.me/t_Serega_01'}>Ткачёв С.А.</a>
-                <a style={{color: "black",textDecoration: "none"}} href={'https://t.me/+375299812625'}>Мрочек Т.В.</a>
+                <a style={{fontWeight: 1000, fontSize: 25, color: "rgb(62,113,178)", textDecoration: "none"}}
+                   href={'http://bru.by/'}>БРУ</a>
+                <a style={{color: "black", textDecoration: "none"}} href={'https://t.me/t_Serega_01'}>Ткачёв С.А.</a>
+                <a style={{color: "black", textDecoration: "none"}} href={'https://t.me/+375299812625'}>Мрочек Т.В.</a>
                 <a>sqlcrowd@yandex.by</a>
             </div>
 

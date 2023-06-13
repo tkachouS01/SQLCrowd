@@ -1,9 +1,9 @@
 import React, {useContext, useEffect, useState} from 'react'
 import {Context} from "../../index";
-import {addImageProfile, getOneUser, getUsers} from "../../httpRequests/userAPI";
+import {addImageProfile, getOneUser} from "../../httpRequests/userAPI";
 import {useNavigate, useParams} from "react-router-dom";
 import Avatar from "../../components/otherComponents/avatar";
-import {Breadcrumb, Button, Form, Image} from "react-bootstrap";
+import {Breadcrumb, Form} from "react-bootstrap";
 import {convertDate, simpleConvertDate} from "../../utils/utils";
 import MyButton from "../../components/basicElements/myButton";
 import {updateRole} from "../../httpRequests/roleRequestsAPI";

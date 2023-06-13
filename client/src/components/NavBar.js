@@ -1,21 +1,17 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Context} from "../index";
-import {Button, Navbar} from "react-bootstrap";
+import {Navbar} from "react-bootstrap";
 import {Container, Nav} from "react-bootstrap";
 import {NavLink, useNavigate} from "react-router-dom";
 import {
     HOME_ROUTE,
-    RATING_ROUTE, REQUESTS_ROLE_ROUTE,
     SIGN_IN_ROUTE,
-    TASKS_ROUTE,
     THEMES_ROUTE,
-    USER_ONE_ROUTE,
     USERS_ROUTE
 } from "../utils/constsPath";
 import {action} from "mobx";
 import Logo from "./otherComponents/logo";
 import {check, exit} from "../httpRequests/authAPI";
-import Avatar from "./otherComponents/avatar";
 import UserImgLink from "./basicElements/userImgLink";
 
 const NavBar = (() => {
@@ -61,9 +57,11 @@ const NavBar = (() => {
                     <Nav className="me-auto">
 
                     </Nav>
-                    <Nav style={{background: "rgba(255,255,255,0.95)",
+                    <Nav style={{
+                        background: "rgba(255,255,255,0.95)",
                         backdropFilter: 'blur(10px)',
-                        height:'100%'}}>
+                        height: '100%'
+                    }}>
                         {
                             user.isAuth
                                 ?

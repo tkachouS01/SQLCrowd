@@ -33,6 +33,7 @@ export default class UserStore {
     get users() {
         return toJS(this._users);
     }
+
     setCurrentProfile(currentProfile) {
         this._currentProfile = currentProfile;
     }
@@ -41,8 +42,8 @@ export default class UserStore {
         return toJS(this._currentProfile);
     }
 
-    setErrorMessage(status, message){
-        this._errorMessage={status, message};
+    setErrorMessage(status, message) {
+        this._errorMessage = {status, message};
     }
 
     get errorMessage() {

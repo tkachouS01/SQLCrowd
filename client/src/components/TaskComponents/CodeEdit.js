@@ -3,16 +3,16 @@ import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-sql';
 import 'ace-builds/src-noconflict/theme-cloud9_day';
 
-function CodeEditor({codeSolution, setCodeSolution,readonly}) {
+function CodeEditor({codeSolution, setCodeSolution, readonly}) {
 
-        return (
+    return (
         <AceEditor
             mode="sql"
             theme="cloud9_day"
             value={codeSolution}
             onChange={(e) => setCodeSolution(e)}
             name="code-editor"
-            editorProps={{ $blockScrolling: true }}
+            editorProps={{$blockScrolling: true}}
             setOptions={{
                 showLineNumbers: true
             }}

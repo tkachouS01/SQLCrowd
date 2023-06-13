@@ -28,10 +28,10 @@ const Module = sequelize.define('modules', {
     createdByUserId: {type: DataTypes.INTEGER},
     updatedByUserId: {type: DataTypes.INTEGER}
 });
-User.hasMany(Module, { as: 'createdModule', foreignKey: 'createdByUserId' });
-User.hasMany(Module, { as: 'updatedModule', foreignKey: 'updatedByUserId' });
-Module.belongsTo(User, { as: 'createdBy', foreignKey: 'createdByUserId',allowNull: false });
-Module.belongsTo(User, { as: 'updatedBy', foreignKey: 'updatedByUserId',allowNull: false });
+User.hasMany(Module, {as: 'createdModule', foreignKey: 'createdByUserId'});
+User.hasMany(Module, {as: 'updatedModule', foreignKey: 'updatedByUserId'});
+Module.belongsTo(User, {as: 'createdBy', foreignKey: 'createdByUserId', allowNull: false});
+Module.belongsTo(User, {as: 'updatedBy', foreignKey: 'updatedByUserId', allowNull: false});
 
 const Theme = sequelize.define('themes', {
     _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
@@ -44,10 +44,10 @@ const Theme = sequelize.define('themes', {
     createdByUserId: {type: DataTypes.INTEGER},
     updatedByUserId: {type: DataTypes.INTEGER}
 });
-User.hasMany(Theme, { as: 'createdThemes', foreignKey: 'createdByUserId' });
-User.hasMany(Theme, { as: 'updatedThemes', foreignKey: 'updatedByUserId' });
-Theme.belongsTo(User, { as: 'createdBy', foreignKey: 'createdByUserId',allowNull: false });
-Theme.belongsTo(User, { as: 'updatedBy', foreignKey: 'updatedByUserId',allowNull: false });
+User.hasMany(Theme, {as: 'createdThemes', foreignKey: 'createdByUserId'});
+User.hasMany(Theme, {as: 'updatedThemes', foreignKey: 'updatedByUserId'});
+Theme.belongsTo(User, {as: 'createdBy', foreignKey: 'createdByUserId', allowNull: false});
+Theme.belongsTo(User, {as: 'updatedBy', foreignKey: 'updatedByUserId', allowNull: false});
 
 Module.hasMany(Theme);
 Theme.belongsTo(Module, {
@@ -102,7 +102,7 @@ Task.belongsTo(Database, {
 });
 
 const AutoTaskCheck = sequelize.define('auto_task_checks', {
-    _id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     simpleConditionCheck: {type: DataTypes.FLOAT},
     complexConditionCheck: {type: DataTypes.FLOAT},
     checkingSyntaxOfCode: {type: DataTypes.BOOLEAN, defaultValue: false},
@@ -218,10 +218,10 @@ const Test = sequelize.define('tests', {
     createdByUserId: {type: DataTypes.INTEGER},
     updatedByUserId: {type: DataTypes.INTEGER}
 });
-User.hasMany(Test, { as: 'createdTest', foreignKey: 'createdByUserId' });
-User.hasMany(Test, { as: 'updatedTest', foreignKey: 'updatedByUserId' });
-Test.belongsTo(User, { as: 'createdBy', foreignKey: 'createdByUserId',allowNull: false });
-Test.belongsTo(User, { as: 'updatedBy', foreignKey: 'updatedByUserId',allowNull: false });
+User.hasMany(Test, {as: 'createdTest', foreignKey: 'createdByUserId'});
+User.hasMany(Test, {as: 'updatedTest', foreignKey: 'updatedByUserId'});
+Test.belongsTo(User, {as: 'createdBy', foreignKey: 'createdByUserId', allowNull: false});
+Test.belongsTo(User, {as: 'updatedBy', foreignKey: 'updatedByUserId', allowNull: false});
 
 Theme.hasOne(Test);
 Test.belongsTo(Theme, {
@@ -256,7 +256,7 @@ const AdminRoleRequest = sequelize.define('admin_role_requests', {
     _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     role: {type: DataTypes.ENUM('USER', 'ADMIN'), allowNull: false},
     isThereResponse: {type: DataTypes.BOOLEAN, defaultValue: false},
-    isApproved: {type: DataTypes.BOOLEAN,defaultValue: false},
+    isApproved: {type: DataTypes.BOOLEAN, defaultValue: false},
     requestMessage: {type: DataTypes.STRING},
     responseMessage: {type: DataTypes.STRING},
     updatedByUserId: {type: DataTypes.INTEGER}
@@ -272,7 +272,7 @@ AdminRoleRequest.belongsTo(User, {
 const Scores = sequelize.define('scores', {
     _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     score: {type: DataTypes.DOUBLE, allowNull: false},
-    rating: {type: DataTypes.DOUBLE,allowNull: false},
+    rating: {type: DataTypes.DOUBLE, allowNull: false},
 });
 User.hasMany(Scores);
 Scores.belongsTo(User, {

@@ -1,8 +1,8 @@
-const convertDate=(str)=> {
+const convertDate = (str) => {
     let date = new Date(str);
     let now = new Date();
     let diff = date - now;
-    let options = { numeric: "auto" };
+    let options = {numeric: "auto"};
     let rtf = new Intl.RelativeTimeFormat("ru-RU", options);
     let formattedDate;
 
@@ -21,24 +21,24 @@ const convertDate=(str)=> {
     }
 
     if (Math.abs(diff) >= 24 * 60 * 60 * 1000 || date.getFullYear() !== now.getFullYear()) {
-        let timeOptions = { hour: "numeric", minute: "numeric" };
+        let timeOptions = {hour: "numeric", minute: "numeric"};
         let time = date.toLocaleTimeString("ru-RU", timeOptions);
         formattedDate += " в " + time;
     }
 
     return formattedDate;
 }
-const simpleConvertDate=(str)=>{
+const simpleConvertDate = (str) => {
     let date = new Date(str);
-    let options = { day: 'numeric', month: 'long', year: 'numeric' };
+    let options = {day: 'numeric', month: 'long', year: 'numeric'};
     let formattedDate = date.toLocaleDateString("ru-RU", options);
     return formattedDate
 }
-const timeSolution=(str)=> {
+const timeSolution = (str) => {
     return str.split(':')
         .map((val, i) => val !== "00" ? val + ['ч', 'мин', 'сек'][i] : "")
         .filter(val => val !== "")
         .join(' ');
 }
 
-export {convertDate, timeSolution,simpleConvertDate}
+export {convertDate, timeSolution, simpleConvertDate}

@@ -4,7 +4,7 @@ export default class SolutionStore {
     constructor() {
         this._oneSolution = {};
         this._allSolutions = [];
-        this._result = {success: false, fields:[],rows:[]};
+        this._result = {success: false, fields: [], rows: []};
         makeAutoObservable(this)
     }
 

@@ -16,11 +16,10 @@ export default async function (req, res, next) {
         req.user = decoded
 
         const user = await User.findByPk(req.user._id)
-        if(user._id === req.user._id && user.nickname === req.user.nickname && user.email ===req.user.email&& user.role===req.user.role) {
+        if (user._id === req.user._id && user.nickname === req.user.nickname && user.email === req.user.email && user.role === req.user.role) {
 
             next()
-        }
-        else {
+        } else {
             return next(ApiError.unauthorized("Доступ запрещен. Данные токена изменены. Пройдите авторизацию"))
         }
 

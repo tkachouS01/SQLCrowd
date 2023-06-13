@@ -15,8 +15,6 @@ import {
 import {Op} from "sequelize";
 import sequelize from "../db.js";
 import {unknownUser} from "./solutionsController.js";
-import {raw} from "express";
-import {consoleError, consoleMessage} from "../customMessageConsole.js";
 
 export default class TasksController {
 
@@ -104,25 +102,25 @@ export default class TasksController {
         }
         try {
 
-        const result = await Task.findAll({
-            ...getQuery(req.query.section, req.query.category, themeId, userId, req.user.role)
-        });
-        const currentTheme = await Theme.findByPk(themeId)
+            const result = await Task.findAll({
+                ...getQuery(req.query.section, req.query.category, themeId, userId, req.user.role)
+            });
+            const currentTheme = await Theme.findByPk(themeId)
 
-        let created = {
-            current: (await Task.findAll({...getQuery('evaluation', 'my-tasks', themeId, userId, req.user.role, true)})).length,
-            max: currentTheme.numCreateTasks
-        }
-        let evaluated = {
-            current: (await Task.findAll({...getQuery('evaluation', 'executed', themeId, userId, req.user.role)})).length,
-            max: currentTheme.numEvaluationTasks
-        }
-        let fromBank = {
-            current: (await Task.findAll({...getQuery('bank', 'executed', themeId, userId, req.user.role)})).length
-        }
-        return res.json({result, info: {created, evaluated, fromBank}})
+            let created = {
+                current: (await Task.findAll({...getQuery('evaluation', 'my-tasks', themeId, userId, req.user.role, true)})).length,
+                max: currentTheme.numCreateTasks
+            }
+            let evaluated = {
+                current: (await Task.findAll({...getQuery('evaluation', 'executed', themeId, userId, req.user.role)})).length,
+                max: currentTheme.numEvaluationTasks
+            }
+            let fromBank = {
+                current: (await Task.findAll({...getQuery('bank', 'executed', themeId, userId, req.user.role)})).length
+            }
+            return res.json({result, info: {created, evaluated, fromBank}})
         } catch (error) {
-           return next(ApiError.serverError(error.message))
+            return next(ApiError.serverError(error.message))
         }
     }
 

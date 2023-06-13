@@ -24,9 +24,7 @@ app.use((req, res, next) => {
     next(ApiError.notFound(`Маршрут не определен`))
 });
 
-
 app.use(errorHandler)
-
 
 try {
     await sequelize.authenticate()

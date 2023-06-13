@@ -4,16 +4,16 @@ import {Context} from "../index";
 import {useNavigate} from "react-router-dom";
 import {getRating} from "../httpRequests/ratingAPI";
 import UserImgLink from "../components/basicElements/userImgLink";
-import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
+import {FaArrowUp, FaArrowDown} from 'react-icons/fa';
 
-const SortableColumnHeader = ({title,column, sortColumn, sortDirection, setSortColumn, setSortDirection}) => {
+const SortableColumnHeader = ({title, column, sortColumn, sortDirection, setSortColumn, setSortDirection}) => {
     return (
         <th
             style={{cursor: "pointer", userSelect: "none"}}
             onClick={() => {
-            setSortColumn(column);
-            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-        }}>
+                setSortColumn(column);
+                setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+            }}>
             {title} {sortColumn === column && (sortDirection === 'asc'
             ? <FaArrowDown color={'rgba(255, 0, 0, 0.8)'}/>
             : <FaArrowUp color={'rgba(58,138,0,0.8)'}/>)}
@@ -63,16 +63,20 @@ const HomePage = () => {
                 <Table bordered responsive>
                     <thead>
                     <tr className={'main-color-blue'}>
-                        <SortableColumnHeader title="Пользователь" column="_id" sortColumn={sortColumn} sortDirection={sortDirection}
+                        <SortableColumnHeader title="Пользователь" column="_id" sortColumn={sortColumn}
+                                              sortDirection={sortDirection}
                                               setSortColumn={setSortColumn} setSortDirection={setSortDirection}/>
-                        <SortableColumnHeader title="В банке" column="tasksInBank" sortColumn={sortColumn} sortDirection={sortDirection}
+                        <SortableColumnHeader title="В банке" column="tasksInBank" sortColumn={sortColumn}
+                                              sortDirection={sortDirection}
                                               setSortColumn={setSortColumn} setSortDirection={setSortDirection}/>
-                        <SortableColumnHeader title="Создано" column="tasksCreated" sortColumn={sortColumn} sortDirection={sortDirection}
+                        <SortableColumnHeader title="Создано" column="tasksCreated" sortColumn={sortColumn}
+                                              sortDirection={sortDirection}
                                               setSortColumn={setSortColumn} setSortDirection={setSortDirection}/>
                         <SortableColumnHeader title="Оценено" column="tasksEvaluated" sortColumn={sortColumn}
                                               sortDirection={sortDirection} setSortColumn={setSortColumn}
                                               setSortDirection={setSortDirection}/>
-                        <SortableColumnHeader title="Баллы" column="scores" sortColumn={sortColumn} sortDirection={sortDirection}
+                        <SortableColumnHeader title="Баллы" column="scores" sortColumn={sortColumn}
+                                              sortDirection={sortDirection}
                                               setSortColumn={setSortColumn} setSortDirection={setSortDirection}/>
                         <SortableColumnHeader title="Средняя оценка" column="averageRating" sortColumn={sortColumn}
                                               sortDirection={sortDirection} setSortColumn={setSortColumn}

@@ -1,10 +1,9 @@
 import React, {useContext, useEffect} from 'react';
-import {Container, Dropdown, DropdownButton, Form, Table} from "react-bootstrap";
+import {Dropdown, DropdownButton, Table} from "react-bootstrap";
 import {toJS} from "mobx";
 import {Context} from "../../index";
 import {observer} from "mobx-react-lite";
-import Button from "react-bootstrap/Button";
-import Diagramm from "./diagramm/diagramModal";
+import Diagram from "./diagramm/diagramModal";
 
 const TableView = observer(({selectedTable, setSelectedTable, tableNames}) => {
     let {user} = useContext(Context)
@@ -29,7 +28,7 @@ const TableView = observer(({selectedTable, setSelectedTable, tableNames}) => {
                         <div>
                             <div style={{marginBottom: 20}}>
                                 <>
-                                    <Diagramm task={task.currentTask}/>
+                                    <Diagram task={task.currentTask}/>
                                 </>
                                 <div style={{marginTop: 15}}>
                                     <DropdownButton id="table-dropdown" title={selectedTable}
@@ -66,7 +65,7 @@ const TableView = observer(({selectedTable, setSelectedTable, tableNames}) => {
                                                             <>
                                                                 <Table bordered responsive>
                                                                     <thead>
-                                                                    <tr  className={'main-color-blue'}>
+                                                                    <tr className={'main-color-blue'}>
                                                                         {
                                                                             solution.result.fields.map((field, id) => (
                                                                                 <th key={id}>{field}</th>
@@ -105,8 +104,10 @@ const TableView = observer(({selectedTable, setSelectedTable, tableNames}) => {
                                                                                 : user.errorMessage.message === 'Запрос исполнен, данные получены'
                                                                                     ? <div
                                                                                         style={{color: "#ff5a6f"}}>{user.errorMessage.message}</div>
-                                                                                    : <div>Здесь будут показаны результаты запроса</div>
-                                                                            : <div>Здесь будут показаны результаты запроса</div>
+                                                                                    : <div>Здесь будут показаны результаты
+                                                                                        запроса</div>
+                                                                            : <div>Здесь будут показаны результаты
+                                                                                запроса</div>
                                                                     }
                                                                 </div>
                                                             </>
@@ -120,7 +121,7 @@ const TableView = observer(({selectedTable, setSelectedTable, tableNames}) => {
                                         (
                                             <Table bordered responsive>
                                                 <thead>
-                                                <tr  className={'main-color-blue'}>
+                                                <tr className={'main-color-blue'}>
                                                     {task.databasesData[selectedTable].fields.map((field, id) => (
                                                         <th key={id}>{field}</th>))}
                                                 </tr>

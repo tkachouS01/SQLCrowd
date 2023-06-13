@@ -1,10 +1,8 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Button, Container} from "react-bootstrap";
 import CodeEditor from "./CodeEdit";
 import {Context} from "../../index";
 import {createSolution, endSolution, runOneSolution} from "../../httpRequests/solutionAPI";
 import {useNavigate, useParams} from "react-router-dom";
-import MyTooltip from "../otherComponents/tooltip";
 import {SOLUTIONS_ROUTE} from "../../utils/constsPath";
 import MyButton from "../basicElements/myButton";
 import {observer} from "mobx-react-lite";
@@ -51,7 +49,7 @@ const EditSolutionComponent = observer(() => {
             })
     }
     useEffect(() => {
-    }, [solution.result.success, tempRender,solution.oneSolution.finished])
+    }, [solution.result.success, tempRender, solution.oneSolution.finished])
 
     return (
         <>
@@ -104,14 +102,14 @@ const EditSolutionComponent = observer(() => {
                                                                     ?
                                                                     <span
                                                                         className={'main-color-green'}
-                                                                        style={{padding: '3px 5px',borderRadius: 10}}
+                                                                        style={{padding: '3px 5px', borderRadius: 10}}
                                                                     >
                                                                         Решение верное
                                                                     </span>
                                                                     :
                                                                     <span
                                                                         className={'main-color-red'}
-                                                                        style={{padding: '3px 5px',borderRadius: 10}}
+                                                                        style={{padding: '3px 5px', borderRadius: 10}}
                                                                     >
                                                                         Решение не верное
                                                                     </span>
@@ -120,7 +118,11 @@ const EditSolutionComponent = observer(() => {
                                                             (
                                                                 <span
                                                                     className={'main-color-blue'}
-                                                                    style={{padding: '3px 5px',fontSize: 12,borderRadius: 10}}
+                                                                    style={{
+                                                                        padding: '3px 5px',
+                                                                        fontSize: 12,
+                                                                        borderRadius: 10
+                                                                    }}
                                                                 >
                                                                     Нажмите Выполнить, для проверки решения
                                                                 </span>

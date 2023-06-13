@@ -33,7 +33,8 @@ async function createDatabases() {
         try {
             await sequelize.query(`CREATE DATABASE ${dbNames[i]}`);
             console.log(`БД ${dbNames[i]} создана`);
-        } catch (error) {}
+        } catch (error) {
+        }
     }
     sequelize = [];
     for (let i = 0; i < dbNames.length; i++) {
@@ -71,7 +72,7 @@ async function createDatabases() {
             }
 
         } catch (err) {
-           consoleError(`Не удалось подключиться к базе данных ${dbNames[i]}: ${err}`)
+            consoleError(`Не удалось подключиться к базе данных ${dbNames[i]}: ${err}`)
         }
     }
 }
@@ -125,4 +126,5 @@ async function getAllTablesAndColumns(databaseId) {
 
     return tableData;
 }
+
 export {createDatabases, executeQuery, getAllTablesAndColumns};

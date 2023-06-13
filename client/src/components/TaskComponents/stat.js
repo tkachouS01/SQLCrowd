@@ -1,25 +1,18 @@
-import {Col, Container, Image, Row} from "react-bootstrap";
+import {Image} from "react-bootstrap";
 import solvedImage from "../../static/solved.png";
 import usersImage from "../../static/users.png";
 import timeImage from "../../static/time.png";
 import createImage from "../../static/create.png";
 import updateImage from "../../static/update.png";
 import dbImage from "../../static/db.png";
-import authorImage from "../../static/author.png";
-
 import React, {useContext} from "react";
 import {convertDate, timeSolution} from "../../utils/utils";
 import {Context} from "../../index";
-import Avatar from "../otherComponents/avatar";
-import {USER_ONE_ROUTE} from "../../utils/constsPath";
-import {useNavigate} from "react-router-dom";
 import UserImgLink from "../basicElements/userImgLink";
 import TaskStatusAuthor from "../basicElements/taskStatusAuthor";
 
 const Stat = (({task}) => {
     const {user} = useContext(Context)
-    const navigate = useNavigate();
-
 
     return (
         <div style={{display: "flex", flexDirection: "column", gap: 15}}>

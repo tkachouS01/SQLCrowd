@@ -56,10 +56,10 @@ export default class AuthController {
                 }, {transaction: t});
 
 
-                let countUsers = await User.count({transaction:t});
+                let countUsers = await User.count({transaction: t});
                 if (countUsers === 1) {
                     await User.update(
-                        {role: 'ADMIN'}, {where: {_id: user._id},transaction:t}
+                        {role: 'ADMIN'}, {where: {_id: user._id}, transaction: t}
                     )
                 }
                 await mySendMail(user.nickname, user.email, password, user._id, user.createdAt)

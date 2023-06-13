@@ -6,7 +6,6 @@ import modulesRouter from "./Modules/modulesRouter.js";
 import ratingRouter from "./ratingRouter.js";
 import Router from 'express'
 
-
 const router = new Router()
 
 router.use("/", authRouter)

@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react'
 import {Context} from "../../index";
 import {addRatingOneTask, getOneTask, updateTask} from "../../httpRequests/taskAPI";
-import {Accordion, Breadcrumb, Button, Container, Form, Modal, Table} from "react-bootstrap";
+import {Accordion, Breadcrumb, Table} from "react-bootstrap";
 import {useNavigate, useParams} from "react-router-dom";
 import Stat from "../../components/TaskComponents/stat";
 import EditTaskComponent from "../../components/TaskComponents/EditTaskComponent";
@@ -11,11 +11,9 @@ import {HOME_ROUTE, TASKS_ROUTE, THEMES_ROUTE} from "../../utils/constsPath";
 import TextareaAutosize from "react-textarea-autosize";
 import StarRating from "../../components/SolutionComponents/StarRating";
 import MyButton from "../../components/basicElements/myButton";
-import {toJS} from "mobx";
 import TaskStatusAuthor from "../../components/basicElements/taskStatusAuthor";
 import {convertDate} from "../../utils/utils";
 import {observer} from "mobx-react-lite";
-
 
 const OneTaskPage = (observer(() => {
     const [isLoading, setIsLoading] = useState(true)
@@ -184,7 +182,8 @@ const OneTaskPage = (observer(() => {
                                                             task.currentTask.ratingTask.myRating.verified === null
                                                                 ? <span className={'main-color-yellow'}>Оценка не проходила проверку</span>
                                                                 : task.currentTask.ratingTask.myRating.verified
-                                                                    ? <span className={'main-color-green'}>Оценка адекватная</span>
+                                                                    ? <span
+                                                                        className={'main-color-green'}>Оценка адекватная</span>
                                                                     : <span className={'main-color-red'}>Оценка является выбросом по критерию Диксона</span>
                                                         }
                                                     </div>
@@ -215,7 +214,7 @@ const OneTaskPage = (observer(() => {
 
                         <Table bordered responsive>
                             <thead>
-                            <tr  className={'main-color-blue'}>
+                            <tr className={'main-color-blue'}>
                                 <th style={{fontWeight: 100, textAlign: "center"}}>Проверка синтаксиса запроса</th>
                                 <th style={{fontWeight: 100, textAlign: "center"}}>Проверка на плагиат формулировки
                                     задачи

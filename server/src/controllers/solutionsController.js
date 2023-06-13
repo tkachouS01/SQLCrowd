@@ -5,8 +5,7 @@ import {
     SolutionLike,
     SolutionComment,
     AutoTaskCheck,
-    TaskRating,
-    TaskEvaluationScore, DifficultyLevelsOfTheme, Scores, TaskSolutionScore
+    TaskRating, DifficultyLevelsOfTheme, Scores, TaskSolutionScore
 } from '../models/models.js';
 import ApiError from '../error/ApiError.js';
 import {executeQuery} from '../init-user-dbs.js'
@@ -14,7 +13,6 @@ import stringSimilarity from "string-similarity";
 import {Op} from "sequelize";
 import sequelize from "../db.js";
 import {convertScoreToRating} from "../utils/utils.js";
-import {consoleError, consoleMessage} from "../customMessageConsole.js";
 
 export const unknownUser = {
     _id: 0, nickname: 'СЕКРЕТНЫЙ СУСЛИК', role: 'ADMIN'
@@ -303,23 +301,23 @@ export default class SolutionsController {
                 return next(ApiError.forbidden(`Редактировать решение другого пользователя запрещено`))
             }
         } catch (error) {
-            if(!t.finished) await t.rollback()
+            if (!t.finished) await t.rollback()
             return next(ApiError.badRequest(error))
         }
     }
 
     async getOneSolution(req, res, next) {
         try {
-        const userId = req.user._id;
-        const solutionId = req.params.solutionId;
-        const taskId = req.params.taskId;
+            const userId = req.user._id;
+            const solutionId = req.params.solutionId;
+            const taskId = req.params.taskId;
 
-        let solution = await Solution.findByPk(solutionId)
+            let solution = await Solution.findByPk(solutionId)
 
-        if (solution.userId !== userId) return next(ApiError.forbidden(`Доступ к этому решению разрешен только его создателю`))
-        return res.json(solution)
+            if (solution.userId !== userId) return next(ApiError.forbidden(`Доступ к этому решению разрешен только его создателю`))
+            return res.json(solution)
         } catch (error) {
-          return next(ApiError.serverError(error.message))
+            return next(ApiError.serverError(error.message))
         }
     }
 
@@ -386,9 +384,13 @@ const queryOptions = {
             }]
 };
 const conditionCheckFunc = (current, array) => {
-    if(current===null) {return 100}
+    if (current === null) {
+        return 100
+    }
     current = current.replace(/(\/\*[\s\S]*?\*\/|--.*?$)/gm, '').toLowerCase();
-    if(!current) {return 100}
+    if (!current) {
+        return 100
+    }
     array = array.map(item => item.replace(/(\/\*[\s\S]*?\*\/|--.*?$)/gm, '').toLowerCase())
     const result = stringSimilarity.findBestMatch(current, array);
 

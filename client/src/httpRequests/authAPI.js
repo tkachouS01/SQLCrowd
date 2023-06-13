@@ -1,6 +1,6 @@
 import {$authHost, $host} from "./httpMain";
 import jwt_decode from "jwt-decode";
-import {TASKS_ROUTE, THEMES_ROUTE} from "../utils/constsPath";
+import {THEMES_ROUTE} from "../utils/constsPath";
 
 const baseUrlApi = 'http://localhost:5000/sql-crowd-api'
 
@@ -75,13 +75,13 @@ export const check = async (context) => {
                 context.setIsAuth(false);
             }
 
-        }
-        else {
+        } else {
             context.setUser(decodedToken);
             context.setIsAuth(true);
         }
+    } else {
+        context.setIsAuth(false);
     }
-    else { context.setIsAuth(false);}
 
     return true;
 };

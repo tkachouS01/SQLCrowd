@@ -3,7 +3,7 @@ import {check} from "./authAPI";
 
 const baseUrlApi = 'http://localhost:5000/sql-crowd-api'
 
-export const getTasks = async (contextUser, contextTask, themeId,section,category) => {
+export const getTasks = async (contextUser, contextTask, themeId, section, category) => {
     let result = false;
 
     await check(contextUser);
@@ -47,7 +47,10 @@ export const addRatingOneTask = async (contextUser, contextTask, themeId, taskId
 
     await check(contextUser);
 
-    await $authHost.post(`${baseUrlApi}/modules/${null}/themes/${themeId}/tasks/${+taskId}/add-rating`, {comment: commentValue, rating: ratingValue})
+    await $authHost.post(`${baseUrlApi}/modules/${null}/themes/${themeId}/tasks/${+taskId}/add-rating`, {
+        comment: commentValue,
+        rating: ratingValue
+    })
         .then(data => {
             contextTask.setCurrentTask({...contextTask.currentTask, ratingTask: {...data.data}})
             contextUser.setErrorMessage(200, 'Отзыв успешно оставлен')
@@ -105,14 +108,17 @@ export const createTask = async (contextUser, contextTask, themeId) => {
     return taskId;
 }
 
-export const updateInBankTask = async(contextUser, contextTask, themeId, tasks, inBank, section, category)=> {
+export const updateInBankTask = async (contextUser, contextTask, themeId, tasks, inBank, section, category) => {
     let result = false;
     await check(contextUser);
 
-    await $authHost.patch(`${baseUrlApi}/modules/${null}/themes/${themeId}/tasks/update-in-bank`, {tasks: tasks, inBank: inBank})
+    await $authHost.patch(`${baseUrlApi}/modules/${null}/themes/${themeId}/tasks/update-in-bank`, {
+        tasks: tasks,
+        inBank: inBank
+    })
         .then(data => {
             result = true;
-            contextUser.setErrorMessage(200, `Задачи ${inBank?'добавлены в банк':'отклонены от добавления в банк'}`)
+            contextUser.setErrorMessage(200, `Задачи ${inBank ? 'добавлены в банк' : 'отклонены от добавления в банк'}`)
             getTasks(contextUser, contextTask, themeId, section, category)
         })
         .catch(error => {

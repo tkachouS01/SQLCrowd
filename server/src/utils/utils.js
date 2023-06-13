@@ -19,7 +19,7 @@ function convertScoreToRating(score, totalScore) {
 }
 
 function convertRatingToScore(rating, totalScore) {
-    return +((rating*totalScore/5).toFixed(2))
+    return +((rating * totalScore / 5).toFixed(2))
 }
 
 export {formatMilliseconds, generatePassword, convertScoreToRating, convertRatingToScore}

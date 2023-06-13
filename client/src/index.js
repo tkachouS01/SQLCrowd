@@ -6,7 +6,6 @@ import UserStore from "./store/UserStore";
 import TaskStore from "./store/TaskStore";
 import SolutionStore from "./store/SolutionStore";
 import App from "./App";
-import RoleRequestsStore from "./store/RoleRequestsStore";
 import TestStore from "./store/TestStore";
 import RatingStore from "./store/RatingStore";
 
@@ -20,7 +19,6 @@ root.render(
         user: new UserStore(),
         task: new TaskStore(),
         solution: new SolutionStore(),
-        roleRequests: new RoleRequestsStore(),
         test: new TestStore(),
         rating: new RatingStore()
     }}>

@@ -16,7 +16,6 @@ import Avatar from "../../components/otherComponents/avatar";
 import UserImgLink from "../../components/basicElements/userImgLink";
 import {TASK_ONE_ROUTE, USER_ONE_ROUTE} from "../../utils/constsPath";
 import StarRating from "../../components/SolutionComponents/StarRating";
-import wordInput from "../../components/basicElements/WordInput";
 
 const SolutionsPage = observer(() => {
     const navigate = useNavigate()
@@ -244,7 +243,7 @@ const SolutionsPage = observer(() => {
                                                                     style={{
                                                                         padding: '5px 0',
                                                                         overflowWrap: "break-word",
-                                                                       wordBreak: "break-all",
+                                                                        wordBreak: "break-all",
                                                                     }}
                                                                 >
                                                                     {comment.content}

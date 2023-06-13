@@ -2,7 +2,7 @@ import {useState, useEffect, useContext, useRef} from 'react';
 import {Button, Toast} from 'react-bootstrap';
 import {useObserver} from 'mobx-react-lite';
 import {Context} from "../../index";
-import {SIGN_IN_ROUTE, TASKS_ROUTE} from "../../utils/constsPath";
+import {SIGN_IN_ROUTE} from "../../utils/constsPath";
 import {useNavigate} from "react-router-dom";
 
 function Message() {
@@ -41,15 +41,17 @@ function Message() {
                                    style={{position: "fixed", bottom: 20, right: 20, zIndex: 100}}>
 
                                 <Toast.Header>
-                                    <strong className="me-auto">Статус {user.errorMessage.status === 500 ? "Зовите быстрее сисадмина. Сервак поломался":user.errorMessage.status}</strong>
+                                    <strong
+                                        className="me-auto">Статус {user.errorMessage.status === 500 ? "Зовите быстрее сисадмина. Сервак поломался" : user.errorMessage.status}</strong>
                                 </Toast.Header>
                                 <Toast.Body>{user.errorMessage.message}</Toast.Body>
                             </Toast>
                             {
                                 show
-                                ?<></>
+                                    ? <></>
                                     :
-                                    <Button variant={'light'} onClick={()=>setShow(!show)} style={{position: "fixed", bottom: 0, right: 0, zIndex: 100,fontSize:10}}>
+                                    <Button variant={'light'} onClick={() => setShow(!show)}
+                                            style={{position: "fixed", bottom: 0, right: 0, zIndex: 100, fontSize: 10}}>
                                         <strong>ПОКАЗАТЬ</strong> сообщение
                                     </Button>
                             }

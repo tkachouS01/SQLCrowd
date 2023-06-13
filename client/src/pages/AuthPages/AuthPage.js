@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {NavLink, useLocation, useNavigate} from 'react-router-dom';
-import {Button, Card, Container, FloatingLabel, Form} from 'react-bootstrap';
+import {Button, FloatingLabel, Form} from 'react-bootstrap';
 import {SIGN_IN_ROUTE, SIGN_UP_ROUTE} from '../../utils/constsPath';
 import {exit, signIn, signUp} from '../../httpRequests/authAPI';
 import {observer} from 'mobx-react-lite';
@@ -39,7 +39,6 @@ const AuthPage = observer(() => {
             await signUp(user, email, nickname, surname, name, patronymic, gender, date_of_birth);
         }
     };
-
     return (
         <div>
             {
@@ -75,7 +74,6 @@ const AuthPage = observer(() => {
                                             onChange={(e) => setLogin(e.target.value)}
                                         />
                                     </FloatingLabel>
-
 
                                     <FloatingLabel label="Введите пароль">
                                         <Form.Control
@@ -117,9 +115,7 @@ const AuthPage = observer(() => {
                         </div>
 
                     </div>
-
                     :
-
                     <div>
                         <div style={{
                             display: "flex",
@@ -211,7 +207,6 @@ const AuthPage = observer(() => {
 
                             </div>
 
-
                         </div>
                         <div style={{
                             display: "flex",
@@ -240,7 +235,6 @@ const AuthPage = observer(() => {
 
                         </div>
                     </div>
-
             }
         </div>);
 });

@@ -27,7 +27,7 @@ export default class UsersController {
             if (!/^[0-9]\d*$/.test(id)) {
                 return next(ApiError.badRequest(`Некорректное значение id: ${id}`));
             }
-            if(id==0) {
+            if (id == 0) {
                 return res.json(unknownUser)
             }
             const user = await User.findOne({
@@ -50,15 +50,15 @@ export default class UsersController {
         fs.exists(imagePath, exists => {
             if (exists) {
                 res.sendFile(imagePath);
-            }
-            else {
+            } else {
                 const defaultImagePath = path.resolve('src/staticImages', 'default', 'default_1.png');
                 res.sendFile(defaultImagePath);
             }
         });
     }
+
     async addAvatar(req, res, next) {
-        const { id } = req.params;
+        const {id} = req.params;
         const imagePath = path.resolve('src/staticImages', `${id}.png`);
 
         try {
@@ -85,9 +85,6 @@ export default class UsersController {
             return next(ApiError.serverError("Ошибка при обработке файла"));
         }
     }
-
-
-
 
 
 }

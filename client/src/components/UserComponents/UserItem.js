@@ -1,9 +1,6 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Button, Card, Image, Row} from "react-bootstrap";
-import {Context} from "../../index";
+import React from 'react';
 import {useNavigate} from "react-router-dom";
-import {USER_ONE_ROUTE, USERS_ROUTE} from "../../utils/constsPath";
-import {getUsers} from "../../httpRequests/userAPI";
+import {USER_ONE_ROUTE} from "../../utils/constsPath";
 import {convertDate} from "../../utils/utils";
 import Avatar from "../otherComponents/avatar";
 import MyButton from "../basicElements/myButton";

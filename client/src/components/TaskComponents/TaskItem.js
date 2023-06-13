@@ -1,19 +1,12 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Card, Form, Image, Row} from "react-bootstrap";
-import {Context} from "../../index";
+import React from 'react';
+import {Form} from "react-bootstrap";
 import {useNavigate, useParams} from "react-router-dom";
 import '../../styles/tasks.css'
-import Stat from "./stat";
-import {getTasks} from "../../httpRequests/taskAPI";
 import {observer} from "mobx-react-lite";
-import {TASK_ONE_ROUTE, USER_ONE_ROUTE} from "../../utils/constsPath";
+import {TASK_ONE_ROUTE} from "../../utils/constsPath";
 import MyButton from "../basicElements/myButton";
-import Avatar from "../otherComponents/avatar";
-import authorImage from "../../static/author.png";
 
 const TaskItem = observer(({task, setSelectedTasks, selectedTasks}) => {
-
-    const {user} = useContext(Context)
     const navigate = useNavigate()
     const {themeId} = useParams();
 
@@ -42,8 +35,8 @@ const TaskItem = observer(({task, setSelectedTasks, selectedTasks}) => {
                         : <></>
                 }
 
-                <div style={{maxWidth: '100%',flexGrow: 1}}>
-                    <div style={{display: "flex", flexDirection: "row", alignItems: "center",maxWidth: '100%'}}>
+                <div style={{maxWidth: '100%', flexGrow: 1}}>
+                    <div style={{display: "flex", flexDirection: "row", alignItems: "center", maxWidth: '100%'}}>
                         <span style={{
                             fontWeight: "100",
                             fontFamily: 'Arial',

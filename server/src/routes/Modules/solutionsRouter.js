@@ -2,7 +2,8 @@ import SolutionsController from '../../controllers/solutionsController.js';
 import solutionAccessControl from '../../middleware/SolutionAccessControl.js'
 import checkSolutionExists from '../../middleware/checkSolutionExists.js'
 import express from 'express';
-const solutionsRouter = new express.Router({ mergeParams: true });
+
+const solutionsRouter = new express.Router({mergeParams: true});
 const solutionsController = new SolutionsController();
 solutionsRouter.param('solutionId', checkSolutionExists);
 solutionsRouter.route('/')
