@@ -61,7 +61,9 @@ const NavBar = (() => {
                     <Nav className="me-auto">
 
                     </Nav>
-                    <Nav>
+                    <Nav style={{background: "rgba(255,255,255,0.95)",
+                        backdropFilter: 'blur(10px)',
+                        height:'100%'}}>
                         {
                             user.isAuth
                                 ?
@@ -86,17 +88,10 @@ const NavBar = (() => {
                                         </Nav.Link>
                                         <Nav.Link
                                             onClick={() => {
-                                                navigate(RATING_ROUTE())
+                                                navigate(HOME_ROUTE())
                                             }}
                                         >
                                             Общий рейтинг
-                                        </Nav.Link>
-                                        <Nav.Link
-                                            onClick={() => {
-                                                navigate(REQUESTS_ROLE_ROUTE())
-                                            }}
-                                        >
-                                            Запросы на роль
                                         </Nav.Link>
 
                                         <Nav.Link

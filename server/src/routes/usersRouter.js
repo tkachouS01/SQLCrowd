@@ -10,7 +10,7 @@ usersRouter.route('/image/:id')
     .post(upload.single('profilePicture'), usersController.addAvatar.bind(usersController));
 
 usersRouter.route('/')
-    .get(usersController.getAll.bind(usersController)); //+
+    .get(usersController.getAll.bind(usersController));
 usersRouter.route('/:id')
     .get(usersController.getOne.bind(usersController));
 

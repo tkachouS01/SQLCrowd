@@ -2,7 +2,6 @@ export const HOME_ROUTE = () => `/`;
 export const SIGN_IN_ROUTE = () => `/sing-in`;
 export const SIGN_UP_ROUTE = () => `/sign-up`;
 
-export const RATING_ROUTE = () => `/rating`;
 export const REQUESTS_ROLE_ROUTE = () => `/role-requests`;
 
 export const USERS_ROUTE = () => `/users`;

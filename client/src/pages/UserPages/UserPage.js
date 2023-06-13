@@ -4,7 +4,7 @@ import {addImageProfile, getOneUser, getUsers} from "../../httpRequests/userAPI"
 import {useNavigate, useParams} from "react-router-dom";
 import Avatar from "../../components/otherComponents/avatar";
 import {Breadcrumb, Button, Form, Image} from "react-bootstrap";
-import {convertDate} from "../../utils/utils";
+import {convertDate, simpleConvertDate} from "../../utils/utils";
 import MyButton from "../../components/basicElements/myButton";
 import {updateRole} from "../../httpRequests/roleRequestsAPI";
 import {HOME_ROUTE, USERS_ROUTE} from "../../utils/constsPath";
@@ -63,7 +63,7 @@ const UserPage = () => {
 
         return (
             <div>
-                <div style={{background: "rgba(1,1,1,0.05)", padding: '0 5px'}}>
+                <div>
                     <Breadcrumb>
                         <Breadcrumb.Item onClick={() => navigate(HOME_ROUTE())}>Главная</Breadcrumb.Item>
                         <Breadcrumb.Item onClick={() => navigate(USERS_ROUTE())}>Пользователи</Breadcrumb.Item>
@@ -143,7 +143,7 @@ const UserPage = () => {
                                     </div>
                                     <div>
                                         <span style={{fontWeight: 500, paddingRight: '20px'}}>Дата рождения </span>
-                                        <span>{convertDate(user.currentProfile.date_of_birth).split(",")[0]}</span>
+                                        <span>{simpleConvertDate(user.currentProfile.date_of_birth).split(",")[0]}</span>
                                     </div>
                                     <div>
                                         <span style={{fontWeight: 500, paddingRight: '20px'}}>Пол </span>

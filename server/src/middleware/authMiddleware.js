@@ -14,11 +14,10 @@ export default async function (req, res, next) {
         const decoded = jwt.verify(token, process.env.SECRET_KEY)
 
         req.user = decoded
-        //let temp = req.user;
+
         const user = await User.findByPk(req.user._id)
         if(user._id === req.user._id && user.nickname === req.user.nickname && user.email ===req.user.email&& user.role===req.user.role) {
 
-            //req.user = jwt.verify(token, process.env.SECRET_KEY)
             next()
         }
         else {

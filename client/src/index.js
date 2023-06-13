@@ -8,6 +8,7 @@ import SolutionStore from "./store/SolutionStore";
 import App from "./App";
 import RoleRequestsStore from "./store/RoleRequestsStore";
 import TestStore from "./store/TestStore";
+import RatingStore from "./store/RatingStore";
 
 export const Context = createContext(null)
 
@@ -20,7 +21,8 @@ root.render(
         task: new TaskStore(),
         solution: new SolutionStore(),
         roleRequests: new RoleRequestsStore(),
-        test: new TestStore()
+        test: new TestStore(),
+        rating: new RatingStore()
     }}>
         <App/>
     </Context.Provider>

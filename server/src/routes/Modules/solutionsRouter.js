@@ -6,11 +6,11 @@ const solutionsRouter = new express.Router({ mergeParams: true });
 const solutionsController = new SolutionsController();
 solutionsRouter.param('solutionId', checkSolutionExists);
 solutionsRouter.route('/')
-    .get(solutionAccessControl, solutionsController.getSolutions.bind(solutionsController)) //+
-    .post(solutionsController.createSolutionTask.bind(solutionsController)); //+
+    .get(solutionAccessControl, solutionsController.getSolutions.bind(solutionsController))
+    .post(solutionsController.createSolutionTask.bind(solutionsController));
 solutionsRouter.route('/:solutionId')
-    .get(solutionsController.getOneSolution.bind(solutionsController)) //+
-    .patch(solutionsController.updateSolutionTask.bind(solutionsController)); //+
+    .get(solutionsController.getOneSolution.bind(solutionsController))
+    .patch(solutionsController.updateSolutionTask.bind(solutionsController));
 
 
 solutionsRouter.route('/:solutionId/like')
@@ -20,7 +20,7 @@ solutionsRouter.route('/:solutionId/comment')
 
 
 solutionsRouter.route('/:solutionId/finished')
-    .patch(solutionsController.finishTheSolution.bind(solutionsController)); //+
+    .patch(solutionsController.finishTheSolution.bind(solutionsController));
 
 
 export default solutionsRouter;

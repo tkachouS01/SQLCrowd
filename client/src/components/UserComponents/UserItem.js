@@ -35,7 +35,7 @@ const UserItem = ({user}) => {
                     </div>
                     <div>{`${user.surname || ''} ${user.name || ''} ${user.patronymic || ''}`}</div>
                     <div>
-                        <span style={{fontWeight: 500}}>Зарегистрирован с </span>
+                        <span style={{fontWeight: 500}}>Зарегистрирован </span>
                         <span>{convertDate(user.createdAt)}</span>
                     </div>
 

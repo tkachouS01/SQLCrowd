@@ -66,7 +66,7 @@ const TableView = observer(({selectedTable, setSelectedTable, tableNames}) => {
                                                             <>
                                                                 <Table bordered responsive>
                                                                     <thead>
-                                                                    <tr style={{background: 'rgba(0, 92, 124, 0.1)'}}>
+                                                                    <tr  className={'main-color-blue'}>
                                                                         {
                                                                             solution.result.fields.map((field, id) => (
                                                                                 <th key={id}>{field}</th>
@@ -120,7 +120,7 @@ const TableView = observer(({selectedTable, setSelectedTable, tableNames}) => {
                                         (
                                             <Table bordered responsive>
                                                 <thead>
-                                                <tr style={{background: 'rgba(0, 92, 124, 0.1)'}}>
+                                                <tr  className={'main-color-blue'}>
                                                     {task.databasesData[selectedTable].fields.map((field, id) => (
                                                         <th key={id}>{field}</th>))}
                                                 </tr>

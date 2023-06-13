@@ -8,17 +8,20 @@ const tasksController = new TasksController();
 
 tasksRouter.param('taskId', checkTaskExists);
 
-
+tasksRouter.route('/update-in-bank')
+    .patch(tasksController.updateInBankTasks.bind(tasksController));
 
 tasksRouter.route('')
-    .get(tasksController.getAllTasks.bind(tasksController)) //+
-    .post(tasksController.createTask.bind(tasksController)); //+
+    .get(tasksController.getAllTasks.bind(tasksController))
+    .post(tasksController.createTask.bind(tasksController));
 tasksRouter.route('/:taskId')
-    .get(tasksController.getOneTask.bind(tasksController)) //+
-    .patch(taskAccessControl, tasksController.updateTask.bind(tasksController)); //+
+    .get(tasksController.getOneTask.bind(tasksController))
+    .patch(taskAccessControl, tasksController.updateTask.bind(tasksController));
 
 tasksRouter.route('/:taskId/add-rating')
-    .post(tasksController.addTaskRating.bind(tasksController)); //+
+    .post(tasksController.addTaskRating.bind(tasksController));
+
+
 
 
 tasksRouter.use('/:taskId/solutions', solutionsRouter)

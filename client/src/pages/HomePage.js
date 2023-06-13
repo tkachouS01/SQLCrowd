@@ -1,44 +1,121 @@
-import React from 'react';
-import Logo from "../components/otherComponents/logo";
-import {Breadcrumb} from "react-bootstrap";
+import React, {useContext, useEffect, useState} from 'react';
+import {Breadcrumb, Table} from "react-bootstrap";
+import {Context} from "../index";
+import {useNavigate} from "react-router-dom";
+import {getRating} from "../httpRequests/ratingAPI";
+import UserImgLink from "../components/basicElements/userImgLink";
+import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
 
-const NotFoundPage = () => {
+const SortableColumnHeader = ({title,column, sortColumn, sortDirection, setSortColumn, setSortDirection}) => {
+    return (
+        <th
+            style={{cursor: "pointer", userSelect: "none"}}
+            onClick={() => {
+            setSortColumn(column);
+            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+        }}>
+            {title} {sortColumn === column && (sortDirection === 'asc'
+            ? <FaArrowDown color={'rgba(255, 0, 0, 0.8)'}/>
+            : <FaArrowUp color={'rgba(58,138,0,0.8)'}/>)}
+        </th>
+    );
+};
+
+const HomePage = () => {
+    const {user, rating} = useContext(Context)
+    const [usersRating, setUsersRating] = useState([]);
+    const [sortColumn, setSortColumn] = useState(null);
+    const [sortDirection, setSortDirection] = useState('asc');
+    const navigate = useNavigate()
+    const [isLoading, setIsLoading] = useState(true)
+
+    useEffect(() => {
+        getRating(user, rating, rating)
+            .then(() => {
+                setUsersRating(rating.usersRating);
+                setIsLoading(false);
+            })
+    }, []);
+
+    useEffect(() => {
+        if (sortColumn) {
+            setUsersRating([...rating.usersRating].sort((a, b) => {
+                if (sortDirection === 'asc') {
+                    return a[sortColumn] - b[sortColumn];
+                } else {
+                    return b[sortColumn] - a[sortColumn];
+                }
+            }));
+        }
+    }, [sortColumn, sortDirection]);
+
+    if (isLoading) return <></>
     return (
         <div>
-            <div style={{background: "rgba(1,1,1,0.05)", padding: '0 5px'}}>
+            <div>
                 <Breadcrumb>
                     <Breadcrumb.Item active>Главная</Breadcrumb.Item>
                 </Breadcrumb>
             </div>
 
-            <div
-                className="d-flex justify-content-center align-items-center flex-column"
-
-            >
-                <Logo/>
-
-                <div style={{textAlign: "center", width: '60%'}}>
-                    ЭТО ДОЛЖНА БЫЛА БЫТЬ СТАРТОВАЯ СТРАНИЦА С ОБЩЕЙ СТАТИСТИКОЙ О СИСТЕМЕ.
-                    ВКРАТЦЕ ЧТО СИСТЕМА ПРЕДОСТАВЛЯЕТ:
-                    <li>РЕГИСТРАЦИЯ И АВТОРИЗАЦИЯ ПОЛЬЗОВАТЕЛЯ</li>
-                    <li>СООБЩЕНИЯ ОТ СЕРВЕРА В ОТВЕТ НА ЗАПРОС</li>
-                    <li>СЕРВЕР ПРЕДОТВРАЩАЕТ НЕЖЕЛАТЕЛЬНЫЕ ДЕЙСТВИЯ ОТ ПОЛЬЗОВАТЕЛЯ (ЗАПРЕТ НА ИЗМЕНЕНИЕ ЧУЖОГО ЗАДАНИЯ ИЛИ РЕШЕНИЯ, ЗАПРЕТ НА ПРОСМОТР РЕШЕНИЙ ДРУГИХ, ЕСЛИ САМ НЕ РЕШИЛ И ТД ...)</li>
-                    <li>ВЫДАЕТ СТРАНИЦУ 404 ЕСЛИ ПОЛЬЗОВАТЕЛЬ ЗАПРАШИВАЕТ НЕСУЩЕСТВУЮЩИЙ РЕСУРС</li>
-                    <li>?? ПОКАЗЫВАЕТ LOADING ВО ВРЕМЯ ЗАПРОСА НА СЕРВЕР ??</li>
-                    <li>ПОКАЗЫВАЕТ ЗАДАЧИ ПОЛЬЗОВАТЕЛЕЙ ВМЕСТЕ СО СТАТИСТИКОЙ И СТАТУСОМ (РЕШЕНО, ВЫПОЛНЯЕТСЯ, НЕ ВЫПОЛНЯЛОСЬ)</li>
-                    <li>СОЗДАНИЕ ЗАДАЧИ</li>
-                    <li>СЕРВЕР МОЖЕТ СОЗДАВАТЬ БАЗЫ ДАННЫХ ПО СКРИПТУ</li>
-                    <li>РЕДАКТИРОВАТЬ ЗАДАЧУ (ВЫБИРАТЬ БД, ОПИСАНИЕ) [ЕСЛИ ЧТО-ТО НЕ ВВЕДЕНО, ТО ПРОСМОТР ТАБЛИЦ ЗАПРЕЩЕН]</li>
-                    <li>ПИСАТЬ SQL ЗАПРОСЫ К БД, ВЫПОЛНЯТЬ ИХ И ПОЛУЧАТЬ РЕЗУЛЬТИРУЮЩУЮ ТАБЛИЦУ</li>
-                    <li>СРАВНИВАТЬ РЕЗУЛЬТИРУЮЩУЮ ТАБЛИЦУ АВТОРА И ПОЛЬЗОВАТЕЛЯ</li>
-                    <li>ПОКАЗЫВАЕТ РЕШЕНИЯ ЗАДАЧИ ДРУГИМИ ПОЛЬЗОВАТЕЛЯМИ</li>
-                    <li>МОЖНО ЛАЙКНУТЬ РЕШЕНИЕ</li>
-                    <li>МОЖНО КОММЕНТИРОВАТЬ РЕШЕНИЕ</li>
-                </div>
-
+            <div style={{marginTop: 15}}>
+                <h2>Таблица рейтинга пользователей</h2>
+                <Table bordered responsive>
+                    <thead>
+                    <tr className={'main-color-blue'}>
+                        <SortableColumnHeader title="Пользователь" column="_id" sortColumn={sortColumn} sortDirection={sortDirection}
+                                              setSortColumn={setSortColumn} setSortDirection={setSortDirection}/>
+                        <SortableColumnHeader title="В банке" column="tasksInBank" sortColumn={sortColumn} sortDirection={sortDirection}
+                                              setSortColumn={setSortColumn} setSortDirection={setSortDirection}/>
+                        <SortableColumnHeader title="Создано" column="tasksCreated" sortColumn={sortColumn} sortDirection={sortDirection}
+                                              setSortColumn={setSortColumn} setSortDirection={setSortDirection}/>
+                        <SortableColumnHeader title="Оценено" column="tasksEvaluated" sortColumn={sortColumn}
+                                              sortDirection={sortDirection} setSortColumn={setSortColumn}
+                                              setSortDirection={setSortDirection}/>
+                        <SortableColumnHeader title="Баллы" column="scores" sortColumn={sortColumn} sortDirection={sortDirection}
+                                              setSortColumn={setSortColumn} setSortDirection={setSortDirection}/>
+                        <SortableColumnHeader title="Средняя оценка" column="averageRating" sortColumn={sortColumn}
+                                              sortDirection={sortDirection} setSortColumn={setSortColumn}
+                                              setSortDirection={setSortDirection}/>
+                        <SortableColumnHeader title="Текущий рейтинг" column="currentRating" sortColumn={sortColumn}
+                                              sortDirection={sortDirection} setSortColumn={setSortColumn}
+                                              setSortDirection={setSortDirection}/>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {
+                        usersRating.map((item, index) =>
+                            <tr key={index} className={item._id === user.user._id ? 'main-color-gray' : ''}>
+                                <td>
+                                    <UserImgLink _id={item._id} nickname={item.nickname} role={item.role}/>
+                                </td>
+                                <td>
+                                    {item.tasksInBank}
+                                </td>
+                                <td>
+                                    {item.tasksCreated}
+                                </td>
+                                <td>
+                                    {item.tasksEvaluated}
+                                </td>
+                                <td>
+                                    {+(item.scores.toFixed(2))}
+                                </td>
+                                <td>
+                                    {+(item.averageRating.toFixed(2))}
+                                </td>
+                                <td>
+                                    {+(item.currentRating.toFixed(2))}
+                                </td>
+                            </tr>
+                        )
+                    }
+                    </tbody>
+                </Table>
             </div>
         </div>
     );
 };
 
-export default NotFoundPage;
+
+export default HomePage;

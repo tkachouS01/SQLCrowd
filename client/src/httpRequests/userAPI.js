@@ -45,8 +45,6 @@ export const addImageProfile = async (contextUser, userId,selectedFile)=>{
 
     await $authHost.post(`${baseUrlApi}/users/image/${userId}`,formData)
         .then(data => {
-
-            //contextUser.setCurrentProfile(data.data)
             result = true;
             contextUser.setErrorMessage(200, "Картинка профиля обновлена. При необходимости перезагрузите страницу")
         })

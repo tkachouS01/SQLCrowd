@@ -7,8 +7,18 @@ import {Sequelize} from 'sequelize';
 import fs from 'fs';
 import path from 'path';
 import {fileURLToPath} from 'url';
+import {Database} from "./models/models.js";
 
-const dbNames = ['aero', 'computer', 'inc_out', 'painting', 'ships'];
+const dbNames = [
+    'aero',
+    'computer',
+    'inc_out',
+    'painting',
+    'ships',
+    'football',
+    'students',
+    'noname'
+];
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 let sequelize = new Sequelize(null, process.env.DB_USER, process.env.DB_PASSWORD, {
@@ -57,10 +67,11 @@ async function createDatabases() {
                     tables[table_name].push(column_name);
                 });
                 consoleMessage(`Структура ${dbNames[i]} создана`)
-                await Databases.create({_id: i + 1, name: dbNames[i], tables})
+                await Database.create({_id: i + 1, name: dbNames[i], tables})
             }
+
         } catch (err) {
-            consoleError(`Не удалось подключиться к базе данных ${dbNames[i]}: ${err}`)
+           consoleError(`Не удалось подключиться к базе данных ${dbNames[i]}: ${err}`)
         }
     }
 }

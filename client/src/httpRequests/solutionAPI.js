@@ -3,7 +3,7 @@ import {$authHost} from "./httpMain";
 
 const baseUrlApi = 'http://localhost:5000/sql-crowd-api'
 
-export const createSolution = async (contextUser, contextTask, contextSolution,moduleId,themeId,taskId) => {
+export const createSolution = async (contextUser, contextTask, contextSolution, moduleId, themeId, taskId) => {
     let result = false;
 
     await check(contextUser);
@@ -13,22 +13,21 @@ export const createSolution = async (contextUser, contextTask, contextSolution,m
         .then(data => {
             solutionId = data.data.solutionId;
 
-            result = getOneSolution(contextUser, contextTask, contextSolution,moduleId,themeId,taskId,solutionId)
-                .then((bool)=>{if(!bool){
-                    contextUser.setErrorMessage(200, `Получить решение #${solutionId} задачи #${taskId} не удалось`)
-                }else{
-                    contextTask.setCurrentTask({...contextTask.currentTask, myProgress: 'Выполняется'})
-                }});
+            result = getOneSolution(contextUser, contextTask, contextSolution, moduleId, themeId, taskId, solutionId)
+                .then((bool) => {
+                    if (!bool) {
+                        contextUser.setErrorMessage(200, `Получить решение #${solutionId} задачи #${taskId} не удалось`)
+                    }
+                });
         })
         .catch(error => {
             contextUser.setErrorMessage(`${error.response.status}`, error.response.data.message)
         })
 
 
-
     return result;
 }
-export const getOneSolution = async (contextUser, contextTask, contextSolution,moduleId,themeId,taskId, solutionId) => {
+export const getOneSolution = async (contextUser, contextTask, contextSolution, moduleId, themeId, taskId, solutionId) => {
     let result = false;
 
     await check(contextUser);
@@ -56,7 +55,7 @@ export const runOneSolution = async (contextUser, contextTask, contextSolution, 
 
         })
         .catch(error => {
-            contextSolution.setResult({success: false, fields: [],rows: []})
+            contextSolution.setResult({success: false, fields: [], rows: []})
             contextUser.setErrorMessage(`${error.response.status}`, error.response.data.message)
         })
 
@@ -70,7 +69,6 @@ export const endSolution = async (contextUser, contextSolution, moduleId, themeI
     await $authHost.patch(`${baseUrlApi}/modules/${moduleId}/themes/${themeId}/tasks/${taskId}/solutions/${solutionId}/finished`)
         .then(data => {
             contextSolution.setOneSolution({...contextSolution.oneSolution, finished: true})
-            //contextSolution.setResult(data.data)
             result = true;
             contextUser.setErrorMessage(`200`, `Решение завершено`)
         })
@@ -80,7 +78,7 @@ export const endSolution = async (contextUser, contextSolution, moduleId, themeI
 
     return result;
 }
-export const getSolutions = async (contextUser, contextTask, contextSolution ,moduleId,themeId,taskId) => {
+export const getSolutions = async (contextUser, contextTask, contextSolution, moduleId, themeId, taskId) => {
     let result = false;
 
     await check(contextUser);
@@ -94,33 +92,31 @@ export const getSolutions = async (contextUser, contextTask, contextSolution ,mo
         })
         .catch(error => {
             contextUser.setErrorMessage(`${error.response.status}`, error.response.data.message)
-            //if(error.response.status==403) navigate(`/tasks/${taskId}`)
         })
 
     return result;
 }
 
-export const createComment = async (contextUser, contextTask, contextSolution, content,moduleId,themeId, taskId,solutionId) => {
-   let result = false;
+export const createComment = async (contextUser, contextTask, contextSolution, content, moduleId, themeId, taskId, solutionId) => {
+    let result = false;
 
     await check(contextUser);
 
     await $authHost.post(
         `${baseUrlApi}/modules/${moduleId}/themes/${themeId}/tasks/${contextTask.currentTask._id}/solutions/${solutionId}/comment`, {content: content})
         .then(() => {
-            result = getSolutions(contextUser,contextTask,contextSolution, null,themeId,taskId)
+            result = getSolutions(contextUser, contextTask, contextSolution, null, themeId, taskId)
         })
         .catch(error => {
             contextUser.setErrorMessage(`${error.response.status}`, error.response.data.message)
         })
 
 
-
     return result;
 }
 
-export const like = async (contextUser, contextTask, contextSolution,moduleId,themeId, solutionId) => {
-   let result = false;
+export const like = async (contextUser, contextTask, contextSolution, moduleId, themeId, solutionId) => {
+    let result = false;
 
     await check(contextUser);
 
@@ -134,8 +130,7 @@ export const like = async (contextUser, contextTask, contextSolution,moduleId,th
             let likeCount = temp[index].like.likeCount;
 
 
-
-            temp[index].like.likeCount = data.data.isLiked ? likeCount+1 : likeCount-1;
+            temp[index].like.likeCount = data.data.isLiked ? likeCount + 1 : likeCount - 1;
 
             contextSolution.setAllSolutions(temp)
             result = true;

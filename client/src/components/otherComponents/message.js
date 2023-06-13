@@ -15,8 +15,7 @@ function Message() {
     useEffect(() => {
         if (user.errorMessage.status === 401)
             navigate(SIGN_IN_ROUTE())
-        /*else if (user.errorMessage.status === 404)
-            navigate(TASKS_ROUTE(1))*/
+
         if (firstRender.current) {
             firstRender.current = false;
             return;

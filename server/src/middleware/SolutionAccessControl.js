@@ -7,8 +7,10 @@ export default async function (req, res, next) {
 
     let task = await Task.findOne({ where: { _id: taskId } })
     const userSolution = await Solution.findOne({where:{taskId, userId}});
-
-    let solution = (task.userId===userId) || (await Solution.findOne({ where: { taskId: taskId, userId } })&&(task.verified && userSolution.verified===true)) || req.user.role==='ADMIN';
+if(!userSolution && req.user.role==='USER') {
+    return next(ApiError.forbidden(`Вам не разрешено просматривать решения задачи №${taskId}`));
+}
+    let solution = task.userId===userId || req.user.role==='ADMIN' || userSolution.verified || userSolution.finished;
 
     if (!solution) {
         return next(ApiError.forbidden(`Вам не разрешено просматривать решения задачи №${taskId}`));

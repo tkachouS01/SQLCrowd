@@ -25,7 +25,7 @@ useEffect(()=>{},[isLoading])
     if(isLoading) return <></>
     return (
         <div>
-            <div style={{background: "rgba(1,1,1,0.05)", padding: '0 5px'}}>
+            <div>
                 <Breadcrumb>
                     <Breadcrumb.Item onClick={()=>navigate(HOME_ROUTE())}>Главная</Breadcrumb.Item>
                     <Breadcrumb.Item active>Пользователи</Breadcrumb.Item>

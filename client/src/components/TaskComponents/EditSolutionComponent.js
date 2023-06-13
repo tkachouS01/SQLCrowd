@@ -101,25 +101,29 @@ const EditSolutionComponent = observer(() => {
                                                             ?
                                                             (
                                                                 (solution.result.success)
-                                                                    ? (<span style={{
-                                                                        background: "#9ACD32",
-                                                                        padding: '3px 5px',
-                                                                        borderRadius: 10
-                                                                    }}>Решение верное</span>)
-                                                                    : (<span style={{
-                                                                        background: "#FFC0CB",
-                                                                        padding: '3px 5px',
-                                                                        borderRadius: 10
-                                                                    }}>Решение неверное</span>)
+                                                                    ?
+                                                                    <span
+                                                                        className={'main-color-green'}
+                                                                        style={{padding: '3px 5px',borderRadius: 10}}
+                                                                    >
+                                                                        Решение верное
+                                                                    </span>
+                                                                    :
+                                                                    <span
+                                                                        className={'main-color-red'}
+                                                                        style={{padding: '3px 5px',borderRadius: 10}}
+                                                                    >
+                                                                        Решение не верное
+                                                                    </span>
                                                             )
                                                             :
                                                             (
-                                                                <span style={{
-                                                                    background: "lightgray",
-                                                                    padding: '3px 5px',
-                                                                    fontSize: 12,
-                                                                    borderRadius: 10
-                                                                }}>Нажмите Выполнить, для проверки решения</span>
+                                                                <span
+                                                                    className={'main-color-blue'}
+                                                                    style={{padding: '3px 5px',fontSize: 12,borderRadius: 10}}
+                                                                >
+                                                                    Нажмите Выполнить, для проверки решения
+                                                                </span>
                                                             )
 
 
@@ -144,7 +148,7 @@ const EditSolutionComponent = observer(() => {
                     :
                     (
                         <div style={{fontSize: 30}}>
-                            Решение задания запрещено, т.к. оно на стадии создания
+                            Недоделанная задача
                         </div>
                     )
             }

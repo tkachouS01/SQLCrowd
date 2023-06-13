@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Card, Image, Row} from "react-bootstrap";
+import {Card, Form, Image, Row} from "react-bootstrap";
 import {Context} from "../../index";
 import {useNavigate, useParams} from "react-router-dom";
 import '../../styles/tasks.css'
@@ -11,7 +11,7 @@ import MyButton from "../basicElements/myButton";
 import Avatar from "../otherComponents/avatar";
 import authorImage from "../../static/author.png";
 
-const TaskItem = observer(({task}) => {
+const TaskItem = observer(({task, setSelectedTasks, selectedTasks}) => {
 
     const {user} = useContext(Context)
     const navigate = useNavigate()
@@ -24,20 +24,84 @@ const TaskItem = observer(({task}) => {
         <>
             <div style={{
                 display: "flex",
-                flexDirection: "column",
+                flexDirection: "row",
+                alignItems: "center",
                 gap: 15,
-                background: "white",
+                background: `${selectedTasks.includes(task._id) ? 'white' : 'transparent'}`,
                 padding: 15,
                 borderRadius: 10
             }}>
+                {
+                    'task_ratings' in task
+                        ?
+                        <Form.Check
+                            type="checkbox"
+                            checked={selectedTasks.includes(task._id)}
+                            onChange={(e) => setSelectedTasks(selectedTasks.includes(task._id) ? selectedTasks.filter(item => item !== task._id) : [...selectedTasks, task._id])}
+                        />
+                        : <></>
+                }
 
+                <div style={{maxWidth: '100%',flexGrow: 1}}>
+                    <div style={{display: "flex", flexDirection: "row", alignItems: "center",maxWidth: '100%'}}>
+                        <span style={{
+                            fontWeight: "100",
+                            fontFamily: 'Arial',
+                            background: 'lightgray',
+                            padding: 5,
+                            borderRadius: 10,
+                            marginRight: 10
+                        }}>#{task._id}</span>
 
-                <Stat task={task} fullContent={false}/>
-                <div style={{alignSelf: "flex-end"}}>
-                    <MyButton text={"Перейти на задачу"} onClick={() => handleTaskClick(task._id)}/>
+                        <div style={{
+                            fontWeight: "700",
+                            fontFamily: 'Arial',
+                            color: 'gray',
+                            maxWidth: '100%', paddingRight: 40
+                        }}>
+                            {
+                                task.description ?
+                                    <div style={{
+                                        whiteSpace: "nowrap",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                        paddingRight: 30
+                                    }}>
+                                        {task.description}
+                                    </div>
+                                    :
+                                    <div style={{opacity: 0.5, fontWeight: 100}}>{'Не указано'}</div>
+                            }
+                        </div>
+
+                    </div>
+                    <div
+                        style={{
+                            display: "flex", flexDirection: "row", flexWrap: "wrap", alignItems: "center",
+                            justifyContent: `${'task_ratings' in task ? 'space-between' : 'end'}`
+                        }}
+                    >
+                        {
+                            'task_ratings' in task
+                                ?
+                                <div>
+                                    <span>{task.task_ratings.length} оценок</span>
+                                    {
+                                        task.task_ratings.length === 0
+                                            ? <></>
+                                            :
+                                            <span style={{paddingLeft: 15}}>
+                                                среднее: {(task.task_ratings.reduce((accum, item) => accum + item.rating, 0) / task.task_ratings.length).toFixed(2)}
+                                            </span>
+
+                                    }
+                                </div>
+                                : <></>
+                        }
+
+                        <MyButton text={"Перейти на задачу"} onClick={() => handleTaskClick(task._id)}/>
+                    </div>
                 </div>
-
-
             </div>
         </>
     )

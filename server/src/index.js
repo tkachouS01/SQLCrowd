@@ -29,7 +29,6 @@ app.use(errorHandler)
 
 
 try {
-
     await sequelize.authenticate()
     await sequelize.sync()
     await createDatabases()

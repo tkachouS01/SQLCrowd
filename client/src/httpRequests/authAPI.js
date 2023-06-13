@@ -4,7 +4,6 @@ import {TASKS_ROUTE, THEMES_ROUTE} from "../utils/constsPath";
 
 const baseUrlApi = 'http://localhost:5000/sql-crowd-api'
 
-//РЕГИСТРАТИОН
 export const signUp = async (context, email, nickname, surname, name, patronymic, gender, date_of_birth) => {
     let result = false;
 
@@ -19,7 +18,6 @@ export const signUp = async (context, email, nickname, surname, name, patronymic
         date_of_birth
     })
         .then(data => {
-            //funcTokenSet(data.data.token, context)
             context.setErrorMessage(200,
                 `Вы стали #${data.data.userId} пользователем. На почту ${email} отправлено письмо с вашим паролем`)
             result = true;
@@ -31,7 +29,6 @@ export const signUp = async (context, email, nickname, surname, name, patronymic
     return result;
 }
 
-//АУТЕНТИФИКЭЙШЕН
 export const signIn = async (contextUser, navigate, login, password) => {
     let result = false;
 
@@ -53,7 +50,6 @@ export const signIn = async (contextUser, navigate, login, password) => {
     return result;
 }
 
-//тут без запроса
 export const exit = (context) => {
     localStorage.removeItem('token');
     context.setUser({});
@@ -67,7 +63,7 @@ export const check = async (context) => {
         const decodedToken = jwt_decode(token);
         const currentTime = Math.floor(Date.now() / 1000);
         const timeLeft = decodedToken.exp - currentTime;
-        if (timeLeft <= 3600) { // если осталось менее часа до истечения токена
+        if (timeLeft <= 3600) {
             try {
                 const response = await $authHost.get(`${baseUrlApi}/auth`);
                 const newToken = response.data.token;

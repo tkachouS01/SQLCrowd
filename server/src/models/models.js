@@ -4,11 +4,9 @@ import {DataTypes} from 'sequelize'
 const Database = sequelize.define('databases', {
     _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     name: {type: DataTypes.STRING, allowNull: false},
-    tables: {type: DataTypes.JSONB, allowNull: false} //названия таблиц, колонок
+    tables: {type: DataTypes.JSONB, allowNull: false}
 });
 
-// СВЯЗАН:
-// Subscriber, Module, Theme, Task, Solution, SolutionComment, SolutionLike, Test, TestAnswer, TaskRating, AdminRoleRequest, Scores.
 const User = sequelize.define('users', {
     _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     role: {type: DataTypes.ENUM('USER', 'ADMIN'), defaultValue: 'USER'},
@@ -22,28 +20,11 @@ const User = sequelize.define('users', {
     password: {type: DataTypes.STRING, allowNull: false}
 });
 
-// СВЯЗАН:
-// User
-const Subscriber = sequelize.define('subscribers', {
-    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    _idSubscriptionTarget: {type: DataTypes.INTEGER}
-});
-
-User.hasMany(Subscriber);
-Subscriber.belongsTo(User, {
-    foreignKey: {
-        name: 'userId',
-        allowNull: false
-    }
-});
-
-// СВЯЗАН:
-// User
 const Module = sequelize.define('modules', {
-    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true}, //номер модуля
-    name: {type: DataTypes.STRING}, //название модуля
-    description: {type: DataTypes.TEXT}, //описание набора тем
-    isAvailable: {type: DataTypes.BOOLEAN, defaultValue: false}, //доступен ли модуль для просмотра
+    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING},
+    description: {type: DataTypes.TEXT},
+    isAvailable: {type: DataTypes.BOOLEAN, defaultValue: false},
     createdByUserId: {type: DataTypes.INTEGER},
     updatedByUserId: {type: DataTypes.INTEGER}
 });
@@ -52,16 +33,14 @@ User.hasMany(Module, { as: 'updatedModule', foreignKey: 'updatedByUserId' });
 Module.belongsTo(User, { as: 'createdBy', foreignKey: 'createdByUserId',allowNull: false });
 Module.belongsTo(User, { as: 'updatedBy', foreignKey: 'updatedByUserId',allowNull: false });
 
-// СВЯЗАН:
-// User, Module
 const Theme = sequelize.define('themes', {
-    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true}, //номер темы
-    name: {type: DataTypes.STRING, defaultValue: ''}, //название темы
-    description: {type: DataTypes.TEXT, defaultValue: ''}, //текст темы
-    sqlCommands: {type: DataTypes.ARRAY(DataTypes.STRING), defaultValue: []}, //набор sql комманд для создания и решения задачи
-    numEvaluationTasks: {type: DataTypes.INTEGER, defaultValue: 0}, //минимальное оцененное кол-во задач для прохождения темы
-    numCreateTasks: {type: DataTypes.INTEGER, defaultValue: 0}, //минимальное созданное кол-во задач для прохождения темы
-    isAvailable: {type: DataTypes.BOOLEAN, defaultValue: false}, //доступна ли тема для просмотра
+    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING, defaultValue: ''},
+    description: {type: DataTypes.TEXT, defaultValue: ''},
+    sqlCommands: {type: DataTypes.ARRAY(DataTypes.STRING), defaultValue: []},
+    numEvaluationTasks: {type: DataTypes.INTEGER, defaultValue: 0},
+    numCreateTasks: {type: DataTypes.INTEGER, defaultValue: 0},
+    isAvailable: {type: DataTypes.BOOLEAN, defaultValue: false},
     createdByUserId: {type: DataTypes.INTEGER},
     updatedByUserId: {type: DataTypes.INTEGER}
 });
@@ -78,13 +57,11 @@ Theme.belongsTo(Module, {
     }
 });
 
-// СВЯЗАН:
-// Theme
 const DifficultyLevelsOfTheme = sequelize.define('difficulty_level_of_themes', {
-    testSolution: {type: DataTypes.INTEGER, defaultValue: 1}, //максимум за решение теста
-    taskSolution: {type: DataTypes.INTEGER, defaultValue: 0}, //максимум за решение задачи из БЗ
-    taskCreation: {type: DataTypes.INTEGER, defaultValue: 0}, //максимум за создание задачи
-    taskEvaluation: {type: DataTypes.INTEGER, defaultValue: 0} //максимум за оценку задачи
+    testSolution: {type: DataTypes.INTEGER, defaultValue: 1},
+    taskSolution: {type: DataTypes.INTEGER, defaultValue: 0},
+    taskCreation: {type: DataTypes.INTEGER, defaultValue: 0},
+    taskEvaluation: {type: DataTypes.INTEGER, defaultValue: 0}
 });
 Theme.hasOne(DifficultyLevelsOfTheme);
 DifficultyLevelsOfTheme.belongsTo(Theme, {
@@ -94,13 +71,11 @@ DifficultyLevelsOfTheme.belongsTo(Theme, {
     }
 });
 
-// СВЯЗАН:
-// Theme, User, Database
 const Task = sequelize.define('tasks', {
-    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true}, //номер задачи
-    description: {type: DataTypes.STRING}, // описание задачи
-    verified: {type: DataTypes.BOOLEAN, defaultValue: false}, //доступно ли для решения
-    inBank: {type: DataTypes.BOOLEAN, defaultValue: null} //задача в банке задач? (банк - прошедшие все проверки)
+    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    description: {type: DataTypes.STRING},
+    verified: {type: DataTypes.BOOLEAN, defaultValue: false},
+    inBank: {type: DataTypes.BOOLEAN, defaultValue: null}
 });
 Theme.hasMany(Task);
 Task.belongsTo(Theme, {
@@ -126,13 +101,11 @@ Task.belongsTo(Database, {
     }
 });
 
-// СВЯЗАН:
-// Task
 const AutoTaskCheck = sequelize.define('auto_task_checks', {
-    _id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true }, //номер проверки
-    simpleConditionCheck: {type: DataTypes.FLOAT}, //содержимое ответа
-    complexConditionCheck: {type: DataTypes.FLOAT}, //содержимое ответа
-    checkingSyntaxOfCode: {type: DataTypes.BOOLEAN, defaultValue: false}, //содержимое ответа
+    _id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    simpleConditionCheck: {type: DataTypes.FLOAT},
+    complexConditionCheck: {type: DataTypes.FLOAT},
+    checkingSyntaxOfCode: {type: DataTypes.BOOLEAN, defaultValue: false},
 });
 Task.hasOne(AutoTaskCheck);
 AutoTaskCheck.belongsTo(Task, {
@@ -142,15 +115,13 @@ AutoTaskCheck.belongsTo(Task, {
     }
 });
 
-// СВЯЗАН:
-// Task, User
 const Solution = sequelize.define('solutions', {
-    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true}, //номер решения
-    isAuthor: {type: DataTypes.BOOLEAN, defaultValue: false}, //это авторское решение?
-    attempts: {type: DataTypes.INTEGER, defaultValue: 0}, //количество попыток решения
-    code: {type: DataTypes.STRING}, //код решения
+    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    isAuthor: {type: DataTypes.BOOLEAN, defaultValue: false},
+    attempts: {type: DataTypes.INTEGER, defaultValue: 0},
+    code: {type: DataTypes.STRING},
     verified: {type: DataTypes.BOOLEAN, defaultValue: false},
-    finished: {type: DataTypes.BOOLEAN, defaultValue: false} //прошло ли решение автоматическую проверку
+    finished: {type: DataTypes.BOOLEAN, defaultValue: false}
 });
 Task.hasMany(Solution);
 Solution.belongsTo(Task, {
@@ -168,12 +139,10 @@ Solution.belongsTo(User, {
     }
 });
 
-// СВЯЗАН:
-// Solution, User
 const TaskRating = sequelize.define('task_ratings', {
     _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     rating: {type: DataTypes.INTEGER, allowNull: false},
-    verified: {type: DataTypes.BOOLEAN, defaultValue: null}, //оценка надежная или нет
+    verified: {type: DataTypes.BOOLEAN, defaultValue: null},
     isAdmin: {type: DataTypes.BOOLEAN, allowNull: false},
 });
 Task.hasMany(TaskRating);
@@ -192,11 +161,9 @@ TaskRating.belongsTo(User, {
     }
 });
 
-// СВЯЗАН:
-// Solution, User
 const SolutionComment = sequelize.define('solution_comments', {
-    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true}, //номер комментария
-    content: {type: DataTypes.TEXT, allowNull: false}, //текст комментария
+    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    content: {type: DataTypes.TEXT, allowNull: false},
 });
 Solution.hasMany(SolutionComment);
 SolutionComment.belongsTo(Solution, {
@@ -222,11 +189,9 @@ SolutionComment.belongsTo(TaskRating, {
     }
 });
 
-// СВЯЗАН:
-// Solution, User
 const SolutionLike = sequelize.define('solution_likes', {
-    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true}, //номер лайка
-    isLiked: {type: DataTypes.BOOLEAN, defaultValue: true} //текущее состояние лайка
+    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    isLiked: {type: DataTypes.BOOLEAN, defaultValue: true}
 });
 Solution.hasMany(SolutionLike);
 SolutionLike.belongsTo(Solution, {
@@ -244,13 +209,11 @@ SolutionLike.belongsTo(User, {
     }
 });
 
-// СВЯЗАН:
-// User, Theme
 const Test = sequelize.define('tests', {
-    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true}, //номер теста
-    questions: {type: DataTypes.ARRAY(DataTypes.TEXT), defaultValue: []}, //содержимое теста
-    answers: {type: DataTypes.JSONB, defaultValue: []}, //содержимое теста
-    correctAnswers: {type: DataTypes.JSONB, defaultValue: []}, //содержимое теста
+    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    questions: {type: DataTypes.ARRAY(DataTypes.TEXT), defaultValue: []},
+    answers: {type: DataTypes.JSONB, defaultValue: []},
+    correctAnswers: {type: DataTypes.JSONB, defaultValue: []},
     isAvailable: {type: DataTypes.BOOLEAN, defaultValue: false},
     createdByUserId: {type: DataTypes.INTEGER},
     updatedByUserId: {type: DataTypes.INTEGER}
@@ -268,12 +231,11 @@ Test.belongsTo(Theme, {
     }
 });
 
-// СВЯЗАН:
-// Test, User
 const UserTestAnswer = sequelize.define('user_test_answers', {
-    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true}, //номер ответа
+    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     selectedAnswers: {type: DataTypes.JSONB, defaultValue: []}
 });
+
 Test.hasMany(UserTestAnswer);
 UserTestAnswer.belongsTo(Test, {
     foreignKey: {
@@ -290,15 +252,11 @@ UserTestAnswer.belongsTo(User, {
     }
 });
 
-
-
-// СВЯЗАН:
-// User
 const AdminRoleRequest = sequelize.define('admin_role_requests', {
-    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true}, //номер запроса
+    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     role: {type: DataTypes.ENUM('USER', 'ADMIN'), allowNull: false},
-    isThereResponse: {type: DataTypes.BOOLEAN, defaultValue: false}, //просмотрено ли админом
-    isApproved: {type: DataTypes.BOOLEAN,defaultValue: false}, //назначена роль?
+    isThereResponse: {type: DataTypes.BOOLEAN, defaultValue: false},
+    isApproved: {type: DataTypes.BOOLEAN,defaultValue: false},
     requestMessage: {type: DataTypes.STRING},
     responseMessage: {type: DataTypes.STRING},
     updatedByUserId: {type: DataTypes.INTEGER}
@@ -311,12 +269,10 @@ AdminRoleRequest.belongsTo(User, {
     }
 });
 
-// СВЯЗАН:
-// User
 const Scores = sequelize.define('scores', {
-    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true}, //номер оценки
-    score: {type: DataTypes.DOUBLE, allowNull: false}, //баллы
-    rating: {type: DataTypes.DOUBLE,allowNull: false}, //оценка
+    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    score: {type: DataTypes.DOUBLE, allowNull: false},
+    rating: {type: DataTypes.DOUBLE,allowNull: false},
 });
 User.hasMany(Scores);
 Scores.belongsTo(User, {
@@ -326,10 +282,8 @@ Scores.belongsTo(User, {
     }
 });
 
-// СВЯЗАН:
-// TestAnswer, Scores
 const UserTestScore = sequelize.define('user_test_scores', {
-    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true}, //номер оценки
+    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
 });
 UserTestAnswer.hasOne(UserTestScore);
 UserTestScore.belongsTo(UserTestAnswer, {
@@ -347,10 +301,8 @@ UserTestScore.belongsTo(Scores, {
     }
 });
 
-// СВЯЗАН:
-// Task, Scores
 const TaskCreationScore = sequelize.define('task_creation_scores', {
-    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true}, //номер оценки
+    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
 });
 Task.hasOne(TaskCreationScore);
 TaskCreationScore.belongsTo(Task, {
@@ -368,10 +320,8 @@ TaskCreationScore.belongsTo(Scores, {
     }
 });
 
-// СВЯЗАН:
-// TaskRating, Scores
 const TaskEvaluationScore = sequelize.define('task_evaluation_scores', {
-    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true}, //номер оценки
+    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
 });
 TaskRating.hasOne(TaskEvaluationScore);
 TaskEvaluationScore.belongsTo(TaskRating, {
@@ -389,10 +339,8 @@ TaskEvaluationScore.belongsTo(Scores, {
     }
 });
 
-// СВЯЗАН:
-// Solution, Scores
 const TaskSolutionScore = sequelize.define('task_solution_scores', {
-    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true}, //номер оценки
+    _id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
 });
 Solution.hasOne(TaskSolutionScore);
 TaskSolutionScore.belongsTo(Solution, {
@@ -413,9 +361,8 @@ TaskSolutionScore.belongsTo(Scores, {
 export {
     Database,
     User,
-    Subscriber,//-
     Task,
-    AutoTaskCheck,//-
+    AutoTaskCheck,
     Solution,
     SolutionComment,
     SolutionLike,
@@ -424,11 +371,11 @@ export {
     DifficultyLevelsOfTheme,
     Test,
     UserTestAnswer,
-    TaskRating,//-
+    TaskRating,
     AdminRoleRequest,
     Scores,
     UserTestScore,
-    TaskCreationScore,//-
-    TaskEvaluationScore,//-
-    TaskSolutionScore//-
+    TaskCreationScore,
+    TaskEvaluationScore,
+    TaskSolutionScore
 };

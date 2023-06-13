@@ -13,9 +13,11 @@ import StarRating from "../../components/SolutionComponents/StarRating";
 import MyButton from "../../components/basicElements/myButton";
 import {toJS} from "mobx";
 import TaskStatusAuthor from "../../components/basicElements/taskStatusAuthor";
+import {convertDate} from "../../utils/utils";
+import {observer} from "mobx-react-lite";
 
 
-const OneTaskPage = (() => {
+const OneTaskPage = (observer(() => {
     const [isLoading, setIsLoading] = useState(true)
     let {user, task, solution} = useContext(Context)
 
@@ -45,6 +47,10 @@ const OneTaskPage = (() => {
                     setSelectedDatabaseName(task.currentTask.database.name)
                 }
                 setDescriptionTask(task.currentTask.description || '');
+
+
+                setRatingValue(task.currentTask.ratingTask.myRating.value || 0)
+                setCommentValue(task.currentTask.ratingTask.myComment || '')
                 setIsLoading(false)
             })
             .catch(() => {
@@ -84,7 +90,7 @@ const OneTaskPage = (() => {
 
     return (
         <div>
-            <div style={{background: "rgba(1,1,1,0.05)", padding: '0 5px'}}>
+            <div>
                 <Breadcrumb>
                     <Breadcrumb.Item onClick={() => navigate(HOME_ROUTE())}>Главная</Breadcrumb.Item>
                     <Breadcrumb.Item onClick={() => navigate(THEMES_ROUTE())}>Темы</Breadcrumb.Item>
@@ -138,7 +144,9 @@ const OneTaskPage = (() => {
                 }
 
                 {
-                    task.currentTask.user._id !== user.user._id && task.currentTask.inBank === null && task.currentTask.myProgress !== 'Не выполнялось'
+                    task.currentTask.ratingTask.createdAt || (task.currentTask.inBank === null &&
+                        task.currentTask.finished === true &&
+                        (task.currentTask.user._id !== user.user._id || user.user.role === 'ADMIN'))
                         ?
                         <Accordion.Item eventKey="2">
                             <Accordion.Header>Оценивание задачи</Accordion.Header>
@@ -149,12 +157,14 @@ const OneTaskPage = (() => {
                                         width: '100%',
                                         border: '1px solid gray',
                                         padding: '10px',
-                                        borderRadius: 10
+                                        borderRadius: 10,
+                                        borderStyle: "none"
                                     }}
-                                    placeholder={'Введите отзыв на задачу'}
+                                    placeholder={'Отзыв на задачу не введен'}
                                     autoFocus
                                     value={commentValue}
                                     onChange={(e) => setCommentValue(e.target.value)}
+                                    readOnly={task.currentTask.ratingTask.createdAt !== null}
                                 />
                                 <div style={{display: "flex", flexDirection: "row", flexWrap: "wrap", columnGap: 15}}>
                                     <div>
@@ -163,10 +173,33 @@ const OneTaskPage = (() => {
                                             onRating={(rating) => {
                                                 setRatingValue(rating)
                                             }}
+                                            readonly={task.currentTask.ratingTask.createdAt !== null}
                                         />
-                                    </div>
+                                        {
+                                            task.currentTask.ratingTask.createdAt
+                                                ?
+                                                <>
+                                                    <div style={{marginTop: 10}}>
+                                                        {
+                                                            task.currentTask.ratingTask.myRating.verified === null
+                                                                ? <span className={'main-color-yellow'}>Оценка не проходила проверку</span>
+                                                                : task.currentTask.ratingTask.myRating.verified
+                                                                    ? <span className={'main-color-green'}>Оценка адекватная</span>
+                                                                    : <span className={'main-color-red'}>Оценка является выбросом по критерию Диксона</span>
+                                                        }
+                                                    </div>
+                                                    <div>Оценено {convertDate(task.currentTask.ratingTask.createdAt)}</div>
+                                                </>
+                                                : <></>
+                                        }
 
-                                    <MyButton text={"Оценить задачу"} onClick={clickEvaluation}/>
+                                    </div>
+                                    {
+                                        task.currentTask.ratingTask.createdAt !== null
+                                            ? <></>
+                                            : <MyButton text={"Оценить задачу"} onClick={clickEvaluation}/>
+                                    }
+
                                 </div>
 
                             </Accordion.Body>
@@ -174,7 +207,7 @@ const OneTaskPage = (() => {
                         : <></>
                 }
                 <Accordion.Item eventKey="3">
-                    <Accordion.Header>Автоматические проверки</Accordion.Header>
+                    <Accordion.Header>Результаты автоматической проверки задачи</Accordion.Header>
                     <Accordion.Body>
                         <div style={{marginBottom: 15}}>
                             <TaskStatusAuthor/>
@@ -182,7 +215,7 @@ const OneTaskPage = (() => {
 
                         <Table bordered responsive>
                             <thead>
-                            <tr style={{background: 'rgba(0, 92, 124, 0.1)'}}>
+                            <tr  className={'main-color-blue'}>
                                 <th style={{fontWeight: 100, textAlign: "center"}}>Проверка синтаксиса запроса</th>
                                 <th style={{fontWeight: 100, textAlign: "center"}}>Проверка на плагиат формулировки
                                     задачи
@@ -258,5 +291,5 @@ const OneTaskPage = (() => {
             </Accordion>
         </div>
     )
-});
+}));
 export default OneTaskPage;

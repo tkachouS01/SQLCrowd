@@ -11,9 +11,10 @@ import {
 import ApiError from '../error/ApiError.js';
 import {executeQuery} from '../init-user-dbs.js'
 import stringSimilarity from "string-similarity";
-import {consoleError, consoleMessage} from "../customMessageConsole.js";
 import {Op} from "sequelize";
 import sequelize from "../db.js";
+import {convertScoreToRating} from "../utils/utils.js";
+import {consoleError, consoleMessage} from "../customMessageConsole.js";
 
 export const unknownUser = {
     _id: 0, nickname: 'СЕКРЕТНЫЙ СУСЛИК', role: 'ADMIN'
@@ -41,9 +42,9 @@ export default class SolutionsController {
                 let likes = await SolutionLike.findAll({where: {solutionId: tempSolutionId}});
                 temp.like = {isLiked: !!like, likeCount: likes.length};
                 if (currentTask.inBank === null && temp.user._id !== userId) {
-                    temp.user = {...unknownUser};
+                    temp.user = (temp.user._id === userId || req.user.role === 'ADMIN') ? temp.user : {...unknownUser};
                     temp.solution_comments = temp.solution_comments.map(item => {
-                        item.user = item.user._id === userId ? item.user : {...unknownUser};
+                        item.user = (item.user._id === userId || req.user.role === 'ADMIN') ? item.user : {...unknownUser};
                         return item;
                     })
                 }
@@ -58,10 +59,13 @@ export default class SolutionsController {
     }
 
     async createSolutionTask(req, res, next) {
+        const taskId = req.params.taskId;
+        const userId = req.user._id;
+
+        if (req.user.role === 'ADMIN' && (await Task.findByPk(taskId)).userId !== userId)
+            return next(ApiError.forbidden('Преподавателям нельзя решать не свои задачи'))
         const t = await sequelize.transaction()
         try {
-            const taskId = req.params.taskId;
-            const userId = req.user._id;
             let userSolution = await Solution.findOne({where: {taskId: taskId, userId}}, {transaction: t})
             if (!userSolution) {
                 let task = await Task.findOne({where: {_id: taskId}}, {transaction: t});
@@ -72,7 +76,7 @@ export default class SolutionsController {
                     isAuthor: task.userId === userId
                 }, {transaction: t});
 
-            }else {
+            } else {
                 await t.rollback()
                 return res.json({solutionId: userSolution._id})
             }
@@ -86,6 +90,7 @@ export default class SolutionsController {
 
     async updateSolutionTask(req, res, next) {
         const t = await sequelize.transaction()
+
         try {
             const solutionId = req.params.solutionId;
             const {code} = req.body;
@@ -176,29 +181,25 @@ export default class SolutionsController {
     }
 
     async finishTheSolution(req, res, next) {
-        //try {
+        const solutionId = req.params.solutionId;
+        const taskId = req.params.taskId;
+        const themeId = req.params.themeId;
+        const userId = req.user._id;
+
+        let userSolution = await Solution.findByPk(solutionId);
+        let userTask = await Task.findByPk(taskId);
+
+        if (userSolution.finished) {
+            return next(ApiError.forbidden('Вы уже завершили решение'))
+        }
+        if (req.user.role === 'USER' && req.user._id !== userTask.userId && userTask.inBank === null) {
+            const taskRating = await TaskRating.findOne({where: {taskId, userId}})
+            if (!taskRating) {
+                return next(ApiError.forbidden('Вы не оценили задачу, завершение решения запрещено'))
+            }
+        }
         const t = await sequelize.transaction()
         try {
-            const solutionId = req.params.solutionId;
-            const taskId = req.params.taskId;
-            const themeId = req.params.themeId;
-            const userId = req.user._id;
-
-            let userSolution = await Solution.findByPk(solutionId, {transaction: t});
-            let userTask = await Task.findByPk(taskId, {transaction: t});
-
-            if (userSolution.finished) {
-                await t.commit()
-                return next(ApiError.forbidden('Вы уже завершили решение'))
-            }
-            if (req.user.role === 'USER' && req.user._id !== userTask.userId && userTask.inBank === null) {
-                const taskRating = await TaskRating.findOne({where: {taskId, userId}}, {transaction: t})
-                if (!taskRating) {
-                    await t.commit()
-                    return next(ApiError.forbidden('Вы не оценили задачу, завершение решения запрещено'))
-                }
-            }
-
             await Solution.update(
                 {finished: true},
                 {where: {_id: solutionId}, transaction: t}
@@ -206,7 +207,7 @@ export default class SolutionsController {
             if (userTask.userId !== req.user._id && userTask.inBank === true) {
                 const taskSolution = (await DifficultyLevelsOfTheme.findByPk(themeId, {transaction: t})).taskSolution;
                 const score = userSolution.verified ? taskSolution : 0;
-                const rating = Math.round(((score / taskSolution) * 5) * 100) / 100
+                const rating = convertScoreToRating(score, taskSolution)
 
                 const scoreId = (await Scores.create({
                     score,
@@ -218,7 +219,7 @@ export default class SolutionsController {
                     scoreId
                 }, {transaction: t})
                 await t.commit()
-                return req.json({})
+                return res.json({})
             }
 
             let isUserSolution = userSolution.userId === userId
@@ -260,14 +261,13 @@ export default class SolutionsController {
                     }, {transaction: t})
 
                     const complexConditionCheck = solutions.length === 0 ? 0 : conditionCheckFunc(
-                        toString(currentSolution.code),
+                        currentSolution.code,
                         solutions.filter(item => item.code !== null && item.code.trim() !== '').map(item => item.code)
                     );
                     const simpleConditionCheck = tasks.length === 0 ? 0 : conditionCheckFunc(
                         currentTask.description,
                         tasks.filter(item => item.description !== null && item.description.trim() !== '').map(item => item.description)
                     );
-
 
                     await AutoTaskCheck.create({
                         taskId,
@@ -299,22 +299,17 @@ export default class SolutionsController {
                     return res.json({})
                 }
             } else {
-                await t.rollback()
+                await t.commit()
                 return next(ApiError.forbidden(`Редактировать решение другого пользователя запрещено`))
             }
-
         } catch (error) {
-            await t.rollback()
+            if(!t.finished) await t.rollback()
             return next(ApiError.badRequest(error))
         }
-
-        //} catch (error) {
-        //  return next(ApiError.serverError(error.message))
-        //}
     }
 
     async getOneSolution(req, res, next) {
-        //try {
+        try {
         const userId = req.user._id;
         const solutionId = req.params.solutionId;
         const taskId = req.params.taskId;
@@ -323,9 +318,9 @@ export default class SolutionsController {
 
         if (solution.userId !== userId) return next(ApiError.forbidden(`Доступ к этому решению разрешен только его создателю`))
         return res.json(solution)
-        //} catch (error) {
-        //   return next(ApiError.serverError(error.message))
-        //}
+        } catch (error) {
+          return next(ApiError.serverError(error.message))
+        }
     }
 
     async likeSolution(req, res, next) {
@@ -364,20 +359,40 @@ export default class SolutionsController {
 }
 
 const queryOptions = {
-    attributes: {exclude: ['taskId', 'userId']}, include: [{
-        model: User, attributes: ['_id', 'nickname', 'role']
-    }, {
-        model: SolutionComment, attributes: {exclude: ['solutionId', 'userId', 'updatedAt']}, include: [{
-            model: User, attributes: ['_id', 'nickname', 'role']
-        }]
-    }]
+    attributes:
+        {
+            exclude: ['taskId', 'userId']
+        },
+    include:
+        [
+            {
+                model: User, attributes: ['_id', 'nickname', 'role']
+            },
+            {
+                model: SolutionComment,
+                attributes: {exclude: ['solutionId', 'userId', 'updatedAt', 'taskRatingId']},
+                include:
+                    [
+                        {
+                            model: User,
+                            attributes: ['_id', 'nickname', 'role'],
+
+                        },
+                        {
+                            model: TaskRating,
+                            attributes: ['rating', 'verified']
+                        }
+                    ]
+            }]
 };
 const conditionCheckFunc = (current, array) => {
+    if(current===null) {return 100}
     current = current.replace(/(\/\*[\s\S]*?\*\/|--.*?$)/gm, '').toLowerCase();
+    if(!current) {return 100}
     array = array.map(item => item.replace(/(\/\*[\s\S]*?\*\/|--.*?$)/gm, '').toLowerCase())
     const result = stringSimilarity.findBestMatch(current, array);
 
-    return (result.bestMatch.rating * 100).toFixed(2)
+    return +(result.bestMatch.rating * 100).toFixed(2)
 }
 
 

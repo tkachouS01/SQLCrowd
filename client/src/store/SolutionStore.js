@@ -5,7 +5,6 @@ export default class SolutionStore {
         this._oneSolution = {};
         this._allSolutions = [];
         this._result = {success: false, fields:[],rows:[]};
-        //this._codeSolution = '';
         makeAutoObservable(this)
     }
 

@@ -26,7 +26,6 @@ import {
 } from '../utils/constsPath'
 import ThemesPage from "../pages/ThemesPage/ThemesPage";
 import OneThemePage from "../pages/ThemesPage/OneThemePage";
-import RatingPage from "../pages/RatingPage/RatingPage";
 import RequestsRolePage from "../pages/RequestsRolePage/RequestsRolePage";
 import TestPage from "../pages/TestPage/TestPage";
 import TasksPage from "../pages/TasksPage/TasksPage";
@@ -39,7 +38,6 @@ const AppRouter = () => {
             <Route key="2" path={SIGN_UP_ROUTE()} element={<AuthPage/>} strict/>
             <Route key="3" path={SIGN_IN_ROUTE()} element={<AuthPage/>} strict/>
 
-            <Route key="4" path={RATING_ROUTE()} element={<RatingPage/>} strict/>
             <Route key="4" path={REQUESTS_ROLE_ROUTE()} element={<RequestsRolePage/>} strict/>
 
             <Route key="5" path={USERS_ROUTE()} element={<UsersPage/>} strict/>

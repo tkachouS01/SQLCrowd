@@ -2,7 +2,6 @@ import ApiError from '../error/ApiError.js';
 import {User} from '../models/models.js';
 import fs from "fs";
 import path from "path";
-import {consoleError} from "../customMessageConsole.js";
 import sharp from "sharp";
 import {unknownUser} from "./solutionsController.js";
 
@@ -46,17 +45,13 @@ export default class UsersController {
 
         const {id} = req.params;
 
-        // формируем путь к файлу картинки
         const imagePath = path.resolve('src/staticImages', `${id}.png`);
 
-        // проверяем, существует ли файл картинки
         fs.exists(imagePath, exists => {
             if (exists) {
-                // отправляем запрошенную картинку на клиент
                 res.sendFile(imagePath);
             }
             else {
-                // отправляем картинку по умолчанию на клиент
                 const defaultImagePath = path.resolve('src/staticImages', 'default', 'default_1.png');
                 res.sendFile(defaultImagePath);
             }
@@ -67,12 +62,10 @@ export default class UsersController {
         const imagePath = path.resolve('src/staticImages', `${id}.png`);
 
         try {
-            // Проверка наличия файла изображения
             await fs.promises.access(imagePath, fs.constants.F_OK);
-            // Удаление существующего файла изображения
+
             await fs.promises.unlink(imagePath);
         } catch (err) {
-            // Файл изображения не существует
         }
 
         const file = req.file;
@@ -81,12 +74,10 @@ export default class UsersController {
         }
 
         try {
-            // Изменение размера и сохранение нового файла изображения
             await sharp(file.path)
                 .resize(200, 200)
                 .toFile(imagePath);
 
-            // Удаление временного файла
             await fs.promises.unlink(file.path);
 
             return res.json({});
