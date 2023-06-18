@@ -1,0 +1,49 @@
+.push {
+    list-style: none;
+}
+
+.push li {
+    position: relative;
+    padding: 10px 20px 10px 40px;
+    font-variant: small-caps;
+}
+
+.push li:hover {
+    background: rgba(0, 0, 0, .1);
+    border-radius: 0px 20px 20px 0px;
+    cursor: pointer;
+}
+
+.push li:before {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 5px;
+
+    background: rgba(0, 92, 124, 0.7);
+    opacity: 0.5;
+    content: "";
+}
+
+.push li:after {
+    position: absolute;
+    height: 100%;
+    content: "";
+    left: 40px;
+    top: 0px;
+
+}
+
+.push li:hover:after {
+    opacity: 0.5;
+    font-size: 12px;
+    content: "Нажмите, чтобы перейти в тему";
+    color: rgba(0, 92, 124, 0.7);
+}
+
+.push li:hover:before {
+    opacity: 1;
+    width: 25px;
+}

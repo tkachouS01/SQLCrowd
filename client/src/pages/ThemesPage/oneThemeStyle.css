@@ -1,0 +1,7 @@
+.showToolsTrue .rdw-editor-toolbar {
+    display: flex;
+}
+
+.showToolsFalse .rdw-editor-toolbar {
+    display: none !important;
+}

@@ -1,0 +1,13 @@
+.active {
+    color: #007598 !important;
+}
+
+button {
+    color: black !important;
+    text-decoration: none !important;
+}
+
+button:hover:not(.active) {
+    color: black !important;
+    text-decoration: none !important;
+}

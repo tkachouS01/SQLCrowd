@@ -1,0 +1,30 @@
+.btn {
+    position: relative;
+    display: inline-block;
+    font-size: 20px;
+    z-index: 1;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.btnContainer {
+    height: 30px;
+    cursor: pointer;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.btnContainer:hover .line {
+    background: rgba(0, 92, 124, 0.5);
+}
+
+.btnContainer:hover .btn {
+    color: black;
+}
+
+.line {
+    background: rgba(0, 92, 124, 0.2);
+    position: relative;
+    bottom: 10px;
+    left: 10px;
+    height: 10px;
+}
