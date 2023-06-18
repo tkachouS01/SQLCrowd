@@ -1,7 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Breadcrumb, Table} from "react-bootstrap";
 import {Context} from "../index";
-import {useNavigate} from "react-router-dom";
 import {getRating} from "../httpRequests/ratingAPI";
 import UserImgLink from "../components/basicElements/userImgLink";
 import {FaArrowUp, FaArrowDown} from 'react-icons/fa';
@@ -26,11 +25,11 @@ const HomePage = () => {
     const [usersRating, setUsersRating] = useState([]);
     const [sortColumn, setSortColumn] = useState(null);
     const [sortDirection, setSortDirection] = useState('asc');
-    const navigate = useNavigate()
+
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
-        getRating(user, rating, rating)
+        getRating(user, rating)
             .then(() => {
                 setUsersRating(rating.usersRating);
                 setIsLoading(false);
@@ -69,6 +68,9 @@ const HomePage = () => {
                         <SortableColumnHeader title="В банке" column="tasksInBank" sortColumn={sortColumn}
                                               sortDirection={sortDirection}
                                               setSortColumn={setSortColumn} setSortDirection={setSortDirection}/>
+                        <SortableColumnHeader title="Из банка" column="solutionsFromBank" sortColumn={sortColumn}
+                                              sortDirection={sortDirection}
+                                              setSortColumn={setSortColumn} setSortDirection={setSortDirection}/>
                         <SortableColumnHeader title="Создано" column="tasksCreated" sortColumn={sortColumn}
                                               sortDirection={sortDirection}
                                               setSortColumn={setSortColumn} setSortDirection={setSortDirection}/>
@@ -89,29 +91,40 @@ const HomePage = () => {
                     <tbody>
                     {
                         usersRating.map((item, index) =>
-                            <tr key={index} className={item._id === user.user._id ? 'main-color-gray' : ''}>
-                                <td>
-                                    <UserImgLink _id={item._id} nickname={item.nickname} role={item.role}/>
-                                </td>
-                                <td>
-                                    {item.tasksInBank}
-                                </td>
-                                <td>
-                                    {item.tasksCreated}
-                                </td>
-                                <td>
-                                    {item.tasksEvaluated}
-                                </td>
-                                <td>
-                                    {+(item.scores.toFixed(2))}
-                                </td>
-                                <td>
-                                    {+(item.averageRating.toFixed(2))}
-                                </td>
-                                <td>
-                                    {+(item.currentRating.toFixed(2))}
-                                </td>
-                            </tr>
+                                <tr key={index} className={item._id === user.user._id ? 'main-color-gray' : ''}>
+                                    <td>
+                                        <UserImgLink _id={item._id} nickname={item.nickname} role={item.role}/>
+                                    </td>
+                                    <td>
+                                        {item.tasksInBank}
+                                    </td>
+                                    <td>
+                                        {item.solutionsFromBank}
+                                    </td>
+                                    <td>
+                                        {item.tasksCreated}
+                                    </td>
+                                    <td>
+                                        {item.tasksEvaluated}
+                                        <br/>
+                                        <span style={{fontSize: 10}}>
+                                            {
+                                                rating.usersRating[0].sameRating
+                                                    ? ``
+                                                    : ''
+                                            }
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {+(item.scores.toFixed(2))}
+                                    </td>
+                                    <td>
+                                        {+(item.averageRating.toFixed(2))}
+                                    </td>
+                                    <td>
+                                        {+(item.currentRating.toFixed(2))}
+                                    </td>
+                                </tr>
                         )
                     }
                     </tbody>

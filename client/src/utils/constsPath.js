@@ -13,4 +13,5 @@ export const THEME_TEST_ROUTE = (themeId) => `/themes/${themeId}/test`;
 export const TASKS_ROUTE = (themeId) => `/themes/${themeId}/tasks`;
 export const TASK_ONE_ROUTE = (themeId, taskId) => `/themes/${themeId}/tasks/${taskId}`;
 
+export const SOLUTION_ONE_ROUTE = (themeId, taskId, userId) => `/themes/${themeId}/tasks/${taskId}/solutions${userId?`?userId=${userId}`:''}`;
 export const SOLUTIONS_ROUTE = (themeId, taskId) => `/themes/${themeId}/tasks/${taskId}/solutions`;

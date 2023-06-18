@@ -8,6 +8,7 @@ import {convertDate, simpleConvertDate} from "../../utils/utils";
 import MyButton from "../../components/basicElements/myButton";
 import {updateRole} from "../../httpRequests/roleRequestsAPI";
 import {HOME_ROUTE, USERS_ROUTE} from "../../utils/constsPath";
+import UserStat from "./UserStat";
 
 const UserPage = () => {
     const [isLoading, setIsLoading] = useState(true)
@@ -170,6 +171,10 @@ const UserPage = () => {
 
                     </div>
                 </div>
+                {
+                    userId==0?<></>: <UserStat/>
+                }
+
             </div>
 
         )

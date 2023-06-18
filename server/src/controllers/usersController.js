@@ -7,7 +7,7 @@ import {unknownUser} from "./solutionsController.js";
 
 export default class UsersController {
 
-    async getAll(req, res, next) {
+    async getAllUsers(req, res, next) {
 
         try {
             const users = await User.findAll({
@@ -20,7 +20,7 @@ export default class UsersController {
         }
     }
 
-    async getOne(req, res, next) {
+    async getOneUser(req, res, next) {
         try {
             const {id} = req.params;
 
@@ -41,7 +41,7 @@ export default class UsersController {
         }
     }
 
-    async getAvatar(req, res, next) {
+    async getImage(req, res, next) {
 
         const {id} = req.params;
 
@@ -57,7 +57,7 @@ export default class UsersController {
         });
     }
 
-    async addAvatar(req, res, next) {
+    async addImage(req, res, next) {
         const {id} = req.params;
         const imagePath = path.resolve('src/staticImages', `${id}.png`);
 
@@ -85,6 +85,4 @@ export default class UsersController {
             return next(ApiError.serverError("Ошибка при обработке файла"));
         }
     }
-
-
 }

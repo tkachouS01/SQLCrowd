@@ -1,5 +1,5 @@
-import React, {useContext, useEffect, useState} from 'react'
-import {useNavigate, useParams} from "react-router-dom";
+import React, {useContext, useEffect, useRef, useState} from 'react'
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {createComment, getSolutions, like} from "../../httpRequests/solutionAPI";
 import {Context} from "../../index";
 import {Card, Container, Form, Image} from "react-bootstrap";
@@ -28,7 +28,17 @@ const SolutionsPage = observer(() => {
 
     const [newComments, setNewComments] = useState({});
 
+    const location = useLocation();
+const [selectedSolutionUserId, setSelectedSolutionUserId] = useState(null)
+
+    const updateModuleRef = useRef(null);
+    const {userId} = useParams()
+
+
+
     useEffect(() => {
+
+
         getOneTask(user, task, themeId, taskId)
             .then(() => {
                 getSolutions(user, task, solution, null, themeId, taskId)
@@ -36,10 +46,17 @@ const SolutionsPage = observer(() => {
                         if (!data) {
                             navigate(TASK_ONE_ROUTE(themeId, taskId))
                         }
-                        setRequestCompleted(true)
-                    })
-                    .catch(() => {
 
+                        const params = new URLSearchParams(location.search);
+                        setSelectedSolutionUserId(params)
+
+                        console.log(userId)
+                        if(selectedSolutionUserId)
+                            updateModuleRef.current.scrollIntoView({behavior: "smooth", block: "center"})
+                        console.log('---')
+
+
+                        setRequestCompleted(true)
                     })
             })
 
@@ -86,6 +103,7 @@ const SolutionsPage = observer(() => {
 
                     solution.allSolutions.map(solutionOne =>
                         <Card
+                            ref={solutionOne.user._id===selectedSolutionUserId?updateModuleRef:null}
                             key={solutionOne._id}
                             className="d-flex flex-row justify-content-between flex-column"
                         >

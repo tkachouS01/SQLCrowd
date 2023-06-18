@@ -9,12 +9,11 @@ import multer from 'multer';
 
 const upload = multer({dest: 'src/staticImages'});
 usersRouter.route('/image/:id')
-    .get(usersController.getAvatar.bind(usersController))
-    .post(upload.single('profilePicture'), usersController.addAvatar.bind(usersController));
-
+    .get(usersController.getImage.bind(usersController))
+    .post(upload.single('profilePicture'), usersController.addImage.bind(usersController));
 usersRouter.route('/')
-    .get(usersController.getAll.bind(usersController));
+    .get(usersController.getAllUsers.bind(usersController));
 usersRouter.route('/:id')
-    .get(usersController.getOne.bind(usersController));
+    .get(usersController.getOneUser.bind(usersController));
 
 export default usersRouter;

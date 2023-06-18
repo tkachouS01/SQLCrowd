@@ -96,11 +96,11 @@ const AuthPage = observer(() => {
                         }}>
                             <div>
                                 <Button style={{
-                                    background: "#005c7c",
+                                    background: "rgba(0,182,206,0.69)",
                                     border: "none",
                                     fontSize: 25,
                                     padding: '5px 40px',
-                                    borderRadius: 15
+                                    borderRadius: 15,
                                 }} onClick={click}>
                                     Войти
                                 </Button>
@@ -217,11 +217,11 @@ const AuthPage = observer(() => {
                         }}>
                             <div>
                                 <Button style={{
-                                    background: "#005c7c",
+                                    background: "rgba(0,182,206,0.69)",
                                     border: "none",
                                     fontSize: 25,
                                     padding: '5px 40px',
-                                    borderRadius: 15
+                                    borderRadius: 15,
                                 }} onClick={click}>
                                     Присоединиться
                                 </Button>

@@ -664,7 +664,7 @@ export const getQuery = (section, category, themeId, userId, role, isFinished = 
 
         if (category === 'all') {
             query.where = {
-                themeId,
+                //themeId,
                 inBank: null,
                 verified: true,
             };
